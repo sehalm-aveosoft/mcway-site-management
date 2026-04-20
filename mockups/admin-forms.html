@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>McWay Admin — Data Entry Forms (v2)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; color: #2d3142; background: #f4f5f7; height: 100vh; overflow: hidden; }
+  .topbar { height: 48px; background: #714B67; color: #fff; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .topbar .logo { font-weight: 600; font-size: 15px; }
+  .topbar .logo .tag { background: #ffb300; color: #333; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-left: 8px; font-weight: 700; }
+  .topbar .breadcrumb { margin-left: 24px; color: rgba(255,255,255,0.8); font-size: 12px; }
+  .topbar .breadcrumb span { margin: 0 6px; }
+  .topbar .user { margin-left: auto; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+  .topbar .avatar { width: 28px; height: 28px; border-radius: 50%; background: #9b7595; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .layout { display: flex; margin-top: 48px; height: calc(100vh - 48px); }
+  .sidebar { width: 240px; background: #fff; border-right: 1px solid #e0e2e7; overflow-y: auto; flex-shrink: 0; }
+  .sidebar-group { padding: 10px 0; border-bottom: 1px solid #eef0f3; }
+  .sidebar-group-title { font-size: 10px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 18px; }
+  .sidebar-item { padding: 8px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #4a4f5c; border-left: 3px solid transparent; }
+  .sidebar-item:hover { background: #f7f4f6; }
+  .sidebar-item.active { background: #f7f4f6; border-left-color: #714B67; color: #714B67; font-weight: 600; }
+  .sidebar-item .icon { width: 16px; text-align: center; }
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px 60px; }
+  .form-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; position: sticky; top: 0; background: #f4f5f7; padding: 10px 0; z-index: 10; border-bottom: 1px solid #e0e2e7; }
+  .form-toolbar h1 { font-size: 19px; font-weight: 600; }
+  .form-toolbar .sub { font-size: 12px; color: #8a8f99; margin-top: 2px; }
+  .btn-group { display: flex; gap: 8px; }
+  .btn { padding: 7px 14px; border-radius: 4px; border: 1px solid transparent; font-size: 13px; cursor: pointer; font-weight: 500; }
+  .btn-primary { background: #714B67; color: #fff; }
+  .btn-primary:hover { background: #5d3d55; }
+  .btn-secondary { background: #fff; color: #4a4f5c; border-color: #d8dae0; }
+  .btn-secondary:hover { background: #f4f5f7; }
+  .form-card { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+  .form-card-title { padding: 12px 20px; background: #f7f8fa; border-bottom: 1px solid #e0e2e7; font-weight: 700; font-size: 12px; text-transform: uppercase; color: #6c7080; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
+  .form-card-title .step { background: #714B67; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; margin-right: 8px; }
+  .form-card-body { padding: 20px 24px; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid #e0e2e7; margin-bottom: 20px; }
+  .tab { padding: 10px 18px; cursor: pointer; color: #6c7080; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab:hover { color: #714B67; }
+  .tab.active { color: #714B67; border-bottom-color: #714B67; font-weight: 600; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px 28px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 11px; font-weight: 600; color: #6c7080; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field label .req { color: #dc3545; margin-left: 2px; }
+  .field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; font-family: inherit; background: #fff; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #714B67; box-shadow: 0 0 0 3px rgba(113,75,103,0.1); }
+  .field input[readonly], .field .computed { background: #f7f8fa; color: #6c7080; cursor: not-allowed; }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field .hint { font-size: 11px; color: #8a8f99; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; }
+  .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #714B67; }
+  .checkbox-row label { text-transform: none; font-size: 13px; font-weight: 500; color: #2d3142; letter-spacing: 0; }
+  .tag-input { display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; border: 1px solid #d8dae0; border-radius: 4px; background: #fff; min-height: 38px; align-items: center; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: #ede7ec; color: #714B67; border-radius: 12px; font-size: 12px; }
+  .tag .x { cursor: pointer; font-weight: bold; }
+  .tag-input input { border: none; flex: 1; outline: none; min-width: 100px; padding: 4px; }
+  .radio-group { display: flex; gap: 16px; padding: 4px 0; }
+  .form-footer { position: sticky; bottom: 0; background: #fff; padding: 14px 24px; border-top: 1px solid #e0e2e7; display: flex; justify-content: space-between; align-items: center; }
+  .info-banner { background: #e7f1fb; border: 1px solid #b4d5f2; color: #1a5a9b; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 18px; }
+  .warn-banner { background: #fff9e6; border: 1px solid #ffe0a6; color: #7a5800; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 18px; }
+  .dev-note { background: #fdecec; border: 1px solid #f7b4b4; color: #8b1e1e; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 18px; }
+  .section-title { font-size: 13px; font-weight: 700; color: #4a4f5c; margin: 20px 0 12px; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #714B67; padding-left: 10px; }
+  .icon-btn { padding: 6px 10px; background: #fff; border: 1px solid #d8dae0; border-radius: 4px; cursor: pointer; color: #dc3545; font-weight: bold; }
+  .hidden { display: none !important; }
+  .repeat-row { display: grid; gap: 10px; align-items: end; padding: 10px; background: #fafbfc; border-radius: 4px; margin-bottom: 8px; }
+  .read-only-panel { background: #f7f8fa; border: 1px dashed #d8dae0; border-radius: 4px; padding: 14px; color: #6c7080; }
+  .read-only-panel h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8a8f99; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .read-only-panel .empty { font-style: italic; color: #8a8f99; font-size: 12px; }
+  .pill { display: inline-block; padding: 2px 8px; margin: 2px 3px 2px 0; background: #ede7ec; color: #714B67; border-radius: 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">McWay Admin<span class="tag">DATA ENTRY v2</span></div>
+  <div class="breadcrumb" id="breadcrumb">McWay Admin <span>›</span> Masters <span>›</span> New Site</div>
+  <div class="user"><span>Rajesh Patel (Admin)</span><div class="avatar">RP</div></div>
+</div>
+
+<div class="layout">
+
+  <div class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Masters</div>
+      <div class="sidebar-item active" data-form="site"><span class="icon">📍</span> Site</div>
+      <div class="sidebar-item" data-form="camp"><span class="icon">🏕️</span> Camp</div>
+      <div class="sidebar-item" data-form="plant"><span class="icon">🏭</span> Plant</div>
+      <div class="sidebar-item" data-form="material"><span class="icon">📦</span> Material</div>
+      <div class="sidebar-item" data-form="machine"><span class="icon">🚜</span> Machine</div>
+      <div class="sidebar-item" data-form="tanker"><span class="icon">⛽</span> Tanker</div>
+      <div class="sidebar-item" data-form="vendor"><span class="icon">🤝</span> Vendor</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Operations Setup</div>
+      <div class="sidebar-item" data-form="assignment"><span class="icon">📌</span> Machine Assignment</div>
+      <div class="sidebar-item" data-form="deployment"><span class="icon">📄</span> Rental Deployment</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Users</div>
+      <div class="sidebar-item" data-form="user"><span class="icon">👤</span> User</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Planning</div>
+      <div class="sidebar-item" data-form="estimation"><span class="icon">📐</span> Estimation</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Master Configuration</div>
+      <div class="sidebar-item" data-form="lookup"><span class="icon">🗂️</span> Lookup Lists</div>
+    </div>
+  </div>
+
+  <div class="main" id="main"></div>
+
+</div>
+
+<script>
+const formTitles = {
+  site: { title: 'New Site', sub: 'Create a construction site with multi-segment chainage support' },
+  camp: { title: 'New Camp', sub: 'Storage + optional RMC mixer. Can serve multiple sites.' },
+  plant: { title: 'New Plant', sub: 'Large-scale production & supply base' },
+  material: { title: 'New Material', sub: 'Single source of truth for materials' },
+  machine: { title: 'New Machine', sub: 'Permanent machine info only. Rental terms and assignment live in separate modules.' },
+  tanker: { title: 'New Tanker', sub: 'Diesel tanker — multi-operator, multi-site mobile' },
+  vendor: { title: 'New Vendor', sub: 'External supplier (machine rental / material / diesel credit)' },
+  assignment: { title: 'New Machine Assignment', sub: 'Assign a machine to a Site, Camp, or Plant (one at a time)' },
+  deployment: { title: 'New Rental Deployment', sub: 'Record a rental spell: vendor, rate, fuel mode, dates' },
+  user: { title: 'New User', sub: 'Create a user with single scope assignment' },
+  estimation: { title: 'New Estimation', sub: 'Baseline quantity for variance calculations (⚠️ TBD with client)' },
+  lookup: { title: 'Master Configuration — Lookup Lists', sub: 'Admin-managed dropdown values' }
+};
+
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const main = document.getElementById('main');
+const breadcrumb = document.getElementById('breadcrumb');
+
+sidebarItems.forEach(item => {
+  item.addEventListener('click', () => {
+    sidebarItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    render(item.dataset.form);
+  });
+});
+
+function render(form) {
+  const m = formTitles[form];
+  breadcrumb.innerHTML = `McWay Admin <span>›</span> ${m.title}`;
+  switch(form) {
+    case 'site': siteForm(); break;
+    case 'camp': campForm(); break;
+    case 'plant': plantForm(); break;
+    case 'material': materialForm(); break;
+    case 'machine': machineForm(); break;
+    case 'tanker': tankerForm(); break;
+    case 'vendor': vendorForm(); break;
+    case 'assignment': assignmentForm(); break;
+    case 'deployment': deploymentForm(); break;
+    case 'user': userForm(); break;
+    case 'estimation': estimationForm(); break;
+    case 'lookup': lookupForm(); break;
+  }
+}
+
+function toolbar(form) {
+  const m = formTitles[form];
+  return `<div class="form-toolbar">
+    <div><h1>${m.title}</h1><div class="sub">${m.sub}</div></div>
+    <div class="btn-group">
+      <button class="btn btn-secondary">Cancel</button>
+      <button class="btn btn-secondary">Save &amp; Add Another</button>
+      <button class="btn btn-primary">💾 Save</button>
+    </div>
+  </div>`;
+}
+
+function footer() {
+  return `<div class="form-footer">
+    <div style="font-size:11px; color:#8a8f99;"><span style="color:#dc3545">*</span> Required field</div>
+    <div class="btn-group">
+      <button class="btn btn-secondary">Cancel</button>
+      <button class="btn btn-secondary">Save &amp; Add Another</button>
+      <button class="btn btn-primary">💾 Save</button>
+    </div>
+  </div>`;
+}
+
+function switchTab(evt, id, container) {
+  container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  container.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+  evt.target.classList.add('active');
+  container.querySelector('#'+id).classList.remove('hidden');
+}
+
+// =============== SITE FORM ===============
+function siteForm() {
+  main.innerHTML = toolbar('site') + `
+    <div class="info-banner"><strong>Linkage principle:</strong> Senior Engineer, Supervisors, Camps, and Plants are NOT entered here — they are linked at their own form (User / Camp / Plant). This Site form just captures the site itself.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span><span class="step">1</span>Site Details</span></div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Site Code</label><input class="computed" readonly placeholder="Auto: SITE/2026/###"></div>
+          <div class="field"><label>Site Name <span class="req">*</span></label><input placeholder="e.g., Kalol Sanand"></div>
+          <div class="field"><label>Type <span class="req">*</span></label><select><option value="">— Select —</option><option>Road</option><option>Bridge</option><option>Building</option></select></div>
+          <div class="field"><label>Status <span class="req">*</span></label><select><option>Active</option><option>Inactive</option></select></div>
+          <div class="field"><label>Location (City/Area) <span class="req">*</span></label><input placeholder="e.g., Kalol–Sanand"></div>
+          <div class="field"><label>State <span class="req">*</span></label><select><option>Gujarat</option><option>Maharashtra</option><option>Rajasthan</option></select></div>
+          <div class="field"><label>Latitude</label><input type="number" step="0.000001"></div>
+          <div class="field"><label>Longitude</label><input type="number" step="0.000001"></div>
+          <div class="field"><label>Planned Start Date</label><input type="date"><span class="hint">Optional</span></div>
+          <div class="field"><label>Planned End Date</label><input type="date"><span class="hint">Optional</span></div>
+          <div class="field full"><label>Description / Notes</label><textarea></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span><span class="step">2</span>Carriageway &amp; Road Width</span></div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field full"><label>Carriageway Mode <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="checkbox-row"><input type="radio" name="carriageway" value="combined" checked onchange="toggleCarriageway()"> Combined (single width)</label>
+              <label class="checkbox-row"><input type="radio" name="carriageway" value="dual" onchange="toggleCarriageway()"> Dual Carriageway (LHS + RHS separate)</label>
+            </div>
+          </div>
+          <div class="field" id="cw-combined"><label>Combined Width (m) <span class="req">*</span></label><input type="number" step="0.1" placeholder="e.g., 7.5"></div>
+          <div class="field" id="cw-lhs" style="display:none"><label>LHS Width (m) <span class="req">*</span></label><input type="number" step="0.1"></div>
+          <div class="field" id="cw-rhs" style="display:none"><label>RHS Width (m) <span class="req">*</span></label><input type="number" step="0.1"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">
+        <span><span class="step">3</span>Chainage Segments</span>
+        <button class="btn btn-primary" style="padding:5px 10px; font-size:12px;" onclick="addSegment()">+ Add Segment</button>
+      </div>
+      <div class="form-card-body">
+        <div class="warn-banner">A site can have multiple non-continuous segments. Example: contract covers 1–5 km AND 7–15 km. Add one row per segment.</div>
+        <div id="segment-list">
+          ${segmentRow(1)}
+        </div>
+        <div style="margin-top:12px; padding: 10px; background:#f7f4f6; border-radius:4px; font-size:13px;">
+          <strong>Total Length:</strong> <span class="computed" style="padding:3px 10px; border-radius:3px; background:#fff;">auto-calculated</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span><span class="step">4</span>Derived (Read-only after save)</span></div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field full">
+            <div class="read-only-panel">
+              <h4>Assigned Team</h4>
+              <div class="empty">Will appear once users are assigned to this site (done on User form)</div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="read-only-panel">
+              <h4>Camps Serving This Site</h4>
+              <div class="empty">Set on Camp form → "Served Sites"</div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="read-only-panel">
+              <h4>Plants Supplying This Site</h4>
+              <div class="empty">Set on Plant form → "Supplies To"</div>
+            </div>
+          </div>
+          <div class="field full">
+            <div class="read-only-panel">
+              <h4>Machines On Site</h4>
+              <div class="empty">Appears from active Machine Assignments</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+function segmentRow(n) {
+  return `<div class="repeat-row" style="grid-template-columns: 50px 1fr 1fr 1fr 1.5fr 40px;">
+    <div class="field"><label>#</label><input class="computed" readonly value="${n}"></div>
+    <div class="field"><label>Start (m) <span class="req">*</span></label><input type="number" placeholder="e.g., 1000"></div>
+    <div class="field"><label>End (m) <span class="req">*</span></label><input type="number" placeholder="e.g., 5000"></div>
+    <div class="field"><label>Length (m)</label><input class="computed" readonly placeholder="auto"></div>
+    <div class="field"><label>Remarks</label><input placeholder="Optional"></div>
+    <button class="icon-btn" onclick="this.closest('.repeat-row').remove()">×</button>
+  </div>`;
+}
+function addSegment() {
+  const list = document.getElementById('segment-list');
+  list.insertAdjacentHTML('beforeend', segmentRow(list.children.length + 1));
+}
+function toggleCarriageway() {
+  const mode = document.querySelector('input[name="carriageway"]:checked').value;
+  document.getElementById('cw-combined').style.display = mode === 'combined' ? '' : 'none';
+  document.getElementById('cw-lhs').style.display = mode === 'dual' ? '' : 'none';
+  document.getElementById('cw-rhs').style.display = mode === 'dual' ? '' : 'none';
+}
+
+// =============== CAMP FORM ===============
+function campForm() {
+  main.innerHTML = toolbar('camp') + `
+    <div class="info-banner">One camp can serve multiple sites. On save, the system auto-creates stock locations (Stock, Scrap; and RMC Output if mixer enabled).</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Camp Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Camp Code</label><input class="computed" readonly placeholder="Auto: CAMP/2026/###"></div>
+          <div class="field"><label>Camp Name <span class="req">*</span></label><input placeholder="e.g., Khatraj Chokdi"></div>
+          <div class="field full"><label>Address</label><input placeholder="Optional — e.g., Khatraj Chokdi, Kheda District"></div>
+          <div class="field"><label>Latitude</label><input type="number" step="0.000001"></div>
+          <div class="field"><label>Longitude</label><input type="number" step="0.000001"></div>
+          <div class="field"><label>Camp In-charge <span class="req">*</span></label><select><option value="">— Select —</option><option>Suresh Rathod</option></select></div>
+          <div class="field"><label>Storage Capacity (MT)</label><input type="number" placeholder="e.g., 500"></div>
+          <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option><option>Closed</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>Served Sites</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field full"><label>Served Sites <span class="req">*</span></label>
+            <div class="tag-input"><input placeholder="Search sites... (at least 1 required)"></div>
+            <span class="hint">A camp can serve one or many sites. This is where the Site ↔ Camp linkage lives.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">3</span>RMC Mixer (Optional)</div>
+      <div class="form-card-body">
+        <div class="dev-note"><strong>Developer note:</strong> If RMC is enabled, camp becomes a mini-production unit. Production entries in the Camp Module will consume inputs (cement/sand/aggregate/water) via BoMs and produce concrete output. <strong>Actual mix formulation (ratios per grade) is pending from client — use placeholder BoMs.</strong></div>
+        <div class="form-grid">
+          <div class="field"><div class="checkbox-row"><input type="checkbox" id="c-rmc" onchange="toggleRmc()"><label for="c-rmc">Has RMC Mixer</label></div></div>
+          <div class="field"></div>
+          <div class="field" id="rmc-cap" style="display:none"><label>Mixer Capacity (m³/hr)</label><input type="number" step="0.1" placeholder="e.g., 30"></div>
+          <div class="field" id="rmc-grades" style="display:none"><label>Output Grades Produced</label>
+            <div class="tag-input"><input placeholder="Pick grades (M10, M20, M25…)"></div>
+            <span class="hint">Values come from Lookup List → Concrete Grades</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">4</span>Notes</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field full"><label>Remarks</label><textarea></textarea></div>
+        </div>
+        <div class="warn-banner" style="margin-top:14px">💡 <strong>Diesel is NOT configured here.</strong> Diesel is handled in its own module which links to camps/sites/machines independently.</div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+function toggleRmc() {
+  const on = document.getElementById('c-rmc').checked;
+  document.getElementById('rmc-cap').style.display = on ? '' : 'none';
+  document.getElementById('rmc-grades').style.display = on ? '' : 'none';
+}
+
+// =============== PLANT FORM ===============
+function plantForm() {
+  main.innerHTML = toolbar('plant') + `
+    <div class="info-banner">Plants produce at large scale. Production capabilities drive which entry screens appear in the Plant Module.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Plant Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Plant Code</label><input class="computed" readonly placeholder="Auto: PLNT/2026/###"></div>
+          <div class="field"><label>Plant Name <span class="req">*</span></label><input placeholder="e.g., Magodi Plant"></div>
+          <div class="field full"><label>Address <span class="req">*</span></label><input placeholder="Full address"></div>
+          <div class="field"><label>Latitude</label><input type="number" step="0.000001"></div>
+          <div class="field"><label>Longitude</label><input type="number" step="0.000001"></div>
+          <div class="field"><label>Plant In-charge <span class="req">*</span></label><select><option value="">— Select —</option><option>Dinesh Joshi</option></select></div>
+          <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">
+        <span><span class="step">2</span>Production Capabilities &amp; Daily Capacity</span>
+        <button class="btn btn-primary" style="padding:5px 10px; font-size:12px;" onclick="addCapacity()">+ Add Capability</button>
+      </div>
+      <div class="form-card-body">
+        <div class="warn-banner">Add one row per product type this plant can produce. Capacity unit varies by capability (MT for Bituminous/Steel, m³ for Concrete, Litres for Emulsion).</div>
+        <div id="capacity-list">
+          ${capacityRow()}
+        </div>
+        <div class="dev-note" style="margin-top:14px"><strong>Developer note:</strong> Capabilities drive plant module dropdowns. Plant without "Concrete (RMC)" capability won't show Concrete Production screens. Emulsion and Steel — tracked as materials in inventory, not declared here.</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">3</span>Supply Network</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Supplies To (Camps)</label>
+            <div class="tag-input"><input placeholder="Search camps..."></div>
+          </div>
+          <div class="field"><label>Supplies To (Sites — direct)</label>
+            <div class="tag-input"><input placeholder="Search sites..."></div>
+            <span class="hint">Only when a site has no camp and is supplied directly</span>
+          </div>
+          <div class="field full"><label>Remarks</label><textarea></textarea></div>
+        </div>
+        <div class="warn-banner" style="margin-top:14px">💡 <strong>No Diesel / LDO / FO tank fields here.</strong> Diesel = separate module. LDO/FO = materials in inventory.</div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+function capacityRow() {
+  return `<div class="repeat-row" style="grid-template-columns: 2fr 1fr 1fr 40px;">
+    <div class="field"><label>Capability</label>
+      <select><option value="">— Select —</option><option>Bituminous Mix</option><option>Concrete (RMC)</option><option>Emulsion</option><option>Steel Cutting/Bending</option></select>
+    </div>
+    <div class="field"><label>Daily Capacity</label><input type="number"></div>
+    <div class="field"><label>Unit</label><select><option>MT</option><option>m³</option><option>Litres</option></select></div>
+    <button class="icon-btn" onclick="this.closest('.repeat-row').remove()">×</button>
+  </div>`;
+}
+function addCapacity() {
+  document.getElementById('capacity-list').insertAdjacentHTML('beforeend', capacityRow());
+}
+
+// =============== MATERIAL FORM ===============
+function materialForm() {
+  main.innerHTML = toolbar('material') + `
+    <div class="info-banner">Simplified form. Secondary UoM shows only for Cement and Steel. Variants pull from Lookup List templates where available.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Material Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Material Code</label><input class="computed" readonly placeholder="Auto: MAT/####"></div>
+          <div class="field"><label>Material Name <span class="req">*</span></label><input placeholder="e.g., Aggregate"></div>
+          <div class="field"><label>Category <span class="req">*</span></label>
+            <select id="mat-cat" onchange="toggleSecondaryUom()">
+              <option value="">— Select —</option>
+              <option>Aggregate</option><option>Cement</option><option>Sand</option>
+              <option>Steel</option><option>Emulsion</option><option>Bitumen</option>
+              <option>Fuel</option><option>Pipe</option><option>Concrete Mix</option>
+              <option>Bituminous Mix</option><option>Other</option>
+            </select>
+            <span class="hint">Values from Lookup List → Material Categories</span>
+          </div>
+          <div class="field"><label>Measured In <span class="req">*</span></label>
+            <select>
+              <option value="">— Select —</option>
+              <option>MT (Metric Tonne)</option><option>Kg</option><option>m³ (Cubic Metre)</option>
+              <option>Litres</option><option>Numbers</option>
+            </select>
+            <span class="hint">Primary unit of measurement</span>
+          </div>
+          <div class="field" id="sec-uom" style="display:none"><label>Secondary Unit</label>
+            <select><option>— None —</option><option>Bag (50 kg)</option><option>Piece</option></select>
+            <span class="hint">Only for Cement (bags ↔ MT) and Steel (pieces ↔ MT)</span>
+          </div>
+          <div class="field" id="conv-factor" style="display:none"><label>Conversion Factor</label>
+            <input type="number" step="0.0001" placeholder="e.g., 0.05">
+            <span class="hint">How many primary units equal 1 secondary unit? E.g., 1 bag cement = 50 kg = 0.05 MT → enter 0.05.</span>
+          </div>
+          <div class="field"><label>Density (kg/m³)</label><input type="number" step="0.001"></div>
+          <div class="field"><label>Specification Reference</label><input placeholder="e.g., IS-383, MoRTH 5th revision"></div>
+          <div class="field"><label>Low Stock Threshold</label><input type="number"><span class="hint">In primary unit (matches "Measured In")</span></div>
+          <div class="field"><label>Source Type(s) <span class="req">*</span></label>
+            <div class="tag-input"><input placeholder="Plant / Camp / External Vendor / Quarry..."></div>
+            <span class="hint">From Lookup List → Source Types</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">
+        <span><span class="step">2</span>Variants (Grades / Sizes)</span>
+        <button class="btn btn-primary" style="padding:5px 10px; font-size:12px;" onclick="addVariant()">+ Add Variant</button>
+      </div>
+      <div class="form-card-body">
+        <div class="warn-banner">For standard categories (Steel, Concrete Mix, Bitumen, Emulsion, Aggregate, Pipe), values are pre-filled from Lookup List templates. You can check the ones this material has, or add custom ones.</div>
+        <div id="variant-list">
+          ${variantRow()}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">3</span>Settings</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><div class="checkbox-row"><input type="checkbox" id="m-active" checked><label for="m-active">Active</label></div><span class="hint">Inactive materials are hidden from dropdowns</span></div>
+        </div>
+        <div class="warn-banner" style="margin-top:14px">💡 Fields removed per client review: "Track in Stock" (always on), "Status" (use Active toggle instead), "Applicable At" (auto-derived from category + type).</div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+function toggleSecondaryUom() {
+  const cat = document.getElementById('mat-cat').value;
+  const show = (cat === 'Cement' || cat === 'Steel');
+  document.getElementById('sec-uom').style.display = show ? '' : 'none';
+  document.getElementById('conv-factor').style.display = show ? '' : 'none';
+}
+function variantRow() {
+  return `<div class="repeat-row" style="grid-template-columns: 2fr 2fr 40px;">
+    <input placeholder="Variant name (e.g., 20mm, VG30, M25)">
+    <input placeholder="Spec reference (optional)">
+    <button class="icon-btn" onclick="this.closest('.repeat-row').remove()">×</button>
+  </div>`;
+}
+function addVariant() {
+  document.getElementById('variant-list').insertAdjacentHTML('beforeend', variantRow());
+}
+
+// =============== MACHINE FORM ===============
+function machineForm() {
+  main.innerHTML = toolbar('machine') + `
+    <div class="info-banner"><strong>Machine Master = permanent info only.</strong> Rental terms live in "Rental Deployments" (per rental spell). Site/Camp/Plant assignment lives in "Machine Assignment".</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Machine Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Machine Code</label><input class="computed" readonly placeholder="Auto: MCH/####"></div>
+          <div class="field"><label>Registration No. / Name <span class="req">*</span></label><input placeholder="e.g., GJ-01-AB-1234"></div>
+          <div class="field"><label>Category <span class="req">*</span></label>
+            <select>
+              <option value="">— Select —</option>
+              <option>Excavator</option><option>JCB</option><option>Roller</option><option>Paver</option>
+              <option>Loader</option><option>Dumper</option><option>Mixer</option><option>Grader</option>
+              <option>Tipper</option><option>Crane</option><option>Compactor</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Status <span class="req">*</span></label><select><option>Active</option><option>Inactive</option><option>Breakdown</option></select></div>
+          <div class="field"><label>Make / Brand</label><input placeholder="e.g., JCB, Volvo"></div>
+          <div class="field"><label>Model</label><input placeholder="e.g., JS205"></div>
+          <div class="field full"><label>Capacity / Specification</label><input placeholder="e.g., 1.0 cum bucket"></div>
+          <div class="field"><label>Photo</label><input type="file" accept="image/*"></div>
+          <div class="field full"><label>Remarks</label><textarea></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>Ownership &amp; Fuel</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Ownership Class <span class="req">*</span></label>
+            <select>
+              <option value="">— Select —</option>
+              <option>Owned</option>
+              <option>Rented</option>
+            </select>
+            <span class="hint">Just tells system if rental deployments are ever needed. Fuel mode (with/without) is per deployment, not here.</span>
+          </div>
+          <div class="field"></div>
+          <div class="field"><label>Expected Fuel Average</label><input type="number" step="0.01" placeholder="e.g., 8"></div>
+          <div class="field"><label>Unit</label><select><option>L/hr</option><option>L/km</option></select></div>
+        </div>
+        <div class="warn-banner" style="margin-top:14px">💡 After save: if Ownership = Rented, go to <strong>Rental Deployments</strong> to record the vendor, rate, fuel mode, and dates. Go to <strong>Machine Assignment</strong> to assign it to a Site/Camp/Plant.</div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+// =============== TANKER FORM ===============
+function tankerForm() {
+  main.innerHTML = toolbar('tanker') + `
+    <div class="info-banner">Current Balance is system-maintained by diesel pickups and dispenses. Use "Opening Stock Adjustment" action after save if the tanker already contains diesel at go-live.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Tanker Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Tanker Code</label><input class="computed" readonly placeholder="Auto: TNK/###"></div>
+          <div class="field"><label>Registration No. <span class="req">*</span></label><input placeholder="e.g., GJ-01-KL-1111"></div>
+          <div class="field"><label>Tank Capacity (L) <span class="req">*</span></label><input type="number" placeholder="e.g., 10000"></div>
+          <div class="field"><label>Current Balance (L) <span class="hint">(system-maintained)</span></label><input class="computed" readonly value="0"></div>
+          <div class="field full"><label>Authorised Operators <span class="req">*</span></label>
+            <div class="tag-input"><input placeholder="Add all operators who can run this tanker..."></div>
+            <span class="hint">Multiple operators allowed. Whoever logs in and records a dispense is auto-stamped. Handles absence naturally.</span>
+          </div>
+          <div class="field"><label>Current Location (Site) <span class="hint">(auto-updated)</span></label><input class="computed" readonly placeholder="Updates from latest dispense"></div>
+          <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option><option>Maintenance</option></select></div>
+          <div class="field"><label>Photo</label><input type="file" accept="image/*"></div>
+          <div class="field full"><label>Remarks</label><textarea></textarea></div>
+        </div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+// =============== VENDOR FORM ===============
+function vendorForm() {
+  main.innerHTML = toolbar('vendor') + `
+    <div class="info-banner">Vendors (renamed from "Rental Party") supply machines, materials, and are the counter-party in diesel-offset reconciliation.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Vendor Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Vendor Code</label><input class="computed" readonly placeholder="Auto: VEN/###"></div>
+          <div class="field"><label>Vendor Name <span class="req">*</span></label><input placeholder="e.g., Shree Construction"></div>
+          <div class="field"><label>Contact Person</label><input></div>
+          <div class="field"><label>Phone</label><input type="tel"><span class="hint">Optional</span></div>
+          <div class="field"><label>Email</label><input type="email"><span class="hint">Optional</span></div>
+          <div class="field"><label>GST Number</label><input placeholder="15-char GSTIN"><span class="hint">Warning (non-blocking) if invalid format</span></div>
+          <div class="field full"><label>Address</label><textarea></textarea></div>
+          <div class="field"><label>Payment Terms</label>
+            <select><option>Immediate</option><option>Net 7</option><option>Net 15</option><option selected>Net 30</option><option>Net 45</option><option>Custom</option></select>
+          </div>
+          <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
+          <div class="field full"><label>Vendor Roles</label>
+            <div class="tag-input">
+              <span class="tag">Machine Rental <span class="x">×</span></span>
+              <input placeholder="Add role...">
+            </div>
+            <span class="hint">Machine Rental / Material Supplier / Diesel Supplier / Other — from lookup</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>Linked Records (read-only after save)</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><div class="read-only-panel"><h4>Machines Rented Out</h4><div class="empty">Populated from Rental Deployments</div></div></div>
+          <div class="field"><div class="read-only-panel"><h4>Current Net Balance (₹)</h4><div class="empty">Bills − Payments − Diesel Offsets = ₹ owed to/by vendor</div></div></div>
+          <div class="field"><div class="read-only-panel"><h4>Deployment History</h4><div class="empty">All rental spells with this vendor</div></div></div>
+          <div class="field"><div class="read-only-panel"><h4>Diesel Offsets Outstanding</h4><div class="empty">₹ we paid for their machines' diesel, not yet settled</div></div></div>
+        </div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+// =============== MACHINE ASSIGNMENT ===============
+function assignmentForm() {
+  main.innerHTML = toolbar('assignment') + `
+    <div class="info-banner">Assign a machine to a Site, Camp, or Plant. A machine can only have <strong>one active assignment</strong> at a time. Creating a new one for an already-assigned machine auto-closes the previous (Transfer flow).</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Assignment Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Assignment Code</label><input class="computed" readonly placeholder="Auto: ASN/2026/####"></div>
+          <div class="field"><label>Machine <span class="req">*</span></label>
+            <select><option value="">— Select —</option><option>MCH/0001 — GJ-01-AB-1234 (Excavator)</option><option>MCH/0002 — GJ-05-CD-5678 (JCB)</option><option>MCH/0003 — GJ-01-EF-9012 (Roller)</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>Target</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field full"><label>Target Type <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="checkbox-row"><input type="radio" name="target" value="site" checked onchange="toggleTarget()"> Site</label>
+              <label class="checkbox-row"><input type="radio" name="target" value="camp" onchange="toggleTarget()"> Camp</label>
+              <label class="checkbox-row"><input type="radio" name="target" value="plant" onchange="toggleTarget()"> Plant</label>
+            </div>
+            <span class="hint">Only one — a machine can be at one place at a time</span>
+          </div>
+          <div class="field" id="t-site"><label>Target Site <span class="req">*</span></label><select><option value="">— Select —</option><option>Kalol Sanand</option></select></div>
+          <div class="field" id="t-camp" style="display:none"><label>Target Camp <span class="req">*</span></label><select><option value="">— Select —</option><option>Khatraj Chokdi</option></select></div>
+          <div class="field" id="t-plant" style="display:none"><label>Target Plant <span class="req">*</span></label><select><option value="">— Select —</option><option>Magodi</option></select></div>
+          <div class="field"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">3</span>Dates &amp; Operator</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Start Date <span class="req">*</span></label><input type="date"></div>
+          <div class="field"><label>End Date</label><input type="date"><span class="hint">Leave blank for open-ended; auto-fills on transfer</span></div>
+          <div class="field"><label>Default Operator</label><select><option value="">— Optional —</option><option>Ramesh Parmar</option></select></div>
+          <div class="field full"><label>Remarks</label><textarea></textarea></div>
+        </div>
+        <div class="warn-banner" style="margin-top:14px">💡 If the selected machine already has an active assignment, saving this will <strong>auto-close</strong> the previous one (Transfer).</div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+function toggleTarget() {
+  const v = document.querySelector('input[name="target"]:checked').value;
+  document.getElementById('t-site').style.display = v === 'site' ? '' : 'none';
+  document.getElementById('t-camp').style.display = v === 'camp' ? '' : 'none';
+  document.getElementById('t-plant').style.display = v === 'plant' ? '' : 'none';
+}
+
+// =============== RENTAL DEPLOYMENT ===============
+function deploymentForm() {
+  main.innerHTML = toolbar('deployment') + `
+    <div class="info-banner">Record a rental spell. Fuel mode (With Fuel / Without Fuel) can differ per deployment — even the same machine from the same vendor can change terms rental-to-rental.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Deployment Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Deployment Code</label><input class="computed" readonly placeholder="Auto: RDP/2026/####"></div>
+          <div class="field"><label>Machine <span class="req">*</span></label>
+            <select><option value="">— Select rented machine —</option><option>MCH/0002 — GJ-05-CD-5678 (JCB)</option><option>MCH/0004 — GJ-07-GH-3456 (Paver)</option></select>
+            <span class="hint">Only machines with Ownership=Rented appear</span>
+          </div>
+          <div class="field"><label>Vendor <span class="req">*</span></label>
+            <select><option value="">— Select —</option><option>Shree Construction</option><option>Maruti Hirers</option></select>
+          </div>
+          <div class="field"><label>Fuel Mode <span class="req">*</span></label>
+            <select>
+              <option value="">— Select —</option>
+              <option>With Fuel (vendor's diesel cost)</option>
+              <option>Without Fuel (our diesel cost)</option>
+            </select>
+            <span class="hint">"With Fuel" → any diesel we pour in is offset against vendor's bill</span>
+          </div>
+          <div class="field"><label>Rental Rate (₹ / day) <span class="req">*</span></label><input type="number" placeholder="e.g., 2400"></div>
+          <div class="field"></div>
+          <div class="field"><label>Start Date <span class="req">*</span></label><input type="date"></div>
+          <div class="field"><label>End Date</label><input type="date"><span class="hint">Blank = open-ended</span></div>
+          <div class="field full"><label>Remarks</label><textarea></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>How "With Fuel" Works</div>
+      <div class="form-card-body">
+        <div style="background:#f7f4f6; padding: 14px; border-radius: 4px; font-size:13px; line-height:1.7;">
+          <strong>Example scenario:</strong><br>
+          • Vendor rents a Paver at ₹2,400/day. Quote <em>includes diesel</em> (vendor's responsibility).<br>
+          • During the day, machine needs fuel. <strong>We pay ₹1,000 from our pocket</strong> (via tanker or direct at pump).<br>
+          • System records ₹1,000 as <strong>recoverable from vendor</strong> (because diesel was their cost).<br>
+          • End-of-day settlement: ₹2,400 rental bill − ₹1,000 diesel we already paid = <strong>₹1,400 net payable to vendor</strong>.<br>
+          • <strong>No double counting.</strong> The ₹1,000 is offset, not added on top.
+        </div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+// =============== USER FORM ===============
+function userForm() {
+  main.innerHTML = toolbar('user') + `
+    <div class="info-banner">A user can be assigned to ONLY ONE scope (Site / Camp / Plant / Tanker / None). Admin can change this anytime.</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Personal Details</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>User Code</label><input class="computed" readonly placeholder="Auto: USR/###"></div>
+          <div class="field"><label>Full Name <span class="req">*</span></label><input></div>
+          <div class="field"><label>Login (Username) <span class="req">*</span></label><input placeholder="e.g., mahesh.sup"></div>
+          <div class="field"><label>Email</label><input type="email"><span class="hint">Optional</span></div>
+          <div class="field"><label>Phone</label><input type="tel"><span class="hint">Optional</span></div>
+          <div class="field"><label>Preferred Language</label><select><option>English</option><option>Gujarati</option><option>Hindi</option></select></div>
+          <div class="field"><label>Photo</label><input type="file" accept="image/*"></div>
+          <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option><option>Locked</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>Credentials</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Password <span class="req">*</span></label><input type="password"></div>
+          <div class="field"><label>Confirm Password <span class="req">*</span></label><input type="password"></div>
+          <div class="field full"><span class="hint">Min 8 chars • 1 uppercase • 1 number • 1 special character. User changes on first login.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">3</span>Role &amp; Assignment</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Role <span class="req">*</span></label>
+            <select id="u-role" onchange="toggleUserAssign()">
+              <option value="">— Select —</option>
+              <option value="admin">Admin</option>
+              <option value="owner">Owner / Upper Management</option>
+              <option value="se">Senior Engineer</option>
+              <option value="supv">Supervisor</option>
+              <option value="camp">Camp In-charge</option>
+              <option value="plant">Plant In-charge</option>
+              <option value="tanker">Tanker Operator</option>
+              <option value="verifier">Verifier</option>
+            </select>
+          </div>
+          <div class="field"><label>Assignment Type <span class="req">*</span></label>
+            <select id="u-atype" onchange="toggleUserTarget()">
+              <option value="">— Select —</option>
+              <option value="none">None (Admin / Owner)</option>
+              <option value="site">Site</option>
+              <option value="camp">Camp</option>
+              <option value="plant">Plant</option>
+              <option value="tanker">Tanker</option>
+            </select>
+            <span class="hint">Limited by role — e.g., Supervisor → Site only</span>
+          </div>
+          <div class="field full" id="u-target-site" style="display:none"><label>Assigned Site <span class="req">*</span></label>
+            <select><option value="">— Select —</option><option>Kalol Sanand</option></select>
+          </div>
+          <div class="field full" id="u-target-camp" style="display:none"><label>Assigned Camp <span class="req">*</span></label>
+            <select><option value="">— Select —</option><option>Khatraj Chokdi</option></select>
+          </div>
+          <div class="field full" id="u-target-plant" style="display:none"><label>Assigned Plant <span class="req">*</span></label>
+            <select><option value="">— Select —</option><option>Magodi</option></select>
+          </div>
+          <div class="field full" id="u-target-tanker" style="display:none"><label>Assigned Tanker <span class="req">*</span></label>
+            <select><option value="">— Select —</option><option>TNK/001 — GJ-01-KL-1111</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">4</span>Platform Access</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><div class="checkbox-row"><input type="checkbox" id="u-web" checked><label for="u-web">Web Access</label></div></div>
+          <div class="field"><div class="checkbox-row"><input type="checkbox" id="u-mobile"><label for="u-mobile">Mobile App Access</label></div></div>
+        </div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+function toggleUserAssign() {
+  const role = document.getElementById('u-role').value;
+  const mapping = { admin: 'none', owner: 'none', se: 'site', supv: 'site', camp: 'camp', plant: 'plant', tanker: 'tanker', verifier: 'site' };
+  const atype = document.getElementById('u-atype');
+  if (role && mapping[role]) atype.value = mapping[role];
+  toggleUserTarget();
+}
+function toggleUserTarget() {
+  const v = document.getElementById('u-atype').value;
+  ['site','camp','plant','tanker'].forEach(t => {
+    const el = document.getElementById('u-target-'+t);
+    if (el) el.style.display = v === t ? '' : 'none';
+  });
+}
+
+// =============== ESTIMATION ===============
+function estimationForm() {
+  main.innerHTML = toolbar('estimation') + `
+    <div class="dev-note"><strong>⚠️ TBD — detailed discussion pending with client.</strong> Fields below are preliminary. Do not finalise database constraints until client confirms the estimation model (segment-wise vs stretch-wise, target calculation, machine/diesel expectations).</div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">1</span>Scope</div>
+      <div class="form-card-body">
+        <div class="form-grid">
+          <div class="field"><label>Site <span class="req">*</span></label><select><option>Kalol Sanand</option></select></div>
+          <div class="field"><label>Layer / Activity <span class="req">*</span></label><select><option>GSB</option><option>WMM</option><option>BM</option><option>DBM</option><option>BC</option><option>SDBC</option><option>CC</option></select></div>
+          <div class="field"><label>Stretch Start (m)</label><input type="number"></div>
+          <div class="field"><label>Stretch End (m)</label><input type="number"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">2</span>Dimensions &amp; Material</div>
+      <div class="form-card-body">
+        <div class="form-grid-3">
+          <div class="field"><label>Length (m) <span class="hint">(computed)</span></label><input class="computed" readonly></div>
+          <div class="field"><label>Width (m)</label><input type="number" step="0.1"></div>
+          <div class="field"><label>Thickness (m)</label><input type="number" step="0.001"></div>
+          <div class="field"><label>Material</label><select><option>GSB</option><option>WMM</option></select></div>
+          <div class="field"><label>Density (kg/m³) <span class="hint">(auto from material)</span></label><input type="number"></div>
+          <div class="field"><label>Estimated Qty (MT) <span class="hint">(computed)</span></label><input class="computed" readonly></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title"><span class="step">3</span>Targets</div>
+      <div class="form-card-body">
+        <div class="form-grid-3">
+          <div class="field"><label>Daily Target (MT)</label><input type="number"></div>
+          <div class="field"><label>Expected Machines</label><input type="number"></div>
+          <div class="field"><label>Expected Diesel (L)</label><input type="number"></div>
+        </div>
+      </div>
+    </div>
+    ${footer()}
+  `;
+}
+
+// =============== LOOKUP LISTS ===============
+const lookupLists = {
+  'material-category': { label: 'Material Categories', values: ['Aggregate','Cement','Sand','Steel','Emulsion','Bitumen','Fuel','Pipe','Concrete Mix','Bituminous Mix','Other'] },
+  'machine-category': { label: 'Machine Categories', values: ['Excavator','JCB','Roller','Paver','Loader','Dumper','Mixer','Grader','Tipper','Crane','Compactor','Other'] },
+  'layer': { label: 'Layers / Activities', values: ['GSB','WMM','BM','DBM','BC','SDBC','MSS','CC','UTWC','PQC'] },
+  'source-type': { label: 'Source Types', values: ['Plant','Camp','External Vendor','Quarry','Sub-Contractor'] },
+  'capability': { label: 'Production Capabilities', values: ['Bituminous Mix','Concrete (RMC)','Emulsion','Steel Cutting/Bending'] },
+  'payment-term': { label: 'Payment Terms', values: ['Immediate','Net 7','Net 15','Net 30','Net 45','Custom'] },
+  'vendor-role': { label: 'Vendor Roles', values: ['Machine Rental','Material Supplier','Diesel Supplier','Other'] },
+  'concrete-grade': { label: 'Concrete Grades', values: ['M10','M15','M20','M25','M30','M35','M40'] },
+  'steel-dia': { label: 'Steel Diameters', values: ['8mm','10mm','12mm','16mm','20mm','25mm','32mm'] },
+  'aggregate-size': { label: 'Aggregate Sizes', values: ['6mm','10mm','20mm','25-40mm','Storm dust'] },
+  'bitumen-grade': { label: 'Bitumen Grades', values: ['VG10','VG30','VG40'] },
+  'emulsion-type': { label: 'Emulsion Types', values: ['SS1','RS1','RS2','CRS1'] },
+  'pipe-dia': { label: 'Pipe Diameters', values: ['300mm','600mm','900mm','1200mm'] }
+};
+let activeLookup = 'material-category';
+
+function lookupForm() {
+  const keys = Object.keys(lookupLists);
+  const list = lookupLists[activeLookup];
+  main.innerHTML = toolbar('lookup') + `
+    <div class="info-banner"><strong>Fixed vs Configurable:</strong> These lists are configurable by Admin. Fixed lists (Material Type, Ownership Class, Site Type, User Role, Side, statuses) change only via developer deployment.</div>
+
+    <div style="display:grid; grid-template-columns: 260px 1fr; gap: 16px;">
+      <div class="form-card" style="height:fit-content">
+        <div class="form-card-title">Lists</div>
+        ${keys.map(k => `<div class="sidebar-item ${k===activeLookup?'active':''}" style="padding:10px 14px;" onclick="activeLookup='${k}'; lookupForm();">${lookupLists[k].label}<span style="margin-left:auto; color:#8a8f99; font-size:11px;">${lookupLists[k].values.length}</span></div>`).join('')}
+      </div>
+      <div class="form-card">
+        <div class="form-card-title">
+          <span>${list.label}</span>
+          <button class="btn btn-primary" style="padding:5px 10px; font-size:12px;" onclick="addLookupRow()">+ Add Value</button>
+        </div>
+        <div class="form-card-body">
+          <table style="width:100%; border-collapse:collapse;">
+            <thead><tr style="background:#f7f8fa;">
+              <th style="padding:10px 12px; text-align:left; font-size:11px; font-weight:700; color:#6c7080; border-bottom:1px solid #e0e2e7; width:60px;">Seq</th>
+              <th style="padding:10px 12px; text-align:left; font-size:11px; font-weight:700; color:#6c7080; border-bottom:1px solid #e0e2e7;">Name</th>
+              <th style="padding:10px 12px; text-align:left; font-size:11px; font-weight:700; color:#6c7080; border-bottom:1px solid #e0e2e7; width:120px;">Code</th>
+              <th style="padding:10px 12px; text-align:center; font-size:11px; font-weight:700; color:#6c7080; border-bottom:1px solid #e0e2e7; width:80px;">Active</th>
+              <th style="width:60px; border-bottom:1px solid #e0e2e7;"></th>
+            </tr></thead>
+            <tbody id="lookup-tbody">
+              ${list.values.map((v,i)=>`<tr style="border-bottom:1px solid #eef0f3;">
+                <td style="padding:8px 12px;"><input type="number" value="${(i+1)*10}" style="width:60px; padding:5px 7px; border:1px solid #d8dae0; border-radius:3px;"></td>
+                <td style="padding:8px 12px;"><input value="${v}" style="width:100%; padding:6px 8px; border:1px solid #d8dae0; border-radius:3px;"></td>
+                <td style="padding:8px 12px;"><input style="width:100%; padding:6px 8px; border:1px solid #d8dae0; border-radius:3px;" placeholder="Code"></td>
+                <td style="padding:8px 12px; text-align:center;"><input type="checkbox" checked style="accent-color:#714B67; width:16px; height:16px;"></td>
+                <td style="padding:8px 12px; text-align:center;"><button class="icon-btn" onclick="this.closest('tr').remove()">×</button></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function addLookupRow() {
+  const tbody = document.getElementById('lookup-tbody');
+  const seq = (tbody.children.length + 1) * 10;
+  tbody.insertAdjacentHTML('beforeend', `<tr style="border-bottom:1px solid #eef0f3; background:#fff9e6;">
+    <td style="padding:8px 12px;"><input type="number" value="${seq}" style="width:60px; padding:5px 7px; border:1px solid #d8dae0; border-radius:3px;"></td>
+    <td style="padding:8px 12px;"><input placeholder="New value" style="width:100%; padding:6px 8px; border:1px solid #d8dae0; border-radius:3px;"></td>
+    <td style="padding:8px 12px;"><input placeholder="Code" style="width:100%; padding:6px 8px; border:1px solid #d8dae0; border-radius:3px;"></td>
+    <td style="padding:8px 12px; text-align:center;"><input type="checkbox" checked style="accent-color:#714B67; width:16px; height:16px;"></td>
+    <td style="padding:8px 12px; text-align:center;"><button class="icon-btn" onclick="this.closest('tr').remove()">×</button></td>
+  </tr>`);
+}
+
+render('site');
+</script>
+
+</body>
+</html>

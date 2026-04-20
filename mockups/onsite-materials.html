@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>McWay On-Site Materials — Mobile Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; color: #1a1a2e; background: #f0f2f5; }
+  /* Phone frame for desktop preview */
+  .phone-frame { max-width: 390px; margin: 0 auto; min-height: 100vh; background: #f0f2f5; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.15); }
+  @media (max-width: 430px) { .phone-frame { max-width: 100%; box-shadow: none; } }
+
+  /* Header */
+  .header { background: #0f4c75; color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .header .site-name { font-weight: 700; font-size: 16px; flex: 1; }
+  .header .site-sub { font-size: 11px; opacity: 0.7; }
+  .header .status { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .header .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-online { background: #4ade80; }
+  .dot-offline { background: #ef4444; }
+  .dot-syncing { background: #facc15; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .header .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .sync-badge { background: #ef4444; color: #fff; border-radius: 10px; padding: 1px 6px; font-size: 10px; font-weight: 700; margin-left: 4px; }
+
+  /* Bottom Nav */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 390px; background: #fff; border-top: 1px solid #e0e2e7; display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0); }
+  @media (max-width: 430px) { .bottom-nav { max-width: 100%; left:0; transform: none; } }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0 8px; cursor: pointer; color: #8a8f99; font-size: 11px; font-weight: 600; gap: 3px; border-top: 2px solid transparent; }
+  .nav-item.active { color: #0f4c75; border-top-color: #0f4c75; }
+  .nav-item .nav-icon { font-size: 20px; }
+  .nav-item .nav-badge { background: #ef4444; color: #fff; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; position: absolute; margin-left: 14px; margin-top: -4px; }
+
+  /* Main content */
+  .screen { padding: 16px; padding-bottom: 80px; display: none; }
+  .screen.active { display: block; }
+
+  /* KPI cards */
+  .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .kpi { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; }
+  .kpi .label { font-size: 11px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi .val { font-size: 24px; font-weight: 800; color: #0f4c75; margin-top: 2px; }
+  .kpi .sub { font-size: 11px; color: #8a8f99; margin-top: 2px; }
+  .kpi.alert .val { color: #ef4444; }
+
+  /* Buttons */
+  .btn-big { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px; background: #0f4c75; color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 16px; }
+  .btn-big:active { background: #0a3a5c; }
+  .btn { padding: 10px 16px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-primary { background: #0f4c75; color: #fff; }
+  .btn-primary:active { background: #0a3a5c; }
+  .btn-secondary { background: #e8ecf1; color: #4a4f5c; }
+  .btn-submit { display: block; width: 100%; padding: 16px; background: #16a34a; color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; position: sticky; bottom: 70px; z-index: 50; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+  .btn-submit:active { background: #15803d; }
+  .btn-group-m { display: flex; gap: 8px; }
+
+  /* Section title */
+  .sec-title { font-size: 12px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.8px; margin: 20px 0 10px; padding-left: 2px; }
+  .sec-title:first-child { margin-top: 0; }
+
+  /* Cards / entries */
+  .entry-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer; }
+  .entry-card:active { background: #f7f8fa; }
+  .entry-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .entry-material { font-weight: 700; font-size: 15px; }
+  .entry-qty { font-size: 18px; font-weight: 800; color: #0f4c75; }
+  .entry-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; font-size: 12px; color: #6c7080; }
+  .entry-meta span { display: inline-flex; align-items: center; gap: 3px; }
+  .entry-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .entry-time { font-size: 12px; color: #8a8f99; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .badge-submitted { background: #dbeafe; color: #1d4ed8; }
+  .badge-verified { background: #dcfce7; color: #16a34a; }
+  .badge-correction { background: #fef3c7; color: #b45309; }
+  .badge-locked { background: #e5e7eb; color: #6b7280; }
+  .badge-draft { background: #fef3c7; color: #92400e; }
+  .badge-pending { background: #fef3c7; color: #b45309; }
+  .badge-synced { background: #dcfce7; color: #16a34a; }
+  .badge-failed { background: #fee2e2; color: #dc2626; }
+  .badge-source { background: #ede9fe; color: #7c3aed; font-size: 11px; }
+  .badge-layer { background: #e0f2fe; color: #0369a1; font-size: 11px; }
+  .badge-side { background: #fce7f3; color: #be185d; font-size: 11px; }
+
+  /* Form */
+  .form-section { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .form-section-title { font-size: 13px; font-weight: 700; color: #0f4c75; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .form-section-title .icon { font-size: 16px; }
+  .field-m { margin-bottom: 14px; }
+  .field-m:last-child { margin-bottom: 0; }
+  .field-m label { display: block; font-size: 12px; font-weight: 700; color: #6c7080; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+  .field-m label .req { color: #ef4444; }
+  .field-m input, .field-m select, .field-m textarea { width: 100%; padding: 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 15px; font-family: inherit; background: #fff; -webkit-appearance: none; }
+  .field-m input:focus, .field-m select:focus { outline: none; border-color: #0f4c75; box-shadow: 0 0 0 3px rgba(15,76,117,0.1); }
+  .field-m input[readonly] { background: #f3f4f6; color: #6b7280; }
+  .field-m .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+  .field-m textarea { min-height: 60px; resize: vertical; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  /* Side selector (pill buttons) */
+  .side-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .side-pill { padding: 10px 14px; border-radius: 8px; border: 1.5px solid #d1d5db; font-size: 13px; font-weight: 600; cursor: pointer; background: #fff; color: #4a4f5c; }
+  .side-pill.active { background: #0f4c75; color: #fff; border-color: #0f4c75; }
+
+  /* Net weight highlight */
+  .net-highlight { background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 16px; text-align: center; margin-top: 10px; }
+  .net-highlight .net-label { font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; }
+  .net-highlight .net-value { font-size: 32px; font-weight: 800; color: #16a34a; }
+  .net-highlight .net-sec { font-size: 13px; color: #9ca3af; margin-top: 2px; }
+
+  /* Photo area */
+  .photo-area { display: flex; gap: 10px; }
+  .photo-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border: 2px dashed #d1d5db; border-radius: 10px; color: #9ca3af; cursor: pointer; font-size: 12px; font-weight: 600; gap: 6px; }
+  .photo-btn:active { border-color: #0f4c75; color: #0f4c75; }
+  .photo-btn .photo-icon { font-size: 24px; }
+  .photo-thumb { width: 60px; height: 60px; border-radius: 8px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; }
+  .photo-thumb .remove { position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+  /* Banners */
+  .banner { padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; }
+  .banner-info { background: #dbeafe; color: #1e40af; }
+  .banner-warn { background: #fef3c7; color: #92400e; }
+  .banner-success { background: #dcfce7; color: #166534; }
+  .banner-offline { background: #fee2e2; color: #991b1b; }
+  .banner-correction { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+
+  /* Toolbar */
+  .filter-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; -webkit-overflow-scrolling: touch; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1.5px solid #d1d5db; background: #fff; color: #4a4f5c; }
+  .chip.active { background: #0f4c75; color: #fff; border-color: #0f4c75; }
+
+  /* Sync queue */
+  .sync-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: #fff; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .sync-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .sync-icon.pending { background: #fef3c7; }
+  .sync-icon.done { background: #dcfce7; }
+  .sync-icon.fail { background: #fee2e2; }
+  .sync-info { flex: 1; }
+  .sync-info .sync-title { font-weight: 600; font-size: 14px; }
+  .sync-info .sync-sub { font-size: 12px; color: #9ca3af; }
+
+  /* Detail view */
+  .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .detail-back { font-size: 14px; font-weight: 600; color: #0f4c75; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .detail-field { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+  .detail-field:last-child { border-bottom: none; }
+  .detail-label { font-size: 12px; font-weight: 700; color: #9ca3af; text-transform: uppercase; }
+  .detail-value { font-weight: 600; text-align: right; max-width: 60%; }
+  .correction-box { background: #fef3c7; border: 1px solid #fbbf24; border-radius: 10px; padding: 12px; margin: 12px 0; }
+  .correction-box .cb-title { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 4px; }
+  .correction-box .cb-remark { font-size: 14px; color: #78350f; }
+  .correction-box .cb-by { font-size: 11px; color: #b45309; margin-top: 6px; }
+
+  /* Toast */
+  .toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #166534; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: none; max-width: 350px; text-align: center; }
+  .toast.show { display: block; animation: fadeInOut 3s ease; }
+  @keyframes fadeInOut { 0%{opacity:0;transform:translateX(-50%) translateY(-10px)} 10%{opacity:1;transform:translateX(-50%) translateY(0)} 80%{opacity:1} 100%{opacity:0} }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="site-name">Kalol Sanand</div>
+      <div class="site-sub">SITE/2026/001 &bull; 0 – 27 km</div>
+    </div>
+    <div class="status" id="connStatus">
+      <div class="dot dot-online"></div>
+      <span>Online</span>
+    </div>
+    <div class="avatar" onclick="showScreen('profile')">MD</div>
+  </div>
+
+  <!-- Screens -->
+  <div class="screen active" id="screen-home"></div>
+  <div class="screen" id="screen-form"></div>
+  <div class="screen" id="screen-entries"></div>
+  <div class="screen" id="screen-detail"></div>
+  <div class="screen" id="screen-sync"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active" data-screen="home">
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" data-screen="form">
+      <span class="nav-icon">➕</span>
+      <span>New Dumping</span>
+    </div>
+    <div class="nav-item" data-screen="entries" style="position:relative">
+      <span class="nav-icon">📋</span>
+      <span class="nav-badge" id="correctionBadge">1</span>
+      <span>My Entries</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============== DATA ==============
+const site = { name: "Kalol Sanand", code: "SITE/2026/001", segments: [{ start: 0, end: 27000 }] };
+const user = { name: "Mahesh Desai", code: "USR/004", role: "Supervisor", lang: "Gujarati" };
+
+const entries = [
+  { code:"DMP/2026/0008", date:"2026-04-17 09:45", material:"Pipe", variant:"600mm", chainStart:2000, chainEnd:2100, side:"LHS", layer:"Pipe-laying", sourceType:"Vendor", source:"Maruti Hirers", sourceRef:"", vehicle:"GJ-01-XX-1234", party:"", slip:"SLP-0420", royalty:"", gross:0, tare:0, net:12, uom:"Nos", isWeight:false, photo:false, remarks:"", state:"Correction", syncStatus:"synced",
+    correction: { by: "Kiran Shah", date: "2026-04-18 16:30", remark: "Quantity seems low for 600mm pipes over 100m. Expected ~25 based on spacing. Please verify count." }
+  },
+  { code:"DMP/2026/0007", date:"2026-04-17 08:00", material:"Aggregate", variant:"20mm", chainStart:1600, chainEnd:1800, side:"LHS", layer:"GSB", sourceType:"Camp", source:"Khatraj Chokdi", sourceRef:"CHN-0210", vehicle:"GJ-01-ZZ-7777", party:"", slip:"CHN-0210", royalty:"", gross:25.0, tare:7.0, net:18.0, uom:"MT", isWeight:true, photo:false, remarks:"", state:"Submitted", syncStatus:"synced" },
+  { code:"DMP/2026/0006", date:"2026-04-16 14:30", material:"Steel", variant:"12mm", chainStart:1200, chainEnd:1400, side:"RHS", layer:"CC", sourceType:"Camp", source:"Khatraj Chokdi", sourceRef:"CHN-0203", vehicle:"GJ-01-XX-7890", party:"", slip:"CHN-0203", royalty:"", gross:15.0, tare:5.0, net:3.0, uom:"MT", isWeight:true, photo:false, remarks:"", state:"Submitted", syncStatus:"synced" },
+  { code:"DMP/2026/0005", date:"2026-04-16 10:00", material:"WMM", variant:"—", chainStart:1000, chainEnd:1200, side:"LHS", layer:"WMM", sourceType:"Plant", source:"Magodi", sourceRef:"PLT-0088", vehicle:"GJ-01-ZZ-3456", party:"", slip:"PLT-0088", royalty:"", gross:28.0, tare:8.0, net:20.0, uom:"MT", isWeight:true, photo:false, remarks:"", state:"Submitted", syncStatus:"synced" },
+  { code:"DMP/2026/0004", date:"2026-04-16 07:45", material:"GSB", variant:"—", chainStart:1400, chainEnd:1600, side:"LHS", layer:"GSB", sourceType:"Vendor", source:"Shakti Aggregates", sourceRef:"", vehicle:"GJ-05-AB-3333", party:"Ram Driver", slip:"SLP-0410", royalty:"ROY-5540", gross:30.0, tare:8.0, net:22.0, uom:"MT", isWeight:true, photo:true, remarks:"", state:"Verified", syncStatus:"synced" },
+  { code:"DMP/2026/0003", date:"2026-04-15 11:00", material:"Cement", variant:"—", chainStart:1000, chainEnd:1200, side:"LHS", layer:"CC", sourceType:"Vendor", source:"Maruti Hirers", sourceRef:"", vehicle:"GJ-01-XX-5678", party:"", slip:"SLP-0403", royalty:"", gross:12.0, tare:7.0, net:5.0, uom:"MT", isWeight:true, photo:false, remarks:"For culvert C-01 base", state:"Verified", syncStatus:"synced", secQty:"100 bags" },
+  { code:"DMP/2026/0002", date:"2026-04-15 09:30", material:"Aggregate", variant:"20mm", chainStart:1200, chainEnd:1400, side:"LHS", layer:"GSB", sourceType:"Camp", source:"Khatraj Chokdi", sourceRef:"CHN-0201", vehicle:"GJ-01-XX-1234", party:"", slip:"SLP-0402", royalty:"ROY-11235", gross:24.5, tare:7.0, net:17.5, uom:"MT", isWeight:true, photo:false, remarks:"", state:"Verified", syncStatus:"synced" },
+  { code:"DMP/2026/0001", date:"2026-04-15 08:15", material:"Aggregate", variant:"20mm", chainStart:1000, chainEnd:1200, side:"LHS", layer:"GSB", sourceType:"Camp", source:"Khatraj Chokdi", sourceRef:"CHN-0201", vehicle:"GJ-01-XX-1234", party:"", slip:"SLP-0401", royalty:"ROY-11234", gross:25.0, tare:7.0, net:18.0, uom:"MT", isWeight:true, photo:true, remarks:"First load of the day", state:"Verified", syncStatus:"synced" },
+];
+
+// ============== NAV ==============
+const navItems = document.querySelectorAll('.nav-item');
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  navItems.forEach(n => n.classList.remove('active'));
+  const navMatch = document.querySelector(`.nav-item[data-screen="${name}"]`);
+  if (navMatch) navMatch.classList.add('active');
+  switch(name) {
+    case 'home': renderHome(); break;
+    case 'form': renderForm(); break;
+    case 'entries': renderEntries(); break;
+    case 'sync': renderSync(); break;
+  }
+}
+navItems.forEach(n => n.addEventListener('click', () => showScreen(n.dataset.screen)));
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('show');
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function stateBadge(s) {
+  const map = { Submitted:'submitted', Verified:'verified', Correction:'correction', Locked:'locked', Draft:'draft' };
+  const label = s === 'Correction' ? '⚠️ Correction' : s === 'Verified' ? '✅ Verified' : s;
+  return `<span class="badge badge-${map[s]||'submitted'}">${label}</span>`;
+}
+
+function chainStr(s, e) { return `km ${(s/1000).toFixed(1)} – ${(e/1000).toFixed(1)}`; }
+
+// ============== HOME ==============
+function renderHome() {
+  const todayEntries = entries.filter(e => e.date.startsWith('2026-04-17'));
+  const todayQty = todayEntries.reduce((s,e) => s + e.net, 0);
+  const corrections = entries.filter(e => e.state === 'Correction').length;
+  const el = document.getElementById('screen-home');
+  el.innerHTML = `
+    <div class="kpi-row">
+      <div class="kpi" onclick="showScreen('entries')">
+        <div class="label">Entries Today</div>
+        <div class="val">${todayEntries.length}</div>
+        <div class="sub">${todayEntries.filter(e=>e.state==='Submitted').length} submitted</div>
+      </div>
+      <div class="kpi" onclick="showScreen('entries')">
+        <div class="label">Total Dumped</div>
+        <div class="val">${todayQty.toFixed(1)}</div>
+        <div class="sub">MT + Nos today</div>
+      </div>
+      <div class="kpi" onclick="showScreen('sync')">
+        <div class="label">Pending Sync</div>
+        <div class="val">0</div>
+        <div class="sub">All synced ✅</div>
+      </div>
+      <div class="kpi ${corrections?'alert':''}" onclick="showScreen('entries')">
+        <div class="label">Corrections</div>
+        <div class="val">${corrections}</div>
+        <div class="sub">${corrections?'Action needed':'None'}</div>
+      </div>
+    </div>
+
+    <button class="btn-big" onclick="showScreen('form')">
+      ➕ New Dumping Entry
+    </button>
+
+    <div class="sec-title">Recent Entries</div>
+    ${entries.slice(0, 5).map(e => `
+      <div class="entry-card" onclick="showDetail('${e.code}')">
+        <div class="entry-top">
+          <div>
+            <div class="entry-material">${e.material}${e.variant!=='—'?' '+e.variant:''}</div>
+            <div class="entry-meta">
+              <span>📍 ${chainStr(e.chainStart, e.chainEnd)}</span>
+              <span class="badge badge-side">${e.side}</span>
+              <span class="badge badge-layer">${e.layer}</span>
+            </div>
+          </div>
+          <div class="entry-qty">${e.net} ${e.uom}</div>
+        </div>
+        <div class="entry-bottom">
+          <div class="entry-time">${e.date.split(' ')[1] || e.date}</div>
+          ${stateBadge(e.state)}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ============== DUMPING FORM ==============
+function renderForm() {
+  const el = document.getElementById('screen-form');
+  el.innerHTML = `
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">📦</span> What</div>
+      <div class="field-m">
+        <label>Material <span class="req">*</span></label>
+        <select id="fMaterial" onchange="onMaterialChange()">
+          <option value="">— Select Material —</option>
+          <option value="Aggregate" selected>Aggregate</option>
+          <option value="Cement">Cement</option>
+          <option value="Sand">Sand</option>
+          <option value="Steel">Steel</option>
+          <option value="GSB">GSB</option>
+          <option value="WMM">WMM</option>
+          <option value="BM">BM</option>
+          <option value="DBM">DBM</option>
+          <option value="BC">BC</option>
+          <option value="SDBC">SDBC</option>
+          <option value="Concrete Mix">Concrete Mix</option>
+          <option value="Pipe">Pipe</option>
+        </select>
+      </div>
+      <div class="field-m" id="variantField">
+        <label>Variant / Grade <span class="req">*</span></label>
+        <select id="fVariant">
+          <option>6mm</option>
+          <option selected>20mm</option>
+          <option>25-40mm</option>
+          <option>Storm dust</option>
+        </select>
+      </div>
+      <div class="field-m">
+        <label>Layer / Activity <span class="req">*</span></label>
+        <select>
+          <option selected>GSB</option>
+          <option>WMM</option>
+          <option>BM</option>
+          <option>DBM</option>
+          <option>BC</option>
+          <option>SDBC</option>
+          <option>MSS</option>
+          <option>CC</option>
+          <option>Pipe-laying</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">📍</span> Where</div>
+      <div class="field-row">
+        <div class="field-m">
+          <label>Chainage Start <span class="req">*</span></label>
+          <input type="number" step="0.1" value="1.8" id="fChainStart" placeholder="km">
+          <div class="hint">in km (0 – 27)</div>
+        </div>
+        <div class="field-m">
+          <label>Chainage End <span class="req">*</span></label>
+          <input type="number" step="0.1" value="2.0" id="fChainEnd" placeholder="km">
+        </div>
+      </div>
+      <div class="field-m">
+        <label>Side <span class="req">*</span></label>
+        <div class="side-pills">
+          <div class="side-pill active" onclick="pickSide(this)">LHS</div>
+          <div class="side-pill" onclick="pickSide(this)">RHS</div>
+          <div class="side-pill" onclick="pickSide(this)">Both</div>
+          <div class="side-pill" onclick="pickSide(this)">Lane</div>
+          <div class="side-pill" onclick="pickSide(this)">Median</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">🚛</span> From</div>
+      <div class="field-m">
+        <label>Source <span class="req">*</span></label>
+        <select id="fSourceType" onchange="onSourceChange()">
+          <option selected>Camp</option>
+          <option>Plant</option>
+          <option>Direct Vendor</option>
+        </select>
+      </div>
+      <div class="field-m" id="srcCampField">
+        <label>Camp</label>
+        <select><option>Khatraj Chokdi</option></select>
+        <div class="hint">Camps serving Kalol Sanand</div>
+      </div>
+      <div class="field-m hidden" id="srcPlantField">
+        <label>Plant</label>
+        <select><option>Magodi</option></select>
+      </div>
+      <div class="field-m hidden" id="srcVendorField">
+        <label>Vendor</label>
+        <input list="vendorList" placeholder="Type vendor name...">
+        <datalist id="vendorList">
+          <option value="Maruti Hirers">
+          <option value="Shree Construction">
+          <option value="Shakti Aggregates">
+        </datalist>
+      </div>
+      <div class="field-m">
+        <label>Source Reference</label>
+        <input placeholder="Camp outward challan # (optional)">
+        <div class="hint">For traceability: links to camp outward entry</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">🚗</span> Vehicle & Slip</div>
+      <div class="field-row">
+        <div class="field-m">
+          <label>Vehicle No <span class="req">*</span></label>
+          <input value="GJ-01-ZZ-7777" style="text-transform:uppercase" list="vehicleList">
+          <datalist id="vehicleList">
+            <option value="GJ-01-XX-1234">
+            <option value="GJ-01-XX-5678">
+            <option value="GJ-01-XX-7890">
+            <option value="GJ-01-ZZ-3456">
+            <option value="GJ-01-ZZ-7777">
+            <option value="GJ-05-AB-3333">
+          </datalist>
+        </div>
+        <div class="field-m">
+          <label>Slip No <span class="req">*</span></label>
+          <input value="SLP-0425">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-m">
+          <label>Party / Driver</label>
+          <input placeholder="Optional">
+        </div>
+        <div class="field-m">
+          <label>Royalty No</label>
+          <input placeholder="For aggregates">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section" id="weightSection">
+      <div class="form-section-title"><span class="icon">⚖️</span> Weight / Quantity</div>
+      <div class="field-m">
+        <label id="wtLabel">Weight <span class="req">*</span></label>
+        <input type="number" step="0.1" value="18.0" id="fWeight" style="font-size:20px; font-weight:700; text-align:center; padding:16px;">
+        <div class="hint" id="wtHint">Enter net weight from weighbridge slip (MT)</div>
+      </div>
+      <div class="net-highlight">
+        <div class="net-label" id="wtUomLabel">Weight</div>
+        <div class="net-value" id="fNet">18.0 MT</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">🚜</span> Machine <span class="badge badge-draft" style="margin-left:8px">Phase 2</span></div>
+      <div class="field-m">
+        <label>Machine</label>
+        <select disabled style="opacity:0.5; background:#f3f4f6;">
+          <option>— Coming in Phase 2 —</option>
+          <option>MCH/0001 — Excavator (GJ-01-AB-1234)</option>
+          <option>MCH/0003 — Roller (GJ-01-EF-9012)</option>
+          <option>MCH/0004 — Paver (GJ-07-GH-3456)</option>
+        </select>
+        <div class="hint">Will capture which machine was used for dumping/laying. Enables per-machine productivity reporting.</div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">📷</span> Photo & Notes</div>
+      <div class="field-m">
+        <label>Photos (optional, up to 2)</label>
+        <div class="photo-area">
+          <div class="photo-btn" onclick="showToast('📷 Camera opened (demo)')">
+            <span class="photo-icon">📷</span>
+            Take Photo
+          </div>
+          <div class="photo-btn" onclick="showToast('🖼 Gallery opened (demo)')">
+            <span class="photo-icon">🖼️</span>
+            Gallery
+          </div>
+        </div>
+      </div>
+      <div class="field-m">
+        <label>Remarks</label>
+        <textarea placeholder="Any notes..."></textarea>
+      </div>
+    </div>
+
+    <div class="field-m" style="padding: 4px; color: #9ca3af; font-size: 12px; text-align: center;">
+      Date: 20 Apr 2026, 10:30 AM &bull; Auto-filled (tap to change)
+    </div>
+
+    <button class="btn-submit" onclick="submitEntry()">✅ Submit Entry</button>
+  `;
+}
+
+function pickSide(el) {
+  el.parentElement.querySelectorAll('.side-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function onMaterialChange() {
+  const mat = document.getElementById('fMaterial').value;
+  const hasVariant = ['Aggregate','Steel','Emulsion','Concrete Mix','Pipe'].includes(mat);
+  document.getElementById('variantField').style.display = hasVariant ? '' : 'none';
+  // Update weight label and UoM based on material type
+  const uomMap = { Pipe: 'Numbers', 'Concrete Mix': 'm³' };
+  const uom = uomMap[mat] || 'MT';
+  const isWeight = !uomMap[mat];
+  document.getElementById('wtLabel').innerHTML = (isWeight ? 'Weight' : 'Quantity') + ' <span class="req">*</span>';
+  document.getElementById('wtHint').textContent = isWeight ? 'Enter net weight from weighbridge slip (' + uom + ')' : 'Enter quantity in ' + uom;
+  document.getElementById('wtUomLabel').textContent = isWeight ? 'Weight' : 'Quantity';
+  document.getElementById('fNet').textContent = document.getElementById('fWeight').value + ' ' + uom;
+  // Update variant options
+  if (hasVariant) {
+    const variants = {
+      Aggregate: ['6mm','10mm','20mm','25-40mm','Storm dust'],
+      Steel: ['8mm','10mm','12mm','16mm','20mm','25mm','32mm'],
+      Emulsion: ['SS1','RS1'],
+      'Concrete Mix': ['M10','M15','M20','M25','M30','M35','M40'],
+      Pipe: ['300mm','600mm','900mm','1200mm']
+    };
+    const sel = document.getElementById('fVariant');
+    sel.innerHTML = (variants[mat]||[]).map(v => `<option>${v}</option>`).join('');
+  }
+}
+
+function onSourceChange() {
+  const src = document.getElementById('fSourceType').value;
+  document.getElementById('srcCampField').classList.toggle('hidden', src !== 'Camp');
+  document.getElementById('srcPlantField').classList.toggle('hidden', src !== 'Plant');
+  document.getElementById('srcVendorField').classList.toggle('hidden', src !== 'Direct Vendor');
+}
+
+// Weight field live update
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'fWeight') {
+    const v = parseFloat(e.target.value) || 0;
+    const mat = document.getElementById('fMaterial').value;
+    const uomMap = { Pipe: 'Nos', 'Concrete Mix': 'm³' };
+    const uom = uomMap[mat] || 'MT';
+    const el = document.getElementById('fNet');
+    if (v > 0) { el.textContent = v.toFixed(1) + ' ' + uom; el.style.color = '#16a34a'; }
+    else { el.textContent = 'Enter value'; el.style.color = '#ef4444'; }
+  }
+});
+
+function submitEntry() {
+  showToast('✅ Entry submitted — Aggregate 20mm, 18.0 MT at km 1.8–2.0');
+  setTimeout(() => showScreen('home'), 1500);
+}
+
+// ============== MY ENTRIES ==============
+function renderEntries(filter) {
+  filter = filter || 'all';
+  const filtered = filter === 'all' ? entries :
+    filter === 'today' ? entries.filter(e=>e.date.startsWith('2026-04-17')) :
+    filter === 'correction' ? entries.filter(e=>e.state==='Correction') :
+    filter === 'verified' ? entries.filter(e=>e.state==='Verified') :
+    filter === 'submitted' ? entries.filter(e=>e.state==='Submitted') : entries;
+
+  const el = document.getElementById('screen-entries');
+  el.innerHTML = `
+    <div class="sec-title">My Entries (${filtered.length})</div>
+    <div class="filter-bar">
+      <div class="chip ${filter==='all'?'active':''}" onclick="renderEntries('all'); event.stopPropagation();">All (${entries.length})</div>
+      <div class="chip ${filter==='today'?'active':''}" onclick="renderEntries('today'); event.stopPropagation();">Today</div>
+      <div class="chip ${filter==='submitted'?'active':''}" onclick="renderEntries('submitted'); event.stopPropagation();">Submitted</div>
+      <div class="chip ${filter==='verified'?'active':''}" onclick="renderEntries('verified'); event.stopPropagation();">Verified</div>
+      <div class="chip ${filter==='correction'?'active':''}" onclick="renderEntries('correction'); event.stopPropagation();">⚠️ Correction</div>
+    </div>
+    ${filtered.length === 0 ? '<div style="text-align:center; color:#9ca3af; padding:40px 0;">No entries found</div>' : ''}
+    ${filtered.map(e => `
+      <div class="entry-card" onclick="showDetail('${e.code}')">
+        <div class="entry-top">
+          <div>
+            <div class="entry-material">${e.material}${e.variant!=='—'?' '+e.variant:''}</div>
+            <div class="entry-meta">
+              <span>📍 ${chainStr(e.chainStart, e.chainEnd)}</span>
+              <span class="badge badge-side">${e.side}</span>
+              <span class="badge badge-layer">${e.layer}</span>
+              <span class="badge badge-source">${e.sourceType==='Camp'?'🏕':e.sourceType==='Plant'?'🏭':'🤝'} ${e.source}</span>
+            </div>
+          </div>
+          <div class="entry-qty">${e.net} ${e.uom}</div>
+        </div>
+        <div class="entry-bottom">
+          <div class="entry-time">${e.date}</div>
+          ${stateBadge(e.state)}
+        </div>
+        ${e.state==='Correction'?'<div class="banner-correction" style="margin-top:8px; padding:8px; border-radius:6px; font-size:12px;">⚠️ '+e.correction.remark.substring(0,60)+'...</div>':''}
+      </div>
+    `).join('')}
+  `;
+  // Keep entries screen active
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-entries').classList.add('active');
+}
+
+// ============== ENTRY DETAIL ==============
+function showDetail(code) {
+  const e = entries.find(x => x.code === code);
+  if (!e) return;
+  const el = document.getElementById('screen-detail');
+  el.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-back" onclick="showScreen('entries')">← Back</div>
+      ${stateBadge(e.state)}
+    </div>
+
+    <div class="form-section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div>
+          <div style="font-size:18px; font-weight:800;">${e.material}${e.variant!=='—'?' '+e.variant:''}</div>
+          <div style="font-size:13px; color:#9ca3af;">${e.code}</div>
+        </div>
+        <div style="font-size:28px; font-weight:800; color:#0f4c75;">${e.net} ${e.uom}</div>
+      </div>
+
+      ${e.state==='Correction' ? `
+        <div class="correction-box">
+          <div class="cb-title">⚠️ Correction Requested</div>
+          <div class="cb-remark">"${e.correction.remark}"</div>
+          <div class="cb-by">— ${e.correction.by}, ${e.correction.date}</div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; padding:12px; font-size:15px; border-radius:8px; margin-top:8px;" onclick="showScreen('form'); showToast('Editing entry ${e.code}...')">✏️ Edit & Re-submit</button>
+      ` : ''}
+
+      ${e.state==='Verified' ? `
+        <div class="banner-success" style="margin-bottom:12px;">✅ Verified by Kiran Shah on 18 Apr 2026, 16:30</div>
+      ` : ''}
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">📍</span> Location</div>
+      <div class="detail-field"><div class="detail-label">Chainage</div><div class="detail-value">${chainStr(e.chainStart, e.chainEnd)}</div></div>
+      <div class="detail-field"><div class="detail-label">Side</div><div class="detail-value"><span class="badge badge-side">${e.side}</span></div></div>
+      <div class="detail-field"><div class="detail-label">Layer / Activity</div><div class="detail-value"><span class="badge badge-layer">${e.layer}</span></div></div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">🚛</span> Source</div>
+      <div class="detail-field"><div class="detail-label">Source Type</div><div class="detail-value">${e.sourceType}</div></div>
+      <div class="detail-field"><div class="detail-label">From</div><div class="detail-value">${e.source}</div></div>
+      ${e.sourceRef ? `<div class="detail-field"><div class="detail-label">Source Ref</div><div class="detail-value">${e.sourceRef}</div></div>` : ''}
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">🚗</span> Vehicle & Slip</div>
+      <div class="detail-field"><div class="detail-label">Vehicle No</div><div class="detail-value">${e.vehicle}</div></div>
+      <div class="detail-field"><div class="detail-label">Slip No</div><div class="detail-value">${e.slip}</div></div>
+      ${e.royalty ? `<div class="detail-field"><div class="detail-label">Royalty No</div><div class="detail-value">${e.royalty}</div></div>` : ''}
+      ${e.party ? `<div class="detail-field"><div class="detail-label">Party / Driver</div><div class="detail-value">${e.party}</div></div>` : ''}
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">⚖️</span> ${e.isWeight ? 'Weight' : 'Quantity'}</div>
+      <div class="detail-field"><div class="detail-label">${e.isWeight ? 'Weight' : 'Quantity'}</div><div class="detail-value" style="font-weight:800; color:#0f4c75; font-size:16px;">${e.net} ${e.uom}</div></div>
+      ${e.secQty ? `<div class="detail-field"><div class="detail-label">Secondary</div><div class="detail-value">≈ ${e.secQty}</div></div>` : ''}
+      <div class="detail-field"><div class="detail-label">Machine</div><div class="detail-value" style="color:#9ca3af; font-style:italic;">Phase 2</div></div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title"><span class="icon">📋</span> Other</div>
+      <div class="detail-field"><div class="detail-label">Date & Time</div><div class="detail-value">${e.date}</div></div>
+      <div class="detail-field"><div class="detail-label">Photo</div><div class="detail-value">${e.photo ? '📷 1 photo' : 'None'}</div></div>
+      <div class="detail-field"><div class="detail-label">Remarks</div><div class="detail-value">${e.remarks || '—'}</div></div>
+      <div class="detail-field"><div class="detail-label">Sync</div><div class="detail-value"><span class="badge badge-synced">✅ Synced</span></div></div>
+    </div>
+
+    ${e.state === 'Submitted' ? `
+      <button class="btn btn-primary" style="width:100%; padding:12px; font-size:15px; border-radius:8px; margin-top:8px;" onclick="showScreen('form'); showToast('Editing entry ${e.code}...')">✏️ Edit Entry</button>
+    ` : ''}
+  `;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ============== SYNC QUEUE ==============
+function renderSync() {
+  const el = document.getElementById('screen-sync');
+  el.innerHTML = `
+    <div class="sec-title">Sync Queue</div>
+    <div class="banner-info">Entries are saved locally and synced automatically when you're online. All entries are currently synced.</div>
+
+    <div class="sync-item">
+      <div class="sync-icon done">✅</div>
+      <div class="sync-info">
+        <div class="sync-title">DMP/2026/0007 — Aggregate 20mm, 18.0 MT</div>
+        <div class="sync-sub">Synced 17 Apr 2026, 08:01</div>
+      </div>
+      <span class="badge badge-synced">Synced</span>
+    </div>
+    <div class="sync-item">
+      <div class="sync-icon done">✅</div>
+      <div class="sync-info">
+        <div class="sync-title">DMP/2026/0008 — Pipe 600mm, 12 Nos</div>
+        <div class="sync-sub">Synced 17 Apr 2026, 09:46</div>
+      </div>
+      <span class="badge badge-synced">Synced</span>
+    </div>
+
+    <div class="sec-title" style="margin-top:24px">Offline Demo</div>
+    <div style="display:flex; gap:8px; margin-bottom:12px;">
+      <button class="btn btn-secondary" style="flex:1; padding:12px; border-radius:8px;" onclick="simulateOffline()">🔴 Go Offline</button>
+      <button class="btn btn-primary" style="flex:1; padding:12px; border-radius:8px;" onclick="simulateOnline()">🟢 Go Online</button>
+    </div>
+    <div id="offlineDemo"></div>
+  `;
+}
+
+function simulateOffline() {
+  document.getElementById('connStatus').innerHTML = '<div class="dot dot-offline"></div><span>Offline</span><span class="sync-badge">1</span>';
+  document.getElementById('offlineDemo').innerHTML = `
+    <div class="banner-offline">You are offline. Entries will be saved locally.</div>
+    <div class="sync-item">
+      <div class="sync-icon pending">🔄</div>
+      <div class="sync-info">
+        <div class="sync-title">Aggregate 20mm — 18.0 MT</div>
+        <div class="sync-sub">Created just now &bull; Waiting for connection</div>
+      </div>
+      <span class="badge badge-pending">Pending</span>
+    </div>
+  `;
+}
+
+function simulateOnline() {
+  document.getElementById('connStatus').innerHTML = '<div class="dot dot-syncing"></div><span>Syncing...</span>';
+  setTimeout(() => {
+    document.getElementById('connStatus').innerHTML = '<div class="dot dot-online"></div><span>Online</span>';
+    document.getElementById('offlineDemo').innerHTML = `
+      <div class="banner-success">✅ 1 entry synced successfully.</div>
+      <div class="sync-item">
+        <div class="sync-icon done">✅</div>
+        <div class="sync-info">
+          <div class="sync-title">DMP/2026/0009 — Aggregate 20mm, 18.0 MT</div>
+          <div class="sync-sub">Synced just now</div>
+        </div>
+        <span class="badge badge-synced">Synced</span>
+      </div>
+    `;
+    showToast('✅ 1 entry synced successfully');
+  }, 2000);
+}
+
+// ============== INIT ==============
+renderHome();
+</script>
+</body>
+</html>

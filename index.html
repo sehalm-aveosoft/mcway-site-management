@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>McWay Site Management — Project Hub</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a2e; background: #f8f9fb; line-height: 1.6; }
+
+  /* Header */
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 48px 24px 40px; text-align: center; }
+  .hero h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+  .hero .subtitle { font-size: 15px; opacity: 0.8; margin-top: 6px; }
+  .hero .meta { display: flex; justify-content: center; gap: 20px; margin-top: 16px; font-size: 13px; opacity: 0.7; flex-wrap: wrap; }
+  .hero .meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* Container */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+  /* Section */
+  .section { margin: 32px 0; }
+  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8a8f99; margin-bottom: 14px; padding-left: 2px; }
+
+  /* Module cards */
+  .module-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .module-card { background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; overflow: hidden; transition: box-shadow 0.15s; }
+  .module-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .module-header { padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+  .module-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .module-info { flex: 1; }
+  .module-name { font-size: 16px; font-weight: 700; }
+  .module-desc { font-size: 13px; color: #6b7280; margin-top: 1px; }
+  .module-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .badge-done { background: #dcfce7; color: #166534; }
+  .badge-progress { background: #dbeafe; color: #1e40af; }
+  .badge-pending { background: #f3f4f6; color: #6b7280; }
+  .module-links { padding: 0 20px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .link-btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid #e5e7eb; color: #374151; background: #f9fafb; transition: all 0.15s; }
+  .link-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+  .link-btn.primary { background: #0f3460; color: #fff; border-color: #0f3460; }
+  .link-btn.primary:hover { background: #1a4a80; }
+
+  /* Quick stats */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .stat { background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; padding: 16px; text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 800; color: #0f3460; }
+  .stat .lbl { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* Changelog */
+  .changelog { background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; overflow: hidden; }
+  .changelog-item { padding: 14px 20px; border-bottom: 1px solid #f3f4f6; display: flex; gap: 14px; }
+  .changelog-item:last-child { border-bottom: none; }
+  .cl-date { font-size: 12px; font-weight: 700; color: #9ca3af; white-space: nowrap; min-width: 80px; padding-top: 2px; }
+  .cl-content { flex: 1; }
+  .cl-title { font-weight: 600; font-size: 14px; }
+  .cl-detail { font-size: 13px; color: #6b7280; margin-top: 2px; }
+  .cl-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+  .cl-tag.new { background: #dcfce7; color: #166534; }
+  .cl-tag.update { background: #dbeafe; color: #1e40af; }
+  .cl-tag.fix { background: #fef3c7; color: #92400e; }
+
+  /* Roadmap */
+  .roadmap { background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; padding: 20px; }
+  .roadmap-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+  .roadmap-item:last-child { border-bottom: none; }
+  .rm-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .rm-done { background: #dcfce7; color: #166534; }
+  .rm-current { background: #dbeafe; color: #1e40af; }
+  .rm-todo { background: #f3f4f6; color: #9ca3af; }
+  .rm-name { flex: 1; }
+  .rm-name.done { text-decoration: line-through; color: #9ca3af; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 32px 20px; font-size: 12px; color: #9ca3af; }
+  .footer a { color: #6b7280; }
+
+  /* Responsive */
+  @media (min-width: 640px) {
+    .module-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>McWay Site Management</h1>
+  <div class="subtitle">ERP Demo &mdash; Road Construction Site Management System</div>
+  <div class="meta">
+    <span>Odoo-based</span>
+    <span>Client: McWay</span>
+    <span>Demo Scope: Kalol Sanand + Khatraj Chokdi + Magodi</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Quick stats -->
+  <div class="section">
+    <div class="stats-row">
+      <div class="stat"><div class="num">3</div><div class="lbl">Modules Done</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">HTML Mockups</div></div>
+      <div class="stat"><div class="num">6</div><div class="lbl">Spec Documents</div></div>
+      <div class="stat"><div class="num">5</div><div class="lbl">Modules Remaining</div></div>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <div class="section">
+    <div class="section-title">Modules</div>
+    <div class="module-grid">
+
+      <!-- Module 01 -->
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-icon" style="background:#ede9fe;">&#x1F4CB;</div>
+          <div class="module-info">
+            <div class="module-name">Module 01 &mdash; Admin Portal</div>
+            <div class="module-desc">Masters, Users, Estimation, Thresholds, Audit. Web (Odoo). Used by Admin.</div>
+          </div>
+          <span class="module-badge badge-done">v2 Done</span>
+        </div>
+        <div class="module-links">
+          <a href="mockups/admin-portal.html" class="link-btn primary" target="_blank">&#x1F4BB; List & View Mockup</a>
+          <a href="mockups/admin-forms.html" class="link-btn primary" target="_blank">&#x1F4DD; Data Entry Forms</a>
+          <a href="docs/Module_01_Admin_Portal.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
+          <a href="downloads/Module_01_Admin_Portal.docx" class="link-btn">&#x2B07; Download .docx</a>
+        </div>
+      </div>
+
+      <!-- Module 02 -->
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-icon" style="background:#d1fae5;">&#x1F4E6;</div>
+          <div class="module-info">
+            <div class="module-name">Module 02 &mdash; Camp Module</div>
+            <div class="module-desc">Inward, Outward, Stock, RMC Production, Labor, Shuttering, Verification. Web. Used by Camp In-charge.</div>
+          </div>
+          <span class="module-badge badge-done">v1 Done</span>
+        </div>
+        <div class="module-links">
+          <a href="mockups/camp-module.html" class="link-btn primary" target="_blank">&#x1F4BB; Interactive Mockup</a>
+          <a href="docs/Module_02_Camp_Module.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
+          <a href="downloads/Module_02_Camp_Module.docx" class="link-btn">&#x2B07; Download .docx</a>
+        </div>
+      </div>
+
+      <!-- Module 03 -->
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-icon" style="background:#dbeafe;">&#x1F4F1;</div>
+          <div class="module-info">
+            <div class="module-name">Module 03 &mdash; On-Site Materials (Dumping)</div>
+            <div class="module-desc">Mobile app for Supervisors. Dumping entry, offline-first, sync queue, chainage input. Phase 2: Machine field.</div>
+          </div>
+          <span class="module-badge badge-done">v1 Done</span>
+        </div>
+        <div class="module-links">
+          <a href="mockups/onsite-materials.html" class="link-btn primary" target="_blank">&#x1F4F1; Mobile Mockup</a>
+          <a href="docs/Module_03_OnSite_Materials.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
+          <a href="downloads/Module_03_OnSite_Materials.docx" class="link-btn">&#x2B07; Download .docx</a>
+        </div>
+      </div>
+
+      <!-- Module 04 (pending) -->
+      <div class="module-card" style="opacity:0.6">
+        <div class="module-header">
+          <div class="module-icon" style="background:#f3f4f6;">&#x1F3ED;</div>
+          <div class="module-info">
+            <div class="module-name">Module 04 &mdash; Plant Module</div>
+            <div class="module-desc">Raw material inward, production batches (MRP/BoM), outward dispatch, plant stock. Web. Used by Plant In-charge.</div>
+          </div>
+          <span class="module-badge badge-pending">Pending</span>
+        </div>
+      </div>
+
+      <!-- Module 05 (pending) -->
+      <div class="module-card" style="opacity:0.6">
+        <div class="module-header">
+          <div class="module-icon" style="background:#f3f4f6;">&#x1F4CA;</div>
+          <div class="module-info">
+            <div class="module-name">Module 05 &mdash; Senior Engineer Work Progress</div>
+            <div class="module-desc">Layer-wise progress per chainage, colour-coded strip view, verification queue. Web. Used by Senior Engineer.</div>
+          </div>
+          <span class="module-badge badge-pending">Pending</span>
+        </div>
+      </div>
+
+      <!-- Module 06 (pending) -->
+      <div class="module-card" style="opacity:0.6">
+        <div class="module-header">
+          <div class="module-icon" style="background:#f3f4f6;">&#x26FD;</div>
+          <div class="module-info">
+            <div class="module-name">Module 06 &mdash; Diesel Module</div>
+            <div class="module-desc">Pump&rarr;Tanker&rarr;Machine traceability, rented-with-fuel reconciliation, truck refuelling. Web + Mobile.</div>
+          </div>
+          <span class="module-badge badge-pending">Pending</span>
+        </div>
+      </div>
+
+      <!-- Module 07 (pending) -->
+      <div class="module-card" style="opacity:0.6">
+        <div class="module-header">
+          <div class="module-icon" style="background:#f3f4f6;">&#x1F4C8;</div>
+          <div class="module-info">
+            <div class="module-name">Module 07 &mdash; Reports</div>
+            <div class="module-desc">DPR, material, diesel, progress, labour, variance reports. PDF/Excel export. Web.</div>
+          </div>
+          <span class="module-badge badge-pending">Pending</span>
+        </div>
+      </div>
+
+      <!-- Module 08 (pending) -->
+      <div class="module-card" style="opacity:0.6">
+        <div class="module-header">
+          <div class="module-icon" style="background:#f3f4f6;">&#x1F4CA;</div>
+          <div class="module-info">
+            <div class="module-name">Module 08 &mdash; Owner Dashboard</div>
+            <div class="module-desc">Consolidated KPIs, drill-down per site/camp/plant, variance flags, unverified alerts. Owner-only.</div>
+          </div>
+          <span class="module-badge badge-pending">Pending</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Foundation docs -->
+  <div class="section">
+    <div class="section-title">Foundation Documents</div>
+    <div class="module-grid">
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-icon" style="background:#fef3c7;">&#x1F4D1;</div>
+          <div class="module-info">
+            <div class="module-name">Product Requirements Document (PRD)</div>
+            <div class="module-desc">Goals, personas, user stories, data model, KPIs, risks, release plan.</div>
+          </div>
+        </div>
+        <div class="module-links">
+          <a href="docs/PRD.md" class="link-btn" target="_blank">&#x1F4C4; View (.md)</a>
+          <a href="downloads/PRD.docx" class="link-btn">&#x2B07; Download .docx</a>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-icon" style="background:#fce7f3;">&#x1F4CB;</div>
+          <div class="module-info">
+            <div class="module-name">Demo Documentation</div>
+            <div class="module-desc">Full demo scope, module-by-module features, materials list, verification workflow.</div>
+          </div>
+        </div>
+        <div class="module-links">
+          <a href="docs/Demo_Documentation.md" class="link-btn" target="_blank">&#x1F4C4; View (.md)</a>
+          <a href="downloads/Demo_Documentation.docx" class="link-btn">&#x2B07; Download .docx</a>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-icon" style="background:#e0e7ff;">&#x1F4DD;</div>
+          <div class="module-info">
+            <div class="module-name">Client Meeting Notes &mdash; 14 Apr 2026</div>
+            <div class="module-desc">ERP vs custom decision, diesel logic clarification, linkage principle, key architectural decisions.</div>
+          </div>
+        </div>
+        <div class="module-links">
+          <a href="docs/Meeting_Notes_2026-04-14.md" class="link-btn" target="_blank">&#x1F4C4; View (.md)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roadmap -->
+  <div class="section">
+    <div class="section-title">Module Roadmap</div>
+    <div class="roadmap">
+      <div class="roadmap-item"><div class="rm-num rm-done">&#x2713;</div><div class="rm-name done">Module 01 &mdash; Admin Portal (v2, post client review)</div><div style="font-size:12px; color:#9ca3af">16 Apr</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done">&#x2713;</div><div class="rm-name done">Module 02 &mdash; Camp Module (v1)</div><div style="font-size:12px; color:#9ca3af">17 Apr</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done">&#x2713;</div><div class="rm-name done">Module 03 &mdash; On-Site Materials (v1)</div><div style="font-size:12px; color:#9ca3af">20 Apr</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-current">4</div><div class="rm-name"><strong>Module 04 &mdash; Plant Module</strong></div><div style="font-size:12px; color:#1e40af">Next</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-todo">5</div><div class="rm-name">Module 05 &mdash; Senior Engineer Work Progress</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-todo">6</div><div class="rm-name">Module 06 &mdash; Diesel Module</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-todo">7</div><div class="rm-name">Module 07 &mdash; Reports</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-todo">8</div><div class="rm-name">Module 08 &mdash; Owner Dashboard</div></div>
+    </div>
+  </div>
+
+  <!-- Changelog -->
+  <div class="section">
+    <div class="section-title">Changelog</div>
+    <div class="changelog">
+      <div class="changelog-item">
+        <div class="cl-date">20 Apr 2026</div>
+        <div class="cl-content">
+          <div class="cl-title">Module 03: On-Site Materials <span class="cl-tag new">NEW</span></div>
+          <div class="cl-detail">Full spec (18 sections) + mobile HTML mockup. Simplified weight entry (single field, no Gross/Tare). Machine field added as Phase 2 placeholder. Offline-first architecture with sync queue demo.</div>
+        </div>
+      </div>
+      <div class="changelog-item">
+        <div class="cl-date">17 Apr 2026</div>
+        <div class="cl-content">
+          <div class="cl-title">Module 02: Camp Module <span class="cl-tag new">NEW</span></div>
+          <div class="cl-detail">Full spec (16 sections) + interactive HTML mockup with 8 views: Home, Inward, Outward, Stock Register, RMC Production, Labour, Shuttering, Verification Queue. 15 design decisions documented.</div>
+        </div>
+      </div>
+      <div class="changelog-item">
+        <div class="cl-date">16 Apr 2026</div>
+        <div class="cl-content">
+          <div class="cl-title">Module 01: Admin Portal v2 <span class="cl-tag update">UPDATE</span></div>
+          <div class="cl-detail">Post client-review revision. Added: multi-segment chainage, LHS/RHS carriageway, Machine Assignment + Rental Deployments as separate sub-modules, Vendor renaming, Tanker multi-operator support, linkage principle. Two HTML mockups (list/view + forms).</div>
+        </div>
+      </div>
+      <div class="changelog-item">
+        <div class="cl-date">15 Apr 2026</div>
+        <div class="cl-content">
+          <div class="cl-title">PRD + Demo Documentation <span class="cl-tag new">NEW</span></div>
+          <div class="cl-detail">Product Requirements Document with personas, user stories, data model, KPIs, risks. Demo Documentation with full module-by-module scope, materials list, verification workflow.</div>
+        </div>
+      </div>
+      <div class="changelog-item">
+        <div class="cl-date">14 Apr 2026</div>
+        <div class="cl-content">
+          <div class="cl-title">Client Meeting &mdash; ERP Decision <span class="cl-tag new">NEW</span></div>
+          <div class="cl-detail">Client chose Odoo ERP approach over custom build. Key decisions: diesel logic (rented-with-fuel offset), linkage principle, no Petrol Pump master, Verifier role (non-blocking). Demo scope: 1 site + 1 camp + 1 plant.</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:12px;">
+      <a href="CHANGELOG.md" class="link-btn" target="_blank">View Full Changelog</a>
+    </div>
+  </div>
+
+  <!-- Key decisions -->
+  <div class="section">
+    <div class="section-title">Key Architectural Decisions</div>
+    <div class="roadmap" style="font-size:13px;">
+      <div class="roadmap-item"><div class="rm-num rm-done" style="font-size:10px">&#x2713;</div><div>Linkage Principle &mdash; relationships entered on the owning side, read-only on parent</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done" style="font-size:10px">&#x2713;</div><div>Verification never blocks &mdash; entries usable before verified; Verifier is accountability, not a gate</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done" style="font-size:10px">&#x2713;</div><div>Diesel offset &mdash; rented-with-fuel: we fuel it, deduct from vendor bill. No double counting.</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done" style="font-size:10px">&#x2713;</div><div>Stock from transactions &mdash; no manual stock entry. Stock emerges from inward/outward/production.</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done" style="font-size:10px">&#x2713;</div><div>One user = one scope &mdash; supervisor sees only their site, camp in-charge sees only their camp.</div></div>
+      <div class="roadmap-item"><div class="rm-num rm-done" style="font-size:10px">&#x2713;</div><div>Machine usage (ON/OFF/idle) deferred to Phase 2 &mdash; Machine field as placeholder in On-Site module.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  McWay Site Management &mdash; Aveo Software &mdash; Last updated: 20 April 2026<br>
+  <a href="CHANGELOG.md">Changelog</a> &bull; <a href="docs/">All Documents</a> &bull; <a href="mockups/">All Mockups</a>
+</div>
+
+</body>
+</html>

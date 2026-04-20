@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>McWay Admin Portal — Mockup v2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; color: #2d3142; background: #f4f5f7; height: 100vh; overflow: hidden; }
+  .topbar { height: 48px; background: #714B67; color: #fff; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .topbar .logo { font-weight: 600; font-size: 15px; }
+  .topbar .logo .tag { background: #ffb300; color: #333; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-left: 8px; font-weight: 700; }
+  .topbar .breadcrumb { margin-left: 24px; color: rgba(255,255,255,0.8); font-size: 12px; }
+  .topbar .breadcrumb span { margin: 0 6px; }
+  .topbar .user { margin-left: auto; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+  .topbar .avatar { width: 28px; height: 28px; border-radius: 50%; background: #9b7595; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .layout { display: flex; margin-top: 48px; height: calc(100vh - 48px); }
+  .sidebar { width: 240px; background: #fff; border-right: 1px solid #e0e2e7; overflow-y: auto; flex-shrink: 0; }
+  .sidebar-group { padding: 10px 0; border-bottom: 1px solid #eef0f3; }
+  .sidebar-group-title { font-size: 10px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 18px; }
+  .sidebar-item { padding: 8px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #4a4f5c; border-left: 3px solid transparent; }
+  .sidebar-item:hover { background: #f7f4f6; }
+  .sidebar-item.active { background: #f7f4f6; border-left-color: #714B67; color: #714B67; font-weight: 600; }
+  .sidebar-item .icon { width: 16px; text-align: center; }
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px; }
+  .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .view-title { font-size: 20px; font-weight: 600; }
+  .view-subtitle { font-size: 12px; color: #8a8f99; margin-top: 2px; }
+  .btn { padding: 7px 14px; border-radius: 4px; border: 1px solid transparent; font-size: 13px; cursor: pointer; font-weight: 500; }
+  .btn-primary { background: #714B67; color: #fff; }
+  .btn-primary:hover { background: #5d3d55; }
+  .btn-secondary { background: #fff; color: #4a4f5c; border-color: #d8dae0; }
+  .btn-secondary:hover { background: #f4f5f7; }
+  .btn-danger { background: #dc3545; color: #fff; }
+  .btn-group { display: flex; gap: 8px; }
+  .toolbar { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 200px; padding: 6px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; }
+  .filter-chip { padding: 4px 10px; background: #f4f5f7; border: 1px solid #d8dae0; border-radius: 14px; font-size: 12px; cursor: pointer; color: #4a4f5c; }
+  .filter-chip.active { background: #714B67; color: #fff; border-color: #714B67; }
+  .table-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f7f8fa; padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6c7080; letter-spacing: 0.5px; border-bottom: 1px solid #e0e2e7; }
+  tbody td { padding: 11px 14px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #fafbfc; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-active { background: #d4f4dd; color: #1a7b36; }
+  .badge-inactive { background: #e0e2e7; color: #6c7080; }
+  .badge-closed { background: #fddede; color: #b5313c; }
+  .badge-breakdown { background: #fde9d4; color: #b86e00; }
+  .badge-info { background: #d4e5f7; color: #1a5a9b; }
+  .badge-warn { background: #fff4d4; color: #8b6b00; }
+  .form-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 20px 24px; }
+  .form-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid #eef0f3; margin-bottom: 20px; }
+  .form-header h2 { font-size: 18px; font-weight: 600; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid #e0e2e7; margin-bottom: 20px; }
+  .tab { padding: 10px 16px; cursor: pointer; font-size: 13px; color: #6c7080; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab:hover { color: #714B67; }
+  .tab.active { color: #714B67; border-bottom-color: #714B67; font-weight: 600; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 11px; font-weight: 600; color: #6c7080; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field input, .field select, .field textarea { padding: 7px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; font-family: inherit; }
+  .field input[readonly], .field .computed { background: #f7f8fa; color: #6c7080; }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .tag-input { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 6px; border: 1px solid #d8dae0; border-radius: 4px; background: #fff; min-height: 34px; align-items: center; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: #ede7ec; color: #714B67; border-radius: 12px; font-size: 12px; }
+  .section-title { font-size: 13px; font-weight: 700; color: #4a4f5c; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hidden { display: none !important; }
+  .info-banner { background: #e7f1fb; border: 1px solid #b4d5f2; color: #1a5a9b; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .warn-banner { background: #fff9e6; border: 1px solid #ffe0a6; color: #7a5800; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .dev-note { background: #fdecec; border: 1px solid #f7b4b4; color: #8b1e1e; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .kpi-card { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 16px; }
+  .kpi-card .label { font-size: 11px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-card .value { font-size: 28px; font-weight: 700; color: #714B67; margin-top: 4px; }
+  .kpi-card .sub { font-size: 11px; color: #8a8f99; margin-top: 4px; }
+  .read-only-panel { background: #f7f8fa; border: 1px dashed #d8dae0; border-radius: 4px; padding: 12px; color: #4a4f5c; }
+  .read-only-panel h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8a8f99; margin-bottom: 8px; letter-spacing: 0.5px; }
+  .segment-row { display: grid; grid-template-columns: 50px 1fr 1fr 1fr 1.5fr; gap: 10px; padding: 8px 10px; background: #fafbfc; border-radius: 4px; margin-bottom: 6px; font-size: 12px; align-items: center; }
+  .segment-row .lbl { font-weight: 600; color: #6c7080; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">McWay Admin<span class="tag">DEMO v2</span></div>
+  <div class="breadcrumb" id="breadcrumb">McWay Admin <span>›</span> Dashboard</div>
+  <div class="user"><span>Rajesh Patel (Admin)</span><div class="avatar">RP</div></div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-item active" data-view="dashboard"><span class="icon">📊</span> Dashboard</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Masters</div>
+      <div class="sidebar-item" data-view="sites"><span class="icon">📍</span> Sites</div>
+      <div class="sidebar-item" data-view="camps"><span class="icon">🏕️</span> Camps</div>
+      <div class="sidebar-item" data-view="plants"><span class="icon">🏭</span> Plants</div>
+      <div class="sidebar-item" data-view="materials"><span class="icon">📦</span> Materials</div>
+      <div class="sidebar-item" data-view="machines"><span class="icon">🚜</span> Machines</div>
+      <div class="sidebar-item" data-view="tankers"><span class="icon">⛽</span> Tankers</div>
+      <div class="sidebar-item" data-view="vendors"><span class="icon">🤝</span> Vendors</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Operations Setup</div>
+      <div class="sidebar-item" data-view="assignments"><span class="icon">📌</span> Machine Assignments</div>
+      <div class="sidebar-item" data-view="deployments"><span class="icon">📄</span> Rental Deployments</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Users</div>
+      <div class="sidebar-item" data-view="users"><span class="icon">👤</span> Users</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Planning</div>
+      <div class="sidebar-item" data-view="estimation"><span class="icon">📐</span> Estimations</div>
+      <div class="sidebar-item" data-view="thresholds"><span class="icon">⚙️</span> System Thresholds</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Master Configuration</div>
+      <div class="sidebar-item" data-view="lookup"><span class="icon">🗂️</span> Lookup Lists</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Audit</div>
+      <div class="sidebar-item" data-view="audit"><span class="icon">📋</span> Audit Log</div>
+    </div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+// ============== DEMO DATA ==============
+const data = {
+  sites: [
+    { code: "SITE/2026/001", name: "Kalol Sanand", type: "Road", location: "Kalol–Sanand", state: "Gujarat",
+      lat: 23.2469, lng: 72.4925,
+      segments: [{ start: 1000, end: 5000 }, { start: 7000, end: 15000 }],
+      carriagewayMode: "Combined", widthCombined: 7.5,
+      plannedStart: "2026-04-01", plannedEnd: "2027-03-31",
+      status: "Active", notes: "Phase 1 road widening project.",
+      // derived data (read-only)
+      team: [ { name: "Kiran Shah", role: "Senior Engineer" }, { name: "Mahesh Desai", role: "Supervisor" }, { name: "Pravin Modi", role: "Supervisor" } ],
+      servingCamps: ["Khatraj Chokdi"],
+      supplyingPlants: ["Magodi"],
+      machinesOnSite: [ "MCH/0001 (Excavator)", "MCH/0002 (JCB)", "MCH/0003 (Roller)", "MCH/0004 (Paver)" ] }
+  ],
+  camps: [
+    { code: "CAMP/2026/001", name: "Khatraj Chokdi", address: "Khatraj, Kheda District",
+      lat: 22.8512, lng: 72.6894, servedSites: ["Kalol Sanand"], incharge: "Suresh Rathod",
+      hasRmc: true, mixerCap: 30, outputGrades: ["M20","M25"],
+      storageCap: 500, status: "Active", remarks: "" }
+  ],
+  plants: [
+    { code: "PLNT/2026/001", name: "Magodi", address: "Magodi Industrial Area, Ahmedabad",
+      lat: 23.1233, lng: 72.6078, incharge: "Dinesh Joshi",
+      capabilities: [
+        { name: "Bituminous Mix", capacity: 500, unit: "MT" },
+        { name: "Concrete (RMC)", capacity: 300, unit: "m³" },
+        { name: "Emulsion", capacity: 50, unit: "MT" },
+        { name: "Steel Cutting/Bending", capacity: 20, unit: "MT" }
+      ],
+      camps: ["Khatraj Chokdi"], sitesDirect: [],
+      status: "Active", remarks: "Main supply plant for north Gujarat sites." }
+  ],
+  materials: [
+    { code: "MAT/0001", name: "Aggregate", category: "Aggregate", type: "Raw", variants: ["6mm","10mm","20mm","25-40mm","Storm dust"], uom: "MT", secUom: "", convFactor: 0, density: 1600, source: ["Plant","Vendor"], active: true },
+    { code: "MAT/0002", name: "Cement", category: "Cement", type: "Raw", variants: [], uom: "MT", secUom: "Bag (50 kg)", convFactor: 0.05, density: 1440, source: ["Vendor"], active: true },
+    { code: "MAT/0003", name: "Sand", category: "Sand", type: "Raw", variants: [], uom: "MT", secUom: "", convFactor: 0, density: 1600, source: ["Vendor"], active: true },
+    { code: "MAT/0004", name: "Steel", category: "Steel", type: "Consumable", variants: ["8mm","10mm","12mm","16mm","20mm","25mm","32mm"], uom: "MT", secUom: "Piece", convFactor: 0.001, density: 7850, source: ["Plant","Vendor"], active: true },
+    { code: "MAT/0005", name: "Emulsion", category: "Emulsion", type: "Raw", variants: ["SS1","RS1"], uom: "MT", secUom: "", convFactor: 0, density: 1030, source: ["Plant","Vendor"], active: true },
+    { code: "MAT/0006", name: "Bitumen", category: "Bitumen", type: "Raw", variants: ["VG30","VG40"], uom: "MT", secUom: "", convFactor: 0, density: 1010, source: ["Vendor"], active: true },
+    { code: "MAT/0007", name: "LDO/FO", category: "Fuel", type: "Raw", variants: [], uom: "Litres", secUom: "", convFactor: 0, density: 870, source: ["Vendor"], active: true },
+    { code: "MAT/0008", name: "GSB", category: "Aggregate", type: "Raw", variants: [], uom: "MT", secUom: "", convFactor: 0, density: 2100, source: ["Camp","Vendor"], active: true },
+    { code: "MAT/0009", name: "WMM", category: "Aggregate", type: "Raw", variants: [], uom: "MT", secUom: "", convFactor: 0, density: 2200, source: ["Camp","Vendor"], active: true },
+    { code: "MAT/0010", name: "BM", category: "Bituminous Mix", type: "Produced", variants: [], uom: "MT", secUom: "", convFactor: 0, density: 2350, source: ["Plant"], active: true },
+    { code: "MAT/0011", name: "DBM", category: "Bituminous Mix", type: "Produced", variants: [], uom: "MT", secUom: "", convFactor: 0, density: 2400, source: ["Plant"], active: true },
+    { code: "MAT/0012", name: "BC", category: "Bituminous Mix", type: "Produced", variants: [], uom: "MT", secUom: "", convFactor: 0, density: 2450, source: ["Plant"], active: true },
+    { code: "MAT/0013", name: "Concrete Mix", category: "Concrete Mix", type: "Produced", variants: ["M10","M15","M20","M25","M30","M35","M40"], uom: "m³", secUom: "", convFactor: 0, density: 2400, source: ["Plant","Camp"], active: true },
+    { code: "MAT/0014", name: "Pipe", category: "Pipe", type: "Consumable", variants: ["300mm","600mm","900mm","1200mm"], uom: "Numbers", secUom: "", convFactor: 0, density: 0, source: ["Vendor"], active: true }
+  ],
+  machines: [
+    { code: "MCH/0001", name: "GJ-01-AB-1234", category: "Excavator", make: "JCB", model: "JS205", capacity: "1.0 cum bucket", ownership: "Owned", fuelAvg: 8, fuelUnit: "L/hr", status: "Active" },
+    { code: "MCH/0002", name: "GJ-05-CD-5678", category: "JCB", make: "JCB", model: "3DX", capacity: "0.3 cum", ownership: "Rented", fuelAvg: 6, fuelUnit: "L/hr", status: "Active" },
+    { code: "MCH/0003", name: "GJ-01-EF-9012", category: "Roller", make: "Volvo", model: "SD110", capacity: "10 MT", ownership: "Owned", fuelAvg: 5, fuelUnit: "L/hr", status: "Active" },
+    { code: "MCH/0004", name: "GJ-07-GH-3456", category: "Paver", make: "Vogele", model: "S1800-3", capacity: "6 m width", ownership: "Rented", fuelAvg: 12, fuelUnit: "L/hr", status: "Active" },
+    { code: "MCH/0005", name: "GJ-12-IJ-7890", category: "Dumper", make: "Tata", model: "LPK 2518", capacity: "16 MT", ownership: "Owned", fuelAvg: 0.25, fuelUnit: "L/km", status: "Breakdown" }
+  ],
+  assignments: [
+    { code: "ASN/2026/0001", machine: "MCH/0001 — GJ-01-AB-1234", targetType: "Site", target: "Kalol Sanand", startDate: "2026-04-01", endDate: "", operator: "Ramesh Parmar", status: "Active" },
+    { code: "ASN/2026/0002", machine: "MCH/0002 — GJ-05-CD-5678", targetType: "Site", target: "Kalol Sanand", startDate: "2026-04-05", endDate: "", operator: "", status: "Active" },
+    { code: "ASN/2026/0003", machine: "MCH/0003 — GJ-01-EF-9012", targetType: "Site", target: "Kalol Sanand", startDate: "2026-04-01", endDate: "", operator: "", status: "Active" },
+    { code: "ASN/2026/0004", machine: "MCH/0004 — GJ-07-GH-3456", targetType: "Site", target: "Kalol Sanand", startDate: "2026-04-10", endDate: "", operator: "", status: "Active" },
+    { code: "ASN/2026/0005", machine: "MCH/0005 — GJ-12-IJ-7890", targetType: "Camp", target: "Khatraj Chokdi", startDate: "2026-03-20", endDate: "2026-04-14", operator: "", status: "Closed" }
+  ],
+  deployments: [
+    { code: "RDP/2026/0001", machine: "MCH/0002 — GJ-05-CD-5678", vendor: "Shree Construction", fuelMode: "Without Fuel", rate: 12000, startDate: "2026-04-05", endDate: "", status: "Active" },
+    { code: "RDP/2026/0002", machine: "MCH/0004 — GJ-07-GH-3456", vendor: "Maruti Hirers", fuelMode: "With Fuel", rate: 25000, startDate: "2026-04-10", endDate: "", status: "Active" }
+  ],
+  tankers: [
+    { code: "TNK/001", name: "GJ-01-KL-1111", capacity: 10000, balance: 6500, operators: ["Aarti Solanki","Preeti Shah"], currentLocation: "Kalol Sanand", status: "Active" }
+  ],
+  vendors: [
+    { code: "VEN/001", name: "Shree Construction", contact: "Jayesh Patel", phone: "+91 98250 11111", email: "shree@example.com", gst: "24AABCS1234A1Z5", terms: "Net 30", roles: ["Machine Rental"], netBalance: 12000, status: "Active" },
+    { code: "VEN/002", name: "Maruti Hirers", contact: "Harsh Mehta", phone: "+91 98250 22222", email: "maruti@example.com", gst: "24AABCM9876B1Z3", terms: "Net 15", roles: ["Machine Rental"], netBalance: 23600, status: "Active" },
+    { code: "VEN/003", name: "Shakti Aggregates", contact: "Rohit Panchal", phone: "+91 98250 33333", email: "", gst: "", terms: "Net 30", roles: ["Material Supplier"], netBalance: 0, status: "Active" }
+  ],
+  users: [
+    { code: "USR/001", name: "Rajesh Patel", login: "rajesh.admin", role: "Admin", assignType: "None", assignTarget: "—", mobile: false, web: true, lang: "English", status: "Active", lastLogin: "2026-04-16 11:42" },
+    { code: "USR/002", name: "Vijay Shah", login: "vijay.owner", role: "Owner", assignType: "None", assignTarget: "—", mobile: true, web: true, lang: "English", status: "Active", lastLogin: "2026-04-16 08:15" },
+    { code: "USR/003", name: "Kiran Shah", login: "kiran.se", role: "Senior Engineer", assignType: "Site", assignTarget: "Kalol Sanand", mobile: true, web: true, lang: "English", status: "Active", lastLogin: "2026-04-16 09:02" },
+    { code: "USR/004", name: "Mahesh Desai", login: "mahesh.sup", role: "Supervisor", assignType: "Site", assignTarget: "Kalol Sanand", mobile: true, web: false, lang: "Gujarati", status: "Active", lastLogin: "2026-04-16 10:30" },
+    { code: "USR/005", name: "Pravin Modi", login: "pravin.sup", role: "Supervisor", assignType: "Site", assignTarget: "Kalol Sanand", mobile: true, web: false, lang: "Gujarati", status: "Active", lastLogin: "2026-04-16 10:45" },
+    { code: "USR/006", name: "Suresh Rathod", login: "suresh.camp", role: "Camp In-charge", assignType: "Camp", assignTarget: "Khatraj Chokdi", mobile: false, web: true, lang: "English", status: "Active", lastLogin: "2026-04-16 08:50" },
+    { code: "USR/007", name: "Dinesh Joshi", login: "dinesh.plant", role: "Plant In-charge", assignType: "Plant", assignTarget: "Magodi", mobile: false, web: true, lang: "English", status: "Active", lastLogin: "2026-04-16 07:20" },
+    { code: "USR/008", name: "Aarti Solanki", login: "aarti.tanker", role: "Tanker Operator", assignType: "Tanker", assignTarget: "TNK/001", mobile: true, web: false, lang: "Gujarati", status: "Active", lastLogin: "2026-04-16 11:10" },
+    { code: "USR/009", name: "Preeti Shah", login: "preeti.tanker", role: "Tanker Operator", assignType: "Tanker", assignTarget: "TNK/001", mobile: true, web: false, lang: "Gujarati", status: "Active", lastLogin: "2026-04-15 16:22" },
+    { code: "USR/010", name: "Kiran Shah", login: "kiran.verify", role: "Verifier", assignType: "Site", assignTarget: "Kalol Sanand", mobile: false, web: true, lang: "English", status: "Active", lastLogin: "2026-04-15 17:55" }
+  ],
+  thresholds: { variance: 5.0, unverifiedAlert: 2, lowStock: 15, idleMachine: 5, dprCutoff: "09:00", reportFreq: "Daily" },
+  audits: [
+    { ts: "2026-04-16 11:04", user: "Rajesh Patel", model: "mcway.machine.assignment", rec: "ASN/2026/0005", action: "State-change", field: "Transferred to Kalol Sanand → Closed" },
+    { ts: "2026-04-16 10:45", user: "Rajesh Patel", model: "fleet.vehicle", rec: "GJ-12-IJ-7890", action: "Write", field: "status: Active → Breakdown" },
+    { ts: "2026-04-16 09:30", user: "Rajesh Patel", model: "res.users", rec: "Preeti Shah", action: "Create", field: "new user (Tanker Operator)" },
+    { ts: "2026-04-15 17:20", user: "Rajesh Patel", model: "product.template", rec: "Bitumen (VG40)", action: "Write", field: "density: 1000 → 1010" },
+    { ts: "2026-04-15 14:02", user: "Rajesh Patel", model: "mcway.plant", rec: "Magodi", action: "Create", field: "new plant" },
+    { ts: "2026-04-15 13:50", user: "Rajesh Patel", model: "mcway.camp", rec: "Khatraj Chokdi", action: "Create", field: "new camp" },
+    { ts: "2026-04-15 13:40", user: "Rajesh Patel", model: "mcway.site", rec: "Kalol Sanand", action: "Create", field: "new site (2 segments)" }
+  ]
+};
+
+// ============== ROUTING ==============
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const main = document.getElementById('main');
+const breadcrumb = document.getElementById('breadcrumb');
+
+sidebarItems.forEach(item => {
+  item.addEventListener('click', () => {
+    sidebarItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    render(item.dataset.view);
+  });
+});
+
+const viewTitles = {
+  dashboard: "Dashboard", sites: "Sites", camps: "Camps", plants: "Plants", materials: "Materials",
+  machines: "Machines", tankers: "Tankers", vendors: "Vendors",
+  assignments: "Machine Assignments", deployments: "Rental Deployments",
+  users: "Users", estimation: "Estimations", thresholds: "System Thresholds",
+  lookup: "Lookup Lists", audit: "Audit Log"
+};
+
+function setBreadcrumb(parts) { breadcrumb.innerHTML = parts.map(p => p).join(' <span>›</span> '); }
+
+function render(view, detail) {
+  const title = viewTitles[view] || "Dashboard";
+  setBreadcrumb(detail ? ['McWay Admin', title, detail] : ['McWay Admin', title]);
+  switch(view) {
+    case 'dashboard': renderDashboard(); break;
+    case 'sites': detail ? renderSiteForm(detail) : renderSites(); break;
+    case 'camps': detail ? renderCampForm(detail) : renderCamps(); break;
+    case 'plants': detail ? renderPlantForm(detail) : renderPlants(); break;
+    case 'materials': detail ? renderMaterialForm(detail) : renderMaterials(); break;
+    case 'machines': detail ? renderMachineForm(detail) : renderMachines(); break;
+    case 'tankers': detail ? renderTankerForm(detail) : renderTankers(); break;
+    case 'vendors': detail ? renderVendorForm(detail) : renderVendors(); break;
+    case 'assignments': renderAssignments(); break;
+    case 'deployments': renderDeployments(); break;
+    case 'users': detail ? renderUserForm(detail) : renderUsers(); break;
+    case 'estimation': renderEstimation(); break;
+    case 'thresholds': renderThresholds(); break;
+    case 'lookup': renderLookup(); break;
+    case 'audit': renderAudit(); break;
+    default: renderDashboard();
+  }
+}
+
+function switchTab(evt, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+  evt.target.classList.add('active');
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ============== DASHBOARD ==============
+function renderDashboard() {
+  const activeAssignments = data.assignments.filter(a => a.status === 'Active').length;
+  const activeDeployments = data.deployments.filter(d => d.status === 'Active').length;
+  main.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">Admin Dashboard</div>
+        <div class="view-subtitle">Master data overview — Kalol Sanand demo environment</div>
+      </div>
+    </div>
+    <div class="info-banner">Demo environment — pre-seeded with Kalol Sanand site (2 segments), Khatraj Chokdi camp, and Magodi plant.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="label">Sites</div><div class="value">${data.sites.length}</div><div class="sub">Active roads</div></div>
+      <div class="kpi-card"><div class="label">Camps</div><div class="value">${data.camps.length}</div><div class="sub">Storage + RMC bases</div></div>
+      <div class="kpi-card"><div class="label">Plants</div><div class="value">${data.plants.length}</div><div class="sub">Production bases</div></div>
+      <div class="kpi-card"><div class="label">Materials</div><div class="value">${data.materials.length}</div></div>
+      <div class="kpi-card"><div class="label">Machines</div><div class="value">${data.machines.length}</div><div class="sub">${data.machines.filter(m=>m.status==='Breakdown').length} breakdown</div></div>
+      <div class="kpi-card"><div class="label">Active Assignments</div><div class="value">${activeAssignments}</div></div>
+      <div class="kpi-card"><div class="label">Active Rentals</div><div class="value">${activeDeployments}</div></div>
+      <div class="kpi-card"><div class="label">Vendors</div><div class="value">${data.vendors.length}</div></div>
+      <div class="kpi-card"><div class="label">Tankers</div><div class="value">${data.tankers.length}</div><div class="sub">${data.tankers[0].balance} L in stock</div></div>
+      <div class="kpi-card"><div class="label">Users</div><div class="value">${data.users.length}</div></div>
+    </div>
+    <div class="section-title">Recent Activity</div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>When</th><th>User</th><th>Action</th><th>Record</th><th>Detail</th></tr></thead>
+        <tbody>${data.audits.slice(0,5).map(a=>`<tr><td>${a.ts}</td><td>${a.user}</td><td><span class="badge badge-info">${a.action}</span></td><td>${a.rec}</td><td style="color:#6c7080">${a.field}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============== SITES ==============
+function renderSites() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Sites</div><div class="view-subtitle">${data.sites.length} site(s)</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Site</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search sites..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Active</span><span class="filter-chip">Road</span>
+      <button class="btn btn-secondary">⬇ Export</button>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Location</th><th>Segments</th><th>Total Length</th><th>Carriageway</th><th>Status</th></tr></thead>
+        <tbody>${data.sites.map(s => {
+          const totalLen = s.segments.reduce((a,b)=>a+(b.end-b.start),0)/1000;
+          const segs = s.segments.map(x=>`${(x.start/1000).toFixed(1)}–${(x.end/1000).toFixed(1)}km`).join(', ');
+          return `<tr onclick="render('sites','${s.name}')">
+            <td><strong>${s.code}</strong></td>
+            <td>${s.name}</td>
+            <td><span class="badge badge-info">${s.type}</span></td>
+            <td>${s.location}, ${s.state}</td>
+            <td>${segs}</td>
+            <td>${totalLen.toFixed(2)} km</td>
+            <td>${s.carriagewayMode} ${s.widthCombined ? s.widthCombined+' m' : s.widthLhs+'+'+s.widthRhs+' m'}</td>
+            <td><span class="badge badge-${s.status.toLowerCase()}">${s.status}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderSiteForm(name) {
+  const s = data.sites.find(x => x.name === name);
+  const totalLen = s.segments.reduce((a,b)=>a+(b.end-b.start),0)/1000;
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('sites')">← Back to list</button></div>
+      <div class="btn-group"><button class="btn btn-secondary">Duplicate</button><button class="btn btn-danger">Deactivate</button><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${s.name}</h2><div class="view-subtitle">${s.code} • ${s.type} • ${totalLen.toFixed(2)} km total</div><div style="margin-top:4px"><span class="badge badge-active">${s.status}</span></div></div></div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(event,'t-general')">General</div>
+        <div class="tab" onclick="switchTab(event,'t-segments')">Chainage Segments</div>
+        <div class="tab" onclick="switchTab(event,'t-team')">Assigned Team</div>
+        <div class="tab" onclick="switchTab(event,'t-infra')">Linked Infrastructure</div>
+        <div class="tab" onclick="switchTab(event,'t-machines')">Machines On Site</div>
+      </div>
+
+      <div id="t-general" class="tab-panel">
+        <div class="form-grid">
+          <div class="field"><label>Site Code</label><input value="${s.code}" readonly></div>
+          <div class="field"><label>Site Name</label><input value="${s.name}"></div>
+          <div class="field"><label>Type</label><select><option>${s.type}</option></select></div>
+          <div class="field"><label>Status</label><select><option>${s.status}</option></select></div>
+          <div class="field"><label>Location</label><input value="${s.location}"></div>
+          <div class="field"><label>State</label><input value="${s.state}"></div>
+          <div class="field"><label>Latitude</label><input value="${s.lat}"></div>
+          <div class="field"><label>Longitude</label><input value="${s.lng}"></div>
+          <div class="field"><label>Carriageway Mode</label><select><option>${s.carriagewayMode}</option></select></div>
+          <div class="field"><label>Combined Width (m)</label><input value="${s.widthCombined||''}"></div>
+          <div class="field"><label>Planned Start Date</label><input type="date" value="${s.plannedStart||''}"></div>
+          <div class="field"><label>Planned End Date</label><input type="date" value="${s.plannedEnd||''}"></div>
+          <div class="field full"><label>Total Length (km) — computed</label><input class="computed" readonly value="${totalLen.toFixed(2)}"></div>
+          <div class="field full"><label>Description</label><textarea>${s.notes}</textarea></div>
+        </div>
+      </div>
+
+      <div id="t-segments" class="tab-panel hidden">
+        <div class="info-banner">A site can have multiple non-continuous contract segments. Example: 1–5 km AND 7–15 km.</div>
+        <div class="segment-row" style="background:#f7f8fa; font-weight:700;">
+          <div>#</div><div>Start (m)</div><div>End (m)</div><div>Length (m)</div><div>Remarks</div>
+        </div>
+        ${s.segments.map((seg,i) => `
+          <div class="segment-row">
+            <div><strong>${i+1}</strong></div>
+            <div>${seg.start}</div>
+            <div>${seg.end}</div>
+            <div>${(seg.end-seg.start)}</div>
+            <div>—</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div id="t-team" class="tab-panel hidden">
+        <div class="warn-banner">This list is <strong>read-only</strong>. Team members are linked at User creation (User → Assigned Site), not here.</div>
+        <div class="table-container">
+          <table><thead><tr><th>Name</th><th>Role</th></tr></thead>
+          <tbody>${s.team.map(t=>`<tr><td>${t.name}</td><td><span class="badge badge-info">${t.role}</span></td></tr>`).join('')}</tbody></table>
+        </div>
+      </div>
+
+      <div id="t-infra" class="tab-panel hidden">
+        <div class="warn-banner">Read-only. Camps: set on Camp form. Plants: set on Plant form.</div>
+        <div class="form-grid">
+          <div class="field full">
+            <div class="read-only-panel"><h4>Camps Serving This Site</h4>
+              ${s.servingCamps.map(c => `<span class="tag">${c}</span>`).join('') || '<span style="color:#8a8f99">None</span>'}
+            </div>
+          </div>
+          <div class="field full">
+            <div class="read-only-panel"><h4>Plants Supplying This Site</h4>
+              ${s.supplyingPlants.map(p => `<span class="tag">${p}</span>`).join('') || '<span style="color:#8a8f99">None</span>'}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="t-machines" class="tab-panel hidden">
+        <div class="warn-banner">Read-only. Machines are linked via the Machine Assignment module.</div>
+        <div class="form-grid"><div class="field full">
+          <div class="read-only-panel"><h4>Active Machines On Site</h4>
+            ${s.machinesOnSite.map(m=>`<span class="tag">${m}</span>`).join('') || '<span style="color:#8a8f99">None</span>'}
+          </div>
+        </div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== CAMPS ==============
+function renderCamps() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Camps</div><div class="view-subtitle">${data.camps.length} camp(s)</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Camp</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search camps..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Active</span><span class="filter-chip">Has RMC</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Address</th><th>In-charge</th><th>Served Sites</th><th>RMC Mixer</th><th>Output Grades</th><th>Status</th></tr></thead>
+        <tbody>${data.camps.map(c=>`
+          <tr onclick="render('camps','${c.name}')">
+            <td><strong>${c.code}</strong></td><td>${c.name}</td><td>${c.address || '—'}</td><td>${c.incharge}</td>
+            <td>${c.servedSites.length} (${c.servedSites.join(', ')})</td>
+            <td>${c.hasRmc ? c.mixerCap+' m³/hr' : '—'}</td>
+            <td>${c.outputGrades.join(', ') || '—'}</td>
+            <td><span class="badge badge-active">${c.status}</span></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderCampForm(name) {
+  const c = data.camps.find(x => x.name === name);
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('camps')">← Back</button></div>
+      <div class="btn-group"><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${c.name}</h2><div class="view-subtitle">${c.code}</div><div style="margin-top:4px"><span class="badge badge-active">${c.status}</span></div></div></div>
+      <div class="form-grid">
+        <div class="field"><label>Camp Code</label><input value="${c.code}" readonly></div>
+        <div class="field"><label>Camp Name</label><input value="${c.name}"></div>
+        <div class="field full"><label>Address (optional)</label><input value="${c.address}"></div>
+        <div class="field"><label>Latitude</label><input value="${c.lat}"></div>
+        <div class="field"><label>Longitude</label><input value="${c.lng}"></div>
+        <div class="field"><label>Camp In-charge</label><select><option>${c.incharge}</option></select></div>
+        <div class="field"><label>Storage Capacity (MT)</label><input type="number" value="${c.storageCap}"></div>
+        <div class="field full"><label>Served Sites (mandatory, can be multiple)</label>
+          <div class="tag-input">${c.servedSites.map(x=>`<span class="tag">${x}</span>`).join('')}<input placeholder="+ Add site"></div>
+        </div>
+      </div>
+      <div class="section-title">RMC Mixer</div>
+      <div class="dev-note"><strong>Developer note:</strong> When RMC is enabled, camp becomes a mini-production unit. Actual mix formulation (cement/sand/aggregate/water ratios) pending from client — use placeholder BoMs.</div>
+      <div class="form-grid">
+        <div class="field"><label>Has RMC Mixer</label><input type="checkbox" ${c.hasRmc?'checked':''}></div>
+        <div class="field"><label>Mixer Capacity (m³/hr)</label><input type="number" value="${c.mixerCap}"></div>
+        <div class="field full"><label>Output Grades Produced</label>
+          <div class="tag-input">${c.outputGrades.map(g=>`<span class="tag">${g}</span>`).join('')}<input placeholder="+ Add grade"></div>
+        </div>
+        <div class="field full"><label>Remarks</label><textarea>${c.remarks}</textarea></div>
+      </div>
+      <div class="warn-banner" style="margin-top:16px">💡 Diesel is NOT configured here. It's a separate module that links to camps independently.</div>
+    </div>
+  `;
+}
+
+// ============== PLANTS ==============
+function renderPlants() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Plants</div><div class="view-subtitle">${data.plants.length} plant(s)</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Plant</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search plants..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Active</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Address</th><th>In-charge</th><th>Capabilities</th><th>Daily Capacity</th><th>Supplies</th><th>Status</th></tr></thead>
+        <tbody>${data.plants.map(p=>`
+          <tr onclick="render('plants','${p.name}')">
+            <td><strong>${p.code}</strong></td><td>${p.name}</td><td>${p.address}</td><td>${p.incharge}</td>
+            <td>${p.capabilities.length} types</td>
+            <td>${p.capabilities.map(c=>`${c.capacity} ${c.unit}`).join(', ')}</td>
+            <td>${p.camps.length} camps</td>
+            <td><span class="badge badge-active">${p.status}</span></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderPlantForm(name) {
+  const p = data.plants.find(x => x.name === name);
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('plants')">← Back</button></div>
+      <div class="btn-group"><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${p.name}</h2><div class="view-subtitle">${p.code}</div><div style="margin-top:4px"><span class="badge badge-active">${p.status}</span></div></div></div>
+      <div class="form-grid">
+        <div class="field"><label>Plant Code</label><input value="${p.code}" readonly></div>
+        <div class="field"><label>Plant Name</label><input value="${p.name}"></div>
+        <div class="field full"><label>Address</label><input value="${p.address}"></div>
+        <div class="field"><label>Latitude</label><input value="${p.lat}"></div>
+        <div class="field"><label>Longitude</label><input value="${p.lng}"></div>
+        <div class="field"><label>Plant In-charge</label><select><option>${p.incharge}</option></select></div>
+        <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
+      </div>
+      <div class="section-title">Production Capabilities &amp; Daily Capacity</div>
+      <div class="dev-note"><strong>Developer note:</strong> BoMs per grade (BM, DBM, BC, M10–M40) to be tuned once client provides exact mix ratios. No diesel/LDO/FO tank fields — those live in inventory & diesel module.</div>
+      <div class="table-container">
+        <table><thead><tr><th>Capability</th><th>Daily Capacity</th><th>Unit</th></tr></thead>
+        <tbody>${p.capabilities.map(cap=>`<tr><td><span class="badge badge-info">${cap.name}</span></td><td><strong>${cap.capacity}</strong></td><td>${cap.unit}</td></tr>`).join('')}</tbody></table>
+      </div>
+      <div class="section-title">Supply Network</div>
+      <div class="form-grid">
+        <div class="field"><label>Supplies To (Camps)</label>
+          <div class="tag-input">${p.camps.map(c=>`<span class="tag">${c}</span>`).join('')}</div>
+        </div>
+        <div class="field"><label>Supplies To (Sites — direct)</label>
+          <div class="tag-input">${p.sitesDirect.length?p.sitesDirect.map(s=>`<span class="tag">${s}</span>`).join(''):'<span style="color:#8a8f99">None</span>'}</div>
+        </div>
+        <div class="field full"><label>Remarks</label><textarea>${p.remarks}</textarea></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== MATERIALS ==============
+function renderMaterials() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Materials</div><div class="view-subtitle">${data.materials.length} materials</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Material</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search materials..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Raw</span><span class="filter-chip">Produced</span><span class="filter-chip">Consumable</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Category</th><th>Type</th><th>Variants</th><th>Measured In</th><th>Secondary</th><th>Density</th><th>Source</th></tr></thead>
+        <tbody>${data.materials.map(m=>`
+          <tr onclick="render('materials','${m.code}')">
+            <td><strong>${m.code}</strong></td><td>${m.name}</td><td>${m.category}</td>
+            <td><span class="badge ${m.type==='Produced'?'badge-info':m.type==='Consumable'?'badge-warn':'badge-active'}">${m.type}</span></td>
+            <td>${m.variants.length ? m.variants.slice(0,3).join(', ')+(m.variants.length>3?' +'+(m.variants.length-3):'') : '—'}</td>
+            <td>${m.uom}</td><td>${m.secUom || '—'}</td><td>${m.density || '—'}</td><td>${m.source.join(', ')}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderMaterialForm(code) {
+  const m = data.materials.find(x => x.code === code);
+  const showSec = m.category === 'Cement' || m.category === 'Steel';
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('materials')">← Back</button></div>
+      <div class="btn-group"><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${m.name}</h2><div class="view-subtitle">${m.code} • ${m.category}</div></div></div>
+      <div class="form-grid">
+        <div class="field"><label>Material Code</label><input value="${m.code}" readonly></div>
+        <div class="field"><label>Material Name</label><input value="${m.name}"></div>
+        <div class="field"><label>Category</label><select><option>${m.category}</option></select></div>
+        <div class="field"><label>Material Type (auto-derived)</label><input class="computed" readonly value="${m.type}"></div>
+        <div class="field"><label>Measured In (Primary UoM)</label><select><option>${m.uom}</option></select></div>
+        ${showSec ? `
+          <div class="field"><label>Secondary Unit</label><select><option>${m.secUom}</option></select></div>
+          <div class="field"><label>Conversion Factor</label><input value="${m.convFactor}"><span style="font-size:11px; color:#8a8f99;">How many primary units = 1 secondary? e.g., 1 bag cement = 0.05 MT → enter 0.05</span></div>
+          <div class="field"></div>
+        ` : `<div class="field"></div><div class="field"></div>`}
+        <div class="field"><label>Density (kg/m³)</label><input value="${m.density}"></div>
+        <div class="field"><label>Low Stock Threshold (in ${m.uom})</label><input type="number"></div>
+        <div class="field full"><label>Source Types</label>
+          <div class="tag-input">${m.source.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+        </div>
+        <div class="field full"><label>Variants (Grades / Sizes)</label>
+          <div class="tag-input">${m.variants.map(v=>`<span class="tag">${v}</span>`).join('') || '<span style="color:#8a8f99">No variants</span>'}</div>
+        </div>
+        <div class="field"><label>Active</label><input type="checkbox" ${m.active?'checked':''}></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== MACHINES ==============
+function renderMachines() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Machines</div><div class="view-subtitle">${data.machines.length} machines • ${data.machines.filter(m=>m.status==='Breakdown').length} breakdown</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Machine</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search machines..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Owned</span><span class="filter-chip">Rented</span><span class="filter-chip">Breakdown</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Reg. No.</th><th>Category</th><th>Make/Model</th><th>Ownership</th><th>Fuel Avg</th><th>Current Assignment</th><th>Status</th></tr></thead>
+        <tbody>${data.machines.map(m=>{
+          const cls = m.status === 'Breakdown' ? 'badge-breakdown' : 'badge-active';
+          const asn = data.assignments.find(a=>a.machine.startsWith(m.code) && a.status==='Active');
+          return `<tr onclick="render('machines','${m.code}')">
+            <td><strong>${m.code}</strong></td><td>${m.name}</td><td>${m.category}</td>
+            <td>${m.make} ${m.model}</td>
+            <td><span class="badge ${m.ownership==='Owned'?'badge-info':'badge-warn'}">${m.ownership}</span></td>
+            <td>${m.fuelAvg} ${m.fuelUnit}</td>
+            <td>${asn ? asn.targetType+' · '+asn.target : '<em style="color:#8a8f99">Unassigned</em>'}</td>
+            <td><span class="badge ${cls}">${m.status}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderMachineForm(code) {
+  const m = data.machines.find(x => x.code === code);
+  const asn = data.assignments.find(a=>a.machine.startsWith(m.code) && a.status==='Active');
+  const deps = data.deployments.filter(d=>d.machine.startsWith(m.code));
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('machines')">← Back</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="render('assignments')">📌 Transfer / Assign</button>
+        ${m.ownership==='Rented' ? `<button class="btn btn-secondary" onclick="render('deployments')">📄 Rental Deployment</button>` : ''}
+        <button class="btn btn-primary">💾 Save</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${m.name}</h2><div class="view-subtitle">${m.code} • ${m.category}</div><div style="margin-top:4px"><span class="badge ${m.status==='Breakdown'?'badge-breakdown':'badge-active'}">${m.status}</span></div></div></div>
+      <div class="info-banner"><strong>Machine Master = permanent info only.</strong> Rental terms (vendor, rate, fuel mode) are per-spell in Rental Deployments. Site/Camp/Plant placement is in Machine Assignment.</div>
+      <div class="form-grid">
+        <div class="field"><label>Machine Code</label><input value="${m.code}" readonly></div>
+        <div class="field"><label>Reg. No. / Name</label><input value="${m.name}"></div>
+        <div class="field"><label>Category</label><select><option>${m.category}</option></select></div>
+        <div class="field"><label>Status</label><select><option>${m.status}</option></select></div>
+        <div class="field"><label>Make / Brand</label><input value="${m.make}"></div>
+        <div class="field"><label>Model</label><input value="${m.model}"></div>
+        <div class="field full"><label>Capacity / Specification</label><input value="${m.capacity}"></div>
+        <div class="field"><label>Ownership Class</label><select><option>${m.ownership}</option></select></div>
+        <div class="field"></div>
+        <div class="field"><label>Expected Fuel Average</label><input value="${m.fuelAvg}"></div>
+        <div class="field"><label>Fuel Unit</label><select><option>${m.fuelUnit}</option></select></div>
+      </div>
+      <div class="section-title">Current Assignment (derived)</div>
+      <div class="read-only-panel">
+        ${asn ? `<strong>${asn.code}</strong> — ${asn.targetType}: <span class="tag">${asn.target}</span> since ${asn.startDate}` : '<em>No active assignment</em>'}
+      </div>
+      ${m.ownership === 'Rented' ? `
+        <div class="section-title">Rental Deployments (history)</div>
+        <div class="table-container">
+          <table><thead><tr><th>Code</th><th>Vendor</th><th>Fuel Mode</th><th>Rate (₹/day)</th><th>Period</th><th>Status</th></tr></thead>
+          <tbody>${deps.length ? deps.map(d=>`<tr><td>${d.code}</td><td>${d.vendor}</td><td>${d.fuelMode}</td><td>${d.rate.toLocaleString('en-IN')}</td><td>${d.startDate} → ${d.endDate||'open'}</td><td><span class="badge badge-active">${d.status}</span></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center; color:#8a8f99;">No deployments</td></tr>'}</tbody></table>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// ============== ASSIGNMENTS ==============
+function renderAssignments() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Machine Assignments</div><div class="view-subtitle">Assign machines to one Site / Camp / Plant at a time. Transfer auto-closes previous.</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Assignment</button></div>
+    </div>
+    <div class="toolbar">
+      <span class="filter-chip active">All</span><span class="filter-chip">Active</span><span class="filter-chip">Closed</span>
+      <span class="filter-chip">Site</span><span class="filter-chip">Camp</span><span class="filter-chip">Plant</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Machine</th><th>Target Type</th><th>Target</th><th>Operator</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+        <tbody>${data.assignments.map(a=>`
+          <tr>
+            <td><strong>${a.code}</strong></td><td>${a.machine}</td>
+            <td><span class="badge badge-info">${a.targetType}</span></td>
+            <td>${a.target}</td><td>${a.operator || '—'}</td>
+            <td>${a.startDate}</td><td>${a.endDate || '<em style="color:#8a8f99">open</em>'}</td>
+            <td><span class="badge ${a.status==='Active'?'badge-active':'badge-inactive'}">${a.status}</span></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============== DEPLOYMENTS ==============
+function renderDeployments() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Rental Deployments</div><div class="view-subtitle">Per-rental-spell terms: vendor, rate, fuel mode, dates</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Deployment</button></div>
+    </div>
+    <div class="info-banner">
+      <strong>Diesel-offset example (With Fuel):</strong> Vendor quote ₹2,400/day includes diesel. If we pay ₹1,000 from our pocket to fuel the machine, system records it as recoverable from vendor. Net payable = ₹2,400 − ₹1,000 = <strong>₹1,400</strong>. No double count.
+    </div>
+    <div class="toolbar">
+      <span class="filter-chip active">All</span><span class="filter-chip">Active</span><span class="filter-chip">With Fuel</span><span class="filter-chip">Without Fuel</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Machine</th><th>Vendor</th><th>Fuel Mode</th><th>Rate (₹/day)</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+        <tbody>${data.deployments.map(d=>`
+          <tr>
+            <td><strong>${d.code}</strong></td><td>${d.machine}</td><td>${d.vendor}</td>
+            <td><span class="badge ${d.fuelMode==='With Fuel'?'badge-warn':'badge-info'}">${d.fuelMode}</span></td>
+            <td>₹${d.rate.toLocaleString('en-IN')}</td>
+            <td>${d.startDate}</td><td>${d.endDate || '<em style="color:#8a8f99">open</em>'}</td>
+            <td><span class="badge badge-active">${d.status}</span></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============== TANKERS ==============
+function renderTankers() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Tankers</div><div class="view-subtitle">${data.tankers.length} tanker(s)</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Tanker</button></div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Reg. No.</th><th>Capacity (L)</th><th>Current Balance (L)</th><th>Authorised Operators</th><th>Current Location</th><th>Status</th></tr></thead>
+        <tbody>${data.tankers.map(t=>`
+          <tr onclick="render('tankers','${t.code}')">
+            <td><strong>${t.code}</strong></td><td>${t.name}</td><td>${t.capacity}</td>
+            <td><strong>${t.balance}</strong></td>
+            <td>${t.operators.join(', ')}</td>
+            <td>${t.currentLocation}</td>
+            <td><span class="badge badge-active">${t.status}</span></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderTankerForm(code) {
+  const t = data.tankers.find(x => x.code === code);
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('tankers')">← Back</button></div>
+      <div class="btn-group"><button class="btn btn-secondary">Opening Stock Adjustment</button><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${t.name}</h2><div class="view-subtitle">${t.code}</div><div style="margin-top:4px"><span class="badge badge-active">${t.status}</span></div></div></div>
+      <div class="info-banner">Current Balance is system-maintained. Use "Opening Stock Adjustment" if tanker contains diesel at go-live.</div>
+      <div class="form-grid">
+        <div class="field"><label>Tanker Code</label><input value="${t.code}" readonly></div>
+        <div class="field"><label>Reg. No.</label><input value="${t.name}"></div>
+        <div class="field"><label>Tank Capacity (L)</label><input value="${t.capacity}"></div>
+        <div class="field"><label>Current Balance (L) — system-maintained</label><input class="computed" readonly value="${t.balance}"></div>
+        <div class="field full"><label>Authorised Operators (multiple)</label>
+          <div class="tag-input">${t.operators.map(o=>`<span class="tag">${o}</span>`).join('')}<input placeholder="+ Add operator"></div>
+        </div>
+        <div class="field"><label>Current Location (auto)</label><input class="computed" readonly value="${t.currentLocation}"></div>
+        <div class="field"><label>Status</label><select><option>${t.status}</option></select></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== VENDORS ==============
+function renderVendors() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Vendors</div><div class="view-subtitle">${data.vendors.length} vendors • ₹${data.vendors.reduce((s,v)=>s+v.netBalance,0).toLocaleString('en-IN')} total net balance</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Vendor</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search vendors..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Machine Rental</span><span class="filter-chip">Material Supplier</span><span class="filter-chip">Diesel Supplier</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Contact</th><th>Phone</th><th>GSTIN</th><th>Roles</th><th>Net Balance ₹</th><th>Status</th></tr></thead>
+        <tbody>${data.vendors.map(v=>`
+          <tr onclick="render('vendors','${v.code}')">
+            <td><strong>${v.code}</strong></td><td>${v.name}</td><td>${v.contact}</td><td>${v.phone}</td>
+            <td>${v.gst || '—'}</td>
+            <td>${v.roles.map(r=>`<span class="badge badge-info">${r}</span>`).join(' ')}</td>
+            <td><strong>${v.netBalance.toLocaleString('en-IN')}</strong></td>
+            <td><span class="badge badge-active">${v.status}</span></td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderVendorForm(code) {
+  const v = data.vendors.find(x => x.code === code);
+  const deps = data.deployments.filter(d => d.vendor === v.name);
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('vendors')">← Back</button></div>
+      <div class="btn-group"><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${v.name}</h2><div class="view-subtitle">${v.code}</div><div style="margin-top:4px"><span class="badge badge-active">${v.status}</span></div></div></div>
+      <div class="form-grid">
+        <div class="field"><label>Vendor Code</label><input value="${v.code}" readonly></div>
+        <div class="field"><label>Vendor Name</label><input value="${v.name}"></div>
+        <div class="field"><label>Contact Person</label><input value="${v.contact}"></div>
+        <div class="field"><label>Phone (optional)</label><input value="${v.phone}"></div>
+        <div class="field"><label>Email (optional)</label><input value="${v.email}"></div>
+        <div class="field"><label>GSTIN</label><input value="${v.gst}"></div>
+        <div class="field"><label>Payment Terms</label><select><option>${v.terms}</option></select></div>
+        <div class="field"><label>Net Balance (₹) — computed</label><input class="computed" readonly value="${v.netBalance.toLocaleString('en-IN')}"></div>
+        <div class="field full"><label>Vendor Roles</label>
+          <div class="tag-input">${v.roles.map(r=>`<span class="tag">${r}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="section-title">Deployment History</div>
+      <div class="table-container">
+        <table><thead><tr><th>Code</th><th>Machine</th><th>Fuel Mode</th><th>Rate</th><th>Start</th><th>Status</th></tr></thead>
+        <tbody>${deps.length?deps.map(d=>`<tr><td>${d.code}</td><td>${d.machine}</td><td>${d.fuelMode}</td><td>₹${d.rate.toLocaleString('en-IN')}</td><td>${d.startDate}</td><td><span class="badge badge-active">${d.status}</span></td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center; color:#8a8f99;">No deployments</td></tr>'}</tbody></table>
+      </div>
+    </div>
+  `;
+}
+
+// ============== USERS ==============
+function renderUsers() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Users &amp; Roles</div><div class="view-subtitle">${data.users.length} users</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New User</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search users..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Admin</span><span class="filter-chip">Owner</span>
+      <span class="filter-chip">SE</span><span class="filter-chip">Supervisor</span><span class="filter-chip">Camp</span><span class="filter-chip">Plant</span><span class="filter-chip">Tanker</span><span class="filter-chip">Verifier</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Login</th><th>Role</th><th>Assignment Type</th><th>Assigned To</th><th>Platform</th><th>Last Login</th></tr></thead>
+        <tbody>${data.users.map(u=>{
+          const plat = [u.web?'Web':'', u.mobile?'Mobile':''].filter(Boolean).join(' + ');
+          return `<tr onclick="render('users','${u.code}')">
+            <td><strong>${u.code}</strong></td><td>${u.name}</td><td>${u.login}</td>
+            <td><span class="badge badge-info">${u.role}</span></td>
+            <td>${u.assignType}</td><td>${u.assignTarget}</td>
+            <td>${plat}</td><td>${u.lastLogin}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderUserForm(code) {
+  const u = data.users.find(x => x.code === code);
+  main.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="render('users')">← Back</button></div>
+      <div class="btn-group"><button class="btn btn-secondary">Reset Password</button><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-header"><div><h2>${u.name}</h2><div class="view-subtitle">${u.code} • ${u.role}</div></div></div>
+      <div class="info-banner">A user can be assigned to only ONE scope (Site / Camp / Plant / Tanker / None). Admin can change anytime.</div>
+      <div class="form-grid">
+        <div class="field"><label>User Code</label><input value="${u.code}" readonly></div>
+        <div class="field"><label>Full Name</label><input value="${u.name}"></div>
+        <div class="field"><label>Login</label><input value="${u.login}"></div>
+        <div class="field"><label>Email (optional)</label><input></div>
+        <div class="field"><label>Phone (optional)</label><input></div>
+        <div class="field"><label>Language</label><select><option>${u.lang}</option></select></div>
+        <div class="field"><label>Role</label><select><option>${u.role}</option></select></div>
+        <div class="field"><label>Assignment Type</label><select><option>${u.assignType}</option></select></div>
+        <div class="field full"><label>Assigned Target</label><input class="computed" readonly value="${u.assignTarget}"></div>
+        <div class="field"><label>Web Access</label><input type="checkbox" ${u.web?'checked':''}></div>
+        <div class="field"><label>Mobile Access</label><input type="checkbox" ${u.mobile?'checked':''}></div>
+        <div class="field"><label>Status</label><select><option>${u.status}</option></select></div>
+        <div class="field"><label>Last Login</label><input class="computed" readonly value="${u.lastLogin}"></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== ESTIMATION ==============
+function renderEstimation() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Estimations</div><div class="view-subtitle">Layer-wise baselines (⚠️ TBD with client)</div></div>
+      <div class="btn-group"><button class="btn btn-primary">+ New Estimation</button></div>
+    </div>
+    <div class="dev-note"><strong>⚠️ TBD:</strong> Detailed discussion pending with client. Field definitions and calculations are preliminary.</div>
+    <div class="table-container">
+      <table><thead><tr><th>Site</th><th>Stretch</th><th>Layer</th><th>L×W×T</th><th>Density</th><th>Est. Qty</th><th>Daily Target</th></tr></thead>
+      <tbody>
+        <tr><td>Kalol Sanand</td><td>1000–5000 m</td><td><span class="badge badge-info">GSB</span></td><td>4000 × 7.5 × 0.2 m</td><td>2100</td><td>12,600 MT</td><td>500 MT/day</td></tr>
+        <tr><td>Kalol Sanand</td><td>1000–5000 m</td><td><span class="badge badge-info">WMM</span></td><td>4000 × 7.5 × 0.15 m</td><td>2200</td><td>9,900 MT</td><td>400 MT/day</td></tr>
+        <tr><td>Kalol Sanand</td><td>7000–15000 m</td><td><span class="badge badge-info">DBM</span></td><td>8000 × 7.5 × 0.075 m</td><td>2400</td><td>10,800 MT</td><td>300 MT/day</td></tr>
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============== THRESHOLDS ==============
+function renderThresholds() {
+  const t = data.thresholds;
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">System Thresholds</div><div class="view-subtitle">Global rules for alerts and variance</div></div>
+      <div class="btn-group"><button class="btn btn-primary">💾 Save</button></div>
+    </div>
+    <div class="form-container">
+      <div class="form-grid">
+        <div class="field"><label>Variance Tolerance (%)</label><input value="${t.variance}"></div>
+        <div class="field"><label>Unverified Entry Alert (days)</label><input value="${t.unverifiedAlert}"></div>
+        <div class="field"><label>Low-Stock Alert (%)</label><input value="${t.lowStock}"></div>
+        <div class="field"><label>Idle Machine Alert (hours) — Phase 2</label><input value="${t.idleMachine}"></div>
+        <div class="field"><label>DPR Cutoff Time</label><input value="${t.dprCutoff}"></div>
+        <div class="field"><label>Report Frequency</label><select><option>${t.reportFreq}</option></select></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== LOOKUP ==============
+function renderLookup() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Lookup Lists</div><div class="view-subtitle">Admin-managed dropdown values</div></div>
+    </div>
+    <div class="info-banner"><strong>Configurable lists:</strong> Material Categories, Machine Categories, Layers, Source Types, Production Capabilities, Payment Terms, Vendor Roles, Concrete Grades, Steel Diameters, Aggregate Sizes, Bitumen Grades, Emulsion Types, Pipe Diameters.</div>
+    <div class="warn-banner">Full editor available in the <strong>McWay_Admin_Forms.html</strong> mockup (click "Lookup Lists" there to see the edit grid).</div>
+    <div class="table-container">
+      <table><thead><tr><th>List</th><th>Sample Values</th><th>Used In</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Material Categories</strong></td><td>Aggregate, Cement, Sand, Steel, Bitumen, Emulsion, Pipe, Fuel, Concrete Mix, Bituminous Mix</td><td>Material Master</td></tr>
+        <tr><td><strong>Machine Categories</strong></td><td>Excavator, JCB, Roller, Paver, Loader, Dumper, Mixer, Grader...</td><td>Machine Master</td></tr>
+        <tr><td><strong>Layers / Activities</strong></td><td>GSB, WMM, BM, DBM, BC, SDBC, MSS, CC, UTWC, PQC</td><td>Dumping, Progress, Estimation</td></tr>
+        <tr><td><strong>Source Types</strong></td><td>Plant, Camp, External Vendor, Quarry, Sub-Contractor</td><td>Material, Camp Inward</td></tr>
+        <tr><td><strong>Production Capabilities</strong></td><td>Bituminous Mix, Concrete (RMC), Emulsion, Steel Cutting/Bending</td><td>Plant Master</td></tr>
+        <tr><td><strong>Payment Terms</strong></td><td>Immediate, Net 7, Net 15, Net 30, Net 45</td><td>Vendor</td></tr>
+        <tr><td><strong>Vendor Roles</strong></td><td>Machine Rental, Material Supplier, Diesel Supplier, Other</td><td>Vendor</td></tr>
+        <tr><td><strong>Concrete Grades</strong></td><td>M10, M15, M20, M25, M30, M35, M40</td><td>Material variants</td></tr>
+        <tr><td><strong>Steel Diameters</strong></td><td>8, 10, 12, 16, 20, 25, 32 mm</td><td>Material variants</td></tr>
+        <tr><td><strong>Aggregate Sizes</strong></td><td>6mm, 10mm, 20mm, 25-40mm, Storm dust</td><td>Material variants</td></tr>
+        <tr><td><strong>Bitumen Grades</strong></td><td>VG10, VG30, VG40</td><td>Material variants</td></tr>
+        <tr><td><strong>Emulsion Types</strong></td><td>SS1, RS1, RS2, CRS1</td><td>Material variants</td></tr>
+        <tr><td><strong>Pipe Diameters</strong></td><td>300mm, 600mm, 900mm, 1200mm</td><td>Material variants</td></tr>
+      </tbody></table>
+    </div>
+  `;
+}
+
+// ============== AUDIT ==============
+function renderAudit() {
+  main.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Audit Log</div><div class="view-subtitle">Admin-only change history</div></div>
+      <div class="btn-group"><button class="btn btn-secondary">⬇ Export CSV</button></div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Create</span><span class="filter-chip">Write</span><span class="filter-chip">State-change</span>
+    </div>
+    <div class="table-container">
+      <table><thead><tr><th>When</th><th>User</th><th>Model</th><th>Record</th><th>Action</th><th>Changed</th></tr></thead>
+      <tbody>${data.audits.map(a=>`<tr><td>${a.ts}</td><td>${a.user}</td><td><code>${a.model}</code></td><td>${a.rec}</td><td><span class="badge badge-info">${a.action}</span></td><td style="color:#6c7080">${a.field}</td></tr>`).join('')}</tbody></table>
+    </div>
+  `;
+}
+
+render('dashboard');
+</script>
+</body>
+</html>

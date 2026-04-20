@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>McWay Camp Module — Mockup v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; color: #2d3142; background: #f4f5f7; height: 100vh; overflow: hidden; }
+  .topbar { height: 48px; background: #2d6a4f; color: #fff; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .topbar .logo { font-weight: 600; font-size: 15px; }
+  .topbar .logo .tag { background: #ffb300; color: #333; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-left: 8px; font-weight: 700; }
+  .topbar .breadcrumb { margin-left: 24px; color: rgba(255,255,255,0.8); font-size: 12px; }
+  .topbar .breadcrumb span { margin: 0 6px; }
+  .topbar .user { margin-left: auto; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+  .topbar .avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .layout { display: flex; margin-top: 48px; height: calc(100vh - 48px); }
+  .sidebar { width: 230px; background: #fff; border-right: 1px solid #e0e2e7; overflow-y: auto; flex-shrink: 0; }
+  .sidebar-group { padding: 10px 0; border-bottom: 1px solid #eef0f3; }
+  .sidebar-group-title { font-size: 10px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 18px; }
+  .sidebar-item { padding: 9px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #4a4f5c; border-left: 3px solid transparent; font-size: 13px; }
+  .sidebar-item:hover { background: #edf5f0; }
+  .sidebar-item.active { background: #edf5f0; border-left-color: #2d6a4f; color: #2d6a4f; font-weight: 600; }
+  .sidebar-item .icon { width: 18px; text-align: center; }
+  .sidebar-item .count { margin-left: auto; background: #dc3545; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px 40px; }
+  .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .view-title { font-size: 20px; font-weight: 600; }
+  .view-subtitle { font-size: 12px; color: #8a8f99; margin-top: 2px; }
+  .btn { padding: 7px 14px; border-radius: 4px; border: 1px solid transparent; font-size: 13px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: #2d6a4f; color: #fff; }
+  .btn-primary:hover { background: #1b4332; }
+  .btn-secondary { background: #fff; color: #4a4f5c; border-color: #d8dae0; }
+  .btn-secondary:hover { background: #f4f5f7; }
+  .btn-success { background: #198754; color: #fff; }
+  .btn-success:hover { background: #157347; }
+  .btn-warn { background: #ffc107; color: #333; }
+  .btn-danger { background: #dc3545; color: #fff; }
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toolbar { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 180px; padding: 6px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; }
+  .filter-chip { padding: 4px 10px; background: #f4f5f7; border: 1px solid #d8dae0; border-radius: 14px; font-size: 12px; cursor: pointer; color: #4a4f5c; }
+  .filter-chip.active { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+  .table-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f7f8fa; padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6c7080; letter-spacing: 0.5px; border-bottom: 1px solid #e0e2e7; white-space: nowrap; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #fafbfc; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-active, .badge-ok { background: #d4f4dd; color: #1a7b36; }
+  .badge-inactive { background: #e0e2e7; color: #6c7080; }
+  .badge-submitted { background: #d4e5f7; color: #1a5a9b; }
+  .badge-verified { background: #d4f4dd; color: #1a7b36; }
+  .badge-locked { background: #e0e2e7; color: #4a4f5c; }
+  .badge-draft { background: #fff4d4; color: #8b6b00; }
+  .badge-info { background: #d4e5f7; color: #1a5a9b; }
+  .badge-warn { background: #fff4d4; color: #8b6b00; }
+  .badge-low { background: #fff4d4; color: #8b6b00; }
+  .badge-critical { background: #fddede; color: #b5313c; }
+  .badge-plant { background: #e0d4f4; color: #5a1a9b; }
+  .badge-vendor { background: #d4e5f7; color: #1a5a9b; }
+  .badge-quarry { background: #fde9d4; color: #b86e00; }
+  .form-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 20px 24px; }
+  .form-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid #eef0f3; margin-bottom: 20px; }
+  .form-header h2 { font-size: 18px; font-weight: 600; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 28px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 11px; font-weight: 600; color: #6c7080; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field label .req { color: #dc3545; margin-left: 2px; }
+  .field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; font-family: inherit; background: #fff; }
+  .field input:focus, .field select:focus { outline: none; border-color: #2d6a4f; box-shadow: 0 0 0 3px rgba(45,106,79,0.1); }
+  .field input[readonly], .field .computed { background: #f7f8fa; color: #6c7080; cursor: not-allowed; }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field .hint { font-size: 11px; color: #8a8f99; }
+  .section-title { font-size: 13px; font-weight: 700; color: #4a4f5c; margin: 22px 0 12px; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #2d6a4f; padding-left: 10px; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid #e0e2e7; margin-bottom: 20px; }
+  .tab { padding: 10px 16px; cursor: pointer; font-size: 13px; color: #6c7080; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab:hover { color: #2d6a4f; }
+  .tab.active { color: #2d6a4f; border-bottom-color: #2d6a4f; font-weight: 600; }
+  .hidden { display: none !important; }
+  .info-banner { background: #e7f1fb; border: 1px solid #b4d5f2; color: #1a5a9b; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .warn-banner { background: #fff9e6; border: 1px solid #ffe0a6; color: #7a5800; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .success-banner { background: #d4f4dd; border: 1px solid #a3e4b5; color: #1a7b36; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .kpi-card { background: #fff; border: 1px solid #e0e2e7; border-radius: 8px; padding: 16px; transition: box-shadow 0.15s; cursor: pointer; }
+  .kpi-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .kpi-card .label { font-size: 11px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-card .value { font-size: 26px; font-weight: 700; color: #2d6a4f; margin-top: 4px; }
+  .kpi-card .sub { font-size: 11px; color: #8a8f99; margin-top: 4px; }
+  .kpi-card.alert .value { color: #dc3545; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: #e0eed8; color: #2d6a4f; border-radius: 12px; font-size: 12px; }
+  .activity-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .activity-icon.in { background: #d4f4dd; }
+  .activity-icon.out { background: #fddede; }
+  .activity-icon.prod { background: #e0d4f4; }
+  .activity-icon.labor { background: #d4e5f7; }
+  .activity-icon.shut { background: #fde9d4; }
+  .activity-time { color: #8a8f99; font-size: 11px; margin-left: auto; white-space: nowrap; }
+  .stock-bar { height: 6px; background: #e0e2e7; border-radius: 3px; overflow: hidden; width: 80px; display: inline-block; vertical-align: middle; margin-left: 8px; }
+  .stock-bar-fill { height: 100%; border-radius: 3px; }
+  .input-row { display: grid; grid-template-columns: 2fr 1fr 1fr 40px; gap: 8px; padding: 8px 10px; background: #fafbfc; border-radius: 4px; margin-bottom: 6px; align-items: end; }
+  .input-row .lbl { font-size: 11px; font-weight: 600; color: #6c7080; text-transform: uppercase; }
+  .photo-upload { border: 2px dashed #d8dae0; border-radius: 6px; padding: 20px; text-align: center; color: #8a8f99; cursor: pointer; }
+  .photo-upload:hover { border-color: #2d6a4f; color: #2d6a4f; }
+  .verify-actions { display: flex; gap: 6px; }
+  .age-stale { color: #dc3545; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">McWay Camp<span class="tag">DEMO v1</span></div>
+  <div class="breadcrumb" id="breadcrumb">Camp Operations <span>&rsaquo;</span> Home</div>
+  <div class="user">
+    <span style="opacity:0.7">Khatraj Chokdi</span>
+    <span>Suresh Rathod (Camp In-charge)</span>
+    <div class="avatar">SR</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-item active" data-view="home"><span class="icon">🏠</span> Home</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Transactions</div>
+      <div class="sidebar-item" data-view="inward"><span class="icon">📥</span> Material Inward</div>
+      <div class="sidebar-item" data-view="outward"><span class="icon">📤</span> Material Outward</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Inventory</div>
+      <div class="sidebar-item" data-view="stock"><span class="icon">📊</span> Stock Register</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Production</div>
+      <div class="sidebar-item" data-view="rmc"><span class="icon">🏗️</span> RMC Production</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Operations</div>
+      <div class="sidebar-item" data-view="labor"><span class="icon">👷</span> Labor</div>
+      <div class="sidebar-item" data-view="shuttering"><span class="icon">🔩</span> Shuttering</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Review</div>
+      <div class="sidebar-item" data-view="verify"><span class="icon">✅</span> Verification Queue <span class="count">4</span></div>
+    </div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+// ============== DEMO DATA ==============
+const camp = { name: "Khatraj Chokdi", code: "CAMP/2026/001", incharge: "Suresh Rathod", hasRmc: true, servedSites: ["Kalol Sanand"] };
+
+const inwardData = [
+  { code:"CIN/2026/0001", date:"2026-04-15 08:30", material:"Aggregate", variant:"20mm", sourceType:"Vendor", source:"Maruti Hirers", vehicle:"GJ-01-XX-1234", slip:"SLP-0401", royalty:"ROY-11234", gross:25.0, tare:7.0, net:18.0, uom:"MT", state:"Verified", photo:false },
+  { code:"CIN/2026/0002", date:"2026-04-15 10:15", material:"Cement", variant:"—", sourceType:"Vendor", source:"Maruti Hirers", vehicle:"GJ-01-XX-5678", slip:"SLP-0402", royalty:"", gross:32.0, tare:12.0, net:20.0, uom:"MT", secQty:"400 bags", state:"Verified", photo:false },
+  { code:"CIN/2026/0003", date:"2026-04-15 14:00", material:"Sand", variant:"—", sourceType:"Quarry", source:"Shree Construction", vehicle:"GJ-01-YY-9012", slip:"SLP-0403", royalty:"ROY-11240", gross:28.5, tare:8.5, net:20.0, uom:"MT", state:"Verified", photo:false },
+  { code:"CIN/2026/0004", date:"2026-04-16 09:20", material:"Aggregate", variant:"6mm", sourceType:"Plant", source:"Magodi", vehicle:"GJ-01-ZZ-3456", slip:"PLT-0088", royalty:"", gross:22.0, tare:7.0, net:15.0, uom:"MT", state:"Submitted", photo:true },
+  { code:"CIN/2026/0005", date:"2026-04-16 11:45", material:"Steel", variant:"12mm", sourceType:"Vendor", source:"Maruti Hirers", vehicle:"GJ-01-XX-7890", slip:"SLP-0404", royalty:"", gross:15.0, tare:5.0, net:10.0, uom:"MT", secQty:"~1,250 pcs", state:"Submitted", photo:false },
+  { code:"CIN/2026/0006", date:"2026-04-17 07:50", material:"Aggregate", variant:"20mm", sourceType:"Plant", source:"Magodi", vehicle:"GJ-01-ZZ-7777", slip:"PLT-0095", royalty:"", gross:30.0, tare:8.0, net:22.0, uom:"MT", state:"Submitted", photo:true },
+  { code:"CIN/2026/0007", date:"2026-04-17 09:10", material:"Cement", variant:"—", sourceType:"Vendor", source:"Shakti Aggregates", vehicle:"GJ-05-AB-3333", slip:"SLP-0410", royalty:"", gross:28.0, tare:10.0, net:18.0, uom:"MT", secQty:"360 bags", state:"Draft", photo:false },
+];
+
+const outwardData = [
+  { code:"COUT/2026/0001", date:"2026-04-16 08:00", material:"Aggregate", variant:"20mm", site:"Kalol Sanand", qty:10.0, uom:"MT", vehicle:"GJ-01-XX-1234", slip:"CHN-0201", receiver:"Mahesh Desai", state:"Verified" },
+  { code:"COUT/2026/0002", date:"2026-04-16 08:45", material:"Cement", variant:"—", site:"Kalol Sanand", qty:5.0, uom:"MT", vehicle:"GJ-01-XX-5678", slip:"CHN-0202", receiver:"Mahesh Desai", state:"Verified" },
+  { code:"COUT/2026/0003", date:"2026-04-16 13:30", material:"Steel", variant:"12mm", site:"Kalol Sanand", qty:3.0, uom:"MT", vehicle:"GJ-01-XX-7890", slip:"CHN-0203", receiver:"Pravin Modi", state:"Submitted" },
+  { code:"COUT/2026/0004", date:"2026-04-17 07:15", material:"Aggregate", variant:"20mm", site:"Kalol Sanand", qty:8.0, uom:"MT", vehicle:"GJ-01-ZZ-7777", slip:"CHN-0210", receiver:"", state:"Submitted" },
+  { code:"COUT/2026/0005", date:"2026-04-17 10:00", material:"Concrete Mix", variant:"M25", site:"Kalol Sanand", qty:2.0, uom:"m³", vehicle:"GJ-01-XX-1234", slip:"CHN-0211", receiver:"Mahesh Desai", state:"Draft" },
+];
+
+const stockData = [
+  { material:"Aggregate", variant:"20mm", uom:"MT", opening:0, inward:40.0, prodIn:0, outward:18.0, prodConsumed:2.10, shutIssue:0, closing:19.90, threshold:10, status:"ok" },
+  { material:"Aggregate", variant:"6mm", uom:"MT", opening:0, inward:15.0, prodIn:0, outward:0, prodConsumed:0, shutIssue:0, closing:15.0, threshold:8, status:"ok" },
+  { material:"Cement", variant:"—", uom:"MT", opening:0, inward:38.0, prodIn:0, outward:5.0, prodConsumed:0.70, shutIssue:0, closing:32.30, threshold:10, status:"ok" },
+  { material:"Sand", variant:"—", uom:"MT", opening:0, inward:20.0, prodIn:0, outward:0, prodConsumed:1.20, shutIssue:0, closing:18.80, threshold:8, status:"ok" },
+  { material:"Steel", variant:"12mm", uom:"MT", opening:0, inward:10.0, prodIn:0, outward:3.0, prodConsumed:0, shutIssue:0, closing:7.0, threshold:5, status:"ok" },
+  { material:"Concrete Mix", variant:"M25", uom:"m³", opening:0, inward:0, prodIn:2.0, outward:2.0, prodConsumed:0, shutIssue:0, closing:0, threshold:0, status:"ok" },
+  { material:"Pipe", variant:"600mm", uom:"Nos", opening:0, inward:50, prodIn:0, outward:12, prodConsumed:0, shutIssue:0, closing:38, threshold:10, status:"ok" },
+];
+
+const rmcData = [
+  { code:"CPRD/2026/0001", date:"2026-04-16 10:30", shift:"Morning", operator:"Ramesh Mixer", grade:"M25", outputQty:2.0, uom:"m³", diesel:8.0, site:"Kalol Sanand", inputs:[
+    { material:"Cement", qty:0.70, uom:"MT" }, { material:"Sand", qty:1.20, uom:"MT" }, { material:"Aggregate 20mm", qty:2.10, uom:"MT" }, { material:"Water", qty:340, uom:"L" }
+  ], state:"Submitted" },
+];
+
+const laborData = [
+  { code:"LAB/2026/0001", date:"2026-04-16", party:"Ramesh Mukadam", workers:12, deployedTo:"Site", site:"Kalol Sanand", purpose:"Concrete work", state:"Verified" },
+  { code:"LAB/2026/0002", date:"2026-04-17", party:"Ramesh Mukadam", workers:8, deployedTo:"Camp", site:"—", purpose:"Shuttering / prep", state:"Submitted" },
+  { code:"LAB/2026/0003", date:"2026-04-17", party:"Gopal Thakur", workers:15, deployedTo:"Site", site:"Kalol Sanand", purpose:"Excavation", state:"Submitted" },
+];
+
+const shutteringData = [
+  { code:"SHT/2026/0001", date:"2026-04-14", type:"Inward", item:"Steel Plate 1.2m x 0.6m", qty:100, site:"—", vendor:"Shree Construction", condition:"", remarks:"Initial stock", state:"Verified" },
+  { code:"SHT/2026/0002", date:"2026-04-15", type:"Issue to Site", item:"Steel Plate 1.2m x 0.6m", qty:30, site:"Kalol Sanand", vendor:"", condition:"", remarks:"For culvert C-01", state:"Verified" },
+  { code:"SHT/2026/0003", date:"2026-04-16", type:"Return from Site", item:"Steel Plate 1.2m x 0.6m", qty:20, site:"Kalol Sanand", vendor:"", condition:"Good", remarks:"Culvert C-01 complete", state:"Submitted" },
+  { code:"SHT/2026/0004", date:"2026-04-16", type:"Damage", item:"Steel Plate 1.2m x 0.6m", qty:2, site:"—", vendor:"", condition:"Major Damage", remarks:"Bent during crane lift", state:"Submitted" },
+  { code:"SHT/2026/0005", date:"2026-04-14", type:"Inward", item:"Prop 3m", qty:200, site:"—", vendor:"Shree Construction", condition:"", remarks:"Initial stock", state:"Verified" },
+  { code:"SHT/2026/0006", date:"2026-04-15", type:"Issue to Site", item:"Prop 3m", qty:50, site:"Kalol Sanand", vendor:"", condition:"", remarks:"", state:"Verified" },
+];
+
+const verifyQueue = [
+  { code:"CIN/2026/0006", type:"Inward", date:"2026-04-17 07:50", desc:"Aggregate 20mm — 22.0 MT", by:"Suresh Rathod", age:"2h ago" },
+  { code:"COUT/2026/0004", type:"Outward", date:"2026-04-17 07:15", desc:"Aggregate 20mm — 8.0 MT → Kalol Sanand", by:"Suresh Rathod", age:"3h ago" },
+  { code:"LAB/2026/0002", type:"Labor", date:"2026-04-17", desc:"Ramesh Mukadam — 8 workers (Shuttering)", by:"Suresh Rathod", age:"4h ago" },
+  { code:"SHT/2026/0003", type:"Shuttering", date:"2026-04-16", desc:"Return 20x Steel Plate from Kalol Sanand", by:"Suresh Rathod", age:"1d 3h", stale:true },
+];
+
+const ledgerData = [
+  { date:"2026-04-15 08:30", type:"Inward", ref:"CIN/2026/0001", detail:"From Maruti Hirers", qtyIn:18.0, qtyOut:"", balance:18.0, state:"Verified", by:"Suresh Rathod" },
+  { date:"2026-04-16 09:20", type:"Outward", ref:"COUT/2026/0001", detail:"To Kalol Sanand", qtyIn:"", qtyOut:10.0, balance:8.0, state:"Verified", by:"Suresh Rathod" },
+  { date:"2026-04-16 10:30", type:"RMC Input", ref:"CPRD/2026/0001", detail:"Used in M25 production", qtyIn:"", qtyOut:2.10, balance:5.90, state:"Submitted", by:"Suresh Rathod" },
+  { date:"2026-04-17 07:50", type:"Inward", ref:"CIN/2026/0006", detail:"From Magodi (Plant)", qtyIn:22.0, qtyOut:"", balance:27.90, state:"Submitted", by:"Suresh Rathod" },
+  { date:"2026-04-17 07:15", type:"Outward", ref:"COUT/2026/0004", detail:"To Kalol Sanand", qtyIn:"", qtyOut:8.0, balance:19.90, state:"Submitted", by:"Suresh Rathod" },
+];
+
+// ============== ROUTING ==============
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const mainEl = document.getElementById('main');
+const breadcrumbEl = document.getElementById('breadcrumb');
+
+sidebarItems.forEach(item => {
+  item.addEventListener('click', () => {
+    sidebarItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    renderView(item.dataset.view);
+  });
+});
+
+function setBreadcrumb(parts) { breadcrumbEl.innerHTML = parts.map(p=>p).join(' <span>&rsaquo;</span> '); }
+
+function renderView(view, detail) {
+  switch(view) {
+    case 'home': renderHome(); break;
+    case 'inward': detail==='form' ? renderInwardForm() : renderInwardList(); break;
+    case 'outward': detail==='form' ? renderOutwardForm() : renderOutwardList(); break;
+    case 'stock': detail==='ledger' ? renderStockLedger() : renderStockSummary(); break;
+    case 'rmc': detail==='form' ? renderRmcForm() : renderRmcList(); break;
+    case 'labor': detail==='form' ? renderLaborForm() : renderLaborList(); break;
+    case 'shuttering': detail==='form' ? renderShutteringForm() : detail==='register' ? renderShutteringRegister() : renderShutteringList(); break;
+    case 'verify': renderVerifyQueue(); break;
+    default: renderHome();
+  }
+}
+
+function stateBadge(s) { return `<span class="badge badge-${s.toLowerCase()}">${s}</span>`; }
+function srcBadge(t) { const c = t==='Plant'?'plant':t==='Quarry'?'quarry':'vendor'; return `<span class="badge badge-${c}">${t}</span>`; }
+
+// ============== HOME ==============
+function renderHome() {
+  setBreadcrumb(['Camp Operations', 'Home']);
+  const todayIn = inwardData.filter(i=>i.date.startsWith('2026-04-17'));
+  const todayOut = outwardData.filter(o=>o.date.startsWith('2026-04-17'));
+  const lowStock = stockData.filter(s=>s.threshold>0 && s.closing < s.threshold);
+  const pending = verifyQueue.length;
+  const todayLabor = laborData.filter(l=>l.date==='2026-04-17').reduce((s,l)=>s+l.workers, 0);
+
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">Camp Home — ${camp.name}</div>
+        <div class="view-subtitle">${camp.code} &bull; Today: 17 Apr 2026</div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card" onclick="renderView('inward')">
+        <div class="label">Today's Inward</div>
+        <div class="value">${todayIn.length}</div>
+        <div class="sub">${todayIn.reduce((s,i)=>s+i.net,0).toFixed(1)} MT total</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('outward')">
+        <div class="label">Today's Outward</div>
+        <div class="value">${todayOut.length}</div>
+        <div class="sub">${todayOut.reduce((s,o)=>s+o.qty,0).toFixed(1)} MT/m³ total</div>
+      </div>
+      <div class="kpi-card ${lowStock.length?'alert':''}" onclick="renderView('stock')">
+        <div class="label">Low Stock Alerts</div>
+        <div class="value">${lowStock.length}</div>
+        <div class="sub">${lowStock.length?lowStock.map(s=>s.material+' '+s.variant).join(', '):'All stock OK'}</div>
+      </div>
+      <div class="kpi-card ${pending>0?'alert':''}" onclick="renderView('verify')">
+        <div class="label">Pending Verification</div>
+        <div class="value">${pending}</div>
+        <div class="sub">${verifyQueue.filter(v=>v.stale).length} stale (>24h)</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('rmc')">
+        <div class="label">RMC Produced Today</div>
+        <div class="value">0 m³</div>
+        <div class="sub">Last: 2.0 m³ yesterday</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('labor')">
+        <div class="label">Labor Today</div>
+        <div class="value">${todayLabor}</div>
+        <div class="sub">${laborData.filter(l=>l.date==='2026-04-17').length} parties</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('shuttering')">
+        <div class="label">Shuttering Out</div>
+        <div class="value">60</div>
+        <div class="sub">Plates: 10, Props: 50 issued</div>
+      </div>
+    </div>
+    <div class="btn-group" style="margin-bottom:20px">
+      <button class="btn btn-primary" onclick="renderView('inward','form')">+ New Inward</button>
+      <button class="btn btn-primary" onclick="renderView('outward','form')">+ New Outward</button>
+      <button class="btn btn-primary" onclick="renderView('rmc','form')">+ New Production</button>
+      <button class="btn btn-secondary" onclick="renderView('verify')">Review Pending (${pending})</button>
+    </div>
+    <div class="section-title">Recent Activity</div>
+    <div class="table-container">
+      <div class="activity-item"><div class="activity-icon in">📥</div><div><strong>CIN/2026/0007</strong> — Cement 18.0 MT from Shakti Aggregates <span class="badge badge-draft">Draft</span></div><div class="activity-time">09:10 today</div></div>
+      <div class="activity-item"><div class="activity-icon in">📥</div><div><strong>CIN/2026/0006</strong> — Aggregate 20mm 22.0 MT from Magodi <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">07:50 today</div></div>
+      <div class="activity-item"><div class="activity-icon out">📤</div><div><strong>COUT/2026/0005</strong> — Concrete Mix M25 2.0 m³ → Kalol Sanand <span class="badge badge-draft">Draft</span></div><div class="activity-time">10:00 today</div></div>
+      <div class="activity-item"><div class="activity-icon out">📤</div><div><strong>COUT/2026/0004</strong> — Aggregate 20mm 8.0 MT → Kalol Sanand <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">07:15 today</div></div>
+      <div class="activity-item"><div class="activity-icon labor">👷</div><div><strong>LAB/2026/0003</strong> — Gopal Thakur 15 workers → Kalol Sanand (Excavation) <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">today</div></div>
+      <div class="activity-item"><div class="activity-icon labor">👷</div><div><strong>LAB/2026/0002</strong> — Ramesh Mukadam 8 workers at Camp (Shuttering) <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">today</div></div>
+      <div class="activity-item"><div class="activity-icon shut">🔩</div><div><strong>SHT/2026/0004</strong> — Damage 2x Steel Plate <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">yesterday</div></div>
+      <div class="activity-item"><div class="activity-icon shut">🔩</div><div><strong>SHT/2026/0003</strong> — Return 20x Steel Plate from Kalol Sanand <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">yesterday</div></div>
+    </div>
+  `;
+}
+
+// ============== MATERIAL INWARD ==============
+function renderInwardList() {
+  setBreadcrumb(['Camp Operations', 'Material Inward']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Material Inward</div><div class="view-subtitle">${inwardData.length} entries &bull; Khatraj Chokdi</div></div>
+      <button class="btn btn-primary" onclick="renderView('inward','form')">+ New Inward</button>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search by material, slip, vehicle..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span><span class="filter-chip">Plant</span><span class="filter-chip">Vendor</span><span class="filter-chip">Quarry</span>
+      <span class="filter-chip">Submitted</span><span class="filter-chip">Verified</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Material</th><th>Variant</th><th>Source</th><th>From</th><th>Vehicle</th><th>Slip</th><th>Net Wt</th><th>State</th></tr></thead>
+        <tbody>${inwardData.map(i=>`
+          <tr onclick="renderView('inward','form')">
+            <td><strong>${i.code}</strong></td>
+            <td>${i.date}</td>
+            <td>${i.material}</td>
+            <td>${i.variant}</td>
+            <td>${srcBadge(i.sourceType)}</td>
+            <td>${i.source}</td>
+            <td>${i.vehicle}</td>
+            <td>${i.slip}</td>
+            <td><strong>${i.net} ${i.uom}</strong>${i.secQty?' <span style="color:#8a8f99">('+i.secQty+')</span>':''}</td>
+            <td>${stateBadge(i.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderInwardForm() {
+  setBreadcrumb(['Camp Operations', 'Material Inward', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('inward')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+        <button class="btn btn-secondary">Save & Add Another</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div>
+          <h2>New Material Inward</h2>
+          <div class="view-subtitle">CIN/2026/0008 &bull; Khatraj Chokdi</div>
+        </div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="field"><label>Inward Code</label><input value="CIN/2026/0008" readonly></div>
+        <div class="field"><label>Camp</label><input value="Khatraj Chokdi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T10:30"><div class="hint">Backdating allowed up to 3 days</div></div>
+        <div class="field"><label>Material <span class="req">*</span></label>
+          <select>
+            <option value="">— Select Material —</option>
+            <option selected>Aggregate</option>
+            <option>Cement</option>
+            <option>Sand</option>
+            <option>Steel</option>
+            <option>Emulsion</option>
+            <option>Pipe</option>
+            <option>Concrete Mix</option>
+          </select>
+        </div>
+        <div class="field"><label>Variant / Grade <span class="req">*</span></label>
+          <select>
+            <option value="">— Select Variant —</option>
+            <option>6mm</option>
+            <option selected>20mm</option>
+            <option>25-40mm</option>
+            <option>Storm dust</option>
+          </select>
+          <div class="hint">Mandatory when material has variants</div>
+        </div>
+        <div class="field"><label>Source Type <span class="req">*</span></label>
+          <select id="srcType" onchange="toggleSourceField()">
+            <option>Plant</option>
+            <option selected>Vendor</option>
+            <option>Quarry</option>
+          </select>
+        </div>
+        <div class="field" id="srcPlant" style="display:none"><label>Source — Plant <span class="req">*</span></label>
+          <select><option>Magodi</option></select>
+          <div class="hint">Filtered to plants supplying this camp</div>
+        </div>
+        <div class="field" id="srcVendor"><label>Source — Vendor <span class="req">*</span></label>
+          <select>
+            <option>Maruti Hirers</option>
+            <option>Shree Construction</option>
+            <option>Shakti Aggregates</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">Vehicle & Slip Details</div>
+      <div class="form-grid">
+        <div class="field"><label>Vehicle Number <span class="req">*</span></label><input value="GJ-01-XX-1234" style="text-transform:uppercase"><div class="hint">Auto uppercase</div></div>
+        <div class="field"><label>Slip / Challan Number <span class="req">*</span></label><input value="SLP-0415"></div>
+        <div class="field"><label>Royalty Number</label><input placeholder="Government reference (for aggregates, sand)"></div>
+        <div class="field"></div>
+      </div>
+
+      <div class="section-title">Weights</div>
+      <div class="info-banner">Net Weight = Gross - Tare, auto-computed. Cannot be negative.</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Gross Weight (MT) <span class="req">*</span></label><input type="number" value="24.5" id="gross" oninput="calcNet()"></div>
+        <div class="field"><label>Tare Weight (MT) <span class="req">*</span></label><input type="number" value="7.0" id="tare" oninput="calcNet()"></div>
+        <div class="field"><label>Net Weight (MT) — auto</label><input class="computed" readonly id="netWt" value="17.50"><div class="hint" id="secHint">Secondary: ~350 bags (Cement only)</div></div>
+      </div>
+
+      <div class="section-title">Photo & Remarks</div>
+      <div class="form-grid">
+        <div class="field"><label>Photos (optional, up to 3)</label>
+          <div class="photo-upload">📷 Click or drag to upload slip / vehicle / material photos<br><span style="font-size:11px">Max 5 MB each, auto-compressed</span></div>
+        </div>
+        <div class="field"><label>Remarks</label><textarea placeholder="Any additional notes..."></textarea></div>
+      </div>
+    </div>
+    <div class="success-banner" style="margin-top:14px; display:none" id="successBanner">Inward CIN/2026/0008 — Aggregate 20mm — 17.50 MT recorded and submitted.</div>
+  `;
+}
+
+function toggleSourceField() {
+  const v = document.getElementById('srcType').value;
+  document.getElementById('srcPlant').style.display = v==='Plant' ? '' : 'none';
+  document.getElementById('srcVendor').style.display = v!=='Plant' ? '' : 'none';
+}
+
+function calcNet() {
+  const g = parseFloat(document.getElementById('gross').value) || 0;
+  const t = parseFloat(document.getElementById('tare').value) || 0;
+  const n = g - t;
+  document.getElementById('netWt').value = n >= 0 ? n.toFixed(2) : 'ERROR: Negative!';
+  document.getElementById('netWt').style.color = n >= 0 ? '#6c7080' : '#dc3545';
+}
+
+// ============== MATERIAL OUTWARD ==============
+function renderOutwardList() {
+  setBreadcrumb(['Camp Operations', 'Material Outward']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Material Outward</div><div class="view-subtitle">${outwardData.length} entries &bull; Dispatches to linked sites</div></div>
+      <button class="btn btn-primary" onclick="renderView('outward','form')">+ New Outward</button>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span><span class="filter-chip">Submitted</span><span class="filter-chip">Verified</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Material</th><th>Variant</th><th>Destination</th><th>Quantity</th><th>Vehicle</th><th>Challan</th><th>Receiver</th><th>State</th></tr></thead>
+        <tbody>${outwardData.map(o=>`
+          <tr onclick="renderView('outward','form')">
+            <td><strong>${o.code}</strong></td>
+            <td>${o.date}</td>
+            <td>${o.material}</td>
+            <td>${o.variant}</td>
+            <td><span class="tag">${o.site}</span></td>
+            <td><strong>${o.qty} ${o.uom}</strong></td>
+            <td>${o.vehicle}</td>
+            <td>${o.slip}</td>
+            <td>${o.receiver || '—'}</td>
+            <td>${stateBadge(o.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderOutwardForm() {
+  setBreadcrumb(['Camp Operations', 'Material Outward', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('outward')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+        <button class="btn btn-secondary">Save & Add Another</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Material Outward</h2><div class="view-subtitle">COUT/2026/0006 &bull; Khatraj Chokdi</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="info-banner">One material per outward entry. Chainage is recorded by the Supervisor at site, not here.</div>
+      <div class="form-grid">
+        <div class="field"><label>Outward Code</label><input value="COUT/2026/0006" readonly></div>
+        <div class="field"><label>Camp</label><input value="Khatraj Chokdi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T11:00"></div>
+        <div class="field"><label>Destination Site <span class="req">*</span></label>
+          <select><option selected>Kalol Sanand</option></select>
+          <div class="hint">Filtered to sites served by this camp</div>
+        </div>
+        <div class="field"><label>Material <span class="req">*</span></label>
+          <select>
+            <option value="">— Select (in-stock only) —</option>
+            <option selected>Aggregate</option>
+            <option>Cement</option>
+            <option>Sand</option>
+            <option>Steel</option>
+            <option>Concrete Mix</option>
+            <option>Pipe</option>
+          </select>
+          <div class="hint">Only materials with stock > 0 shown</div>
+        </div>
+        <div class="field"><label>Variant / Grade</label>
+          <select><option>20mm</option><option>6mm</option></select>
+        </div>
+        <div class="field"><label>Issue Quantity <span class="req">*</span></label>
+          <input type="number" value="5.0">
+          <div class="hint">Available: 19.90 MT | UoM: MT</div>
+        </div>
+        <div class="field"><label>Vehicle Number <span class="req">*</span></label><input value="GJ-01-XX-1234" style="text-transform:uppercase"></div>
+        <div class="field"><label>Slip / Challan Number <span class="req">*</span></label><input value="CHN-0212"></div>
+        <div class="field"><label>Receiving Person</label><input placeholder="Supervisor name at site (optional)"></div>
+        <div class="field"><label>Photos (optional)</label>
+          <div class="photo-upload">📷 Click to upload (loaded vehicle, challan)</div>
+        </div>
+        <div class="field"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+    <div class="warn-banner" style="margin-top:14px">After this dispatch, <strong>14.90 MT</strong> of Aggregate 20mm will remain. Threshold: 10 MT.</div>
+  `;
+}
+
+// ============== STOCK REGISTER ==============
+function renderStockSummary() {
+  setBreadcrumb(['Camp Operations', 'Stock Register']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Stock Register</div><div class="view-subtitle">Khatraj Chokdi &bull; Real-time closing balances</div></div>
+      <div class="btn-group">
+        <select class="btn btn-secondary" style="padding:6px 10px"><option>Today (17 Apr 2026)</option><option>Yesterday</option><option>This Week</option><option>This Month</option></select>
+        <button class="btn btn-secondary">⬇ Export</button>
+      </div>
+    </div>
+    <div class="info-banner">Stock is auto-maintained from transactions. No manual edits. Click any row to view the detailed ledger.</div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Material</th><th>Variant</th><th>UoM</th><th>Opening</th><th>Inward</th><th>Prod In</th><th>Outward</th><th>Prod Used</th><th>Closing</th><th>Threshold</th><th>Status</th></tr></thead>
+        <tbody>${stockData.map(s=>{
+          let st = 'ok', cls = 'badge-ok';
+          if (s.threshold > 0) {
+            if (s.closing < s.threshold) { st = 'Critical'; cls = 'badge-critical'; }
+            else if (s.closing < s.threshold * 2) { st = 'Low'; cls = 'badge-low'; }
+            else { st = 'OK'; cls = 'badge-ok'; }
+          } else { st = 'OK'; cls = 'badge-ok'; }
+          const pct = s.threshold > 0 ? Math.min(100, (s.closing / (s.threshold * 3)) * 100) : 100;
+          const barColor = cls === 'badge-critical' ? '#dc3545' : cls === 'badge-low' ? '#ffc107' : '#198754';
+          return `<tr onclick="renderView('stock','ledger')">
+            <td><strong>${s.material}</strong></td>
+            <td>${s.variant}</td>
+            <td>${s.uom}</td>
+            <td>${s.opening}</td>
+            <td style="color:#198754">${s.inward || '—'}</td>
+            <td style="color:#6f42c1">${s.prodIn || '—'}</td>
+            <td style="color:#dc3545">${s.outward || '—'}</td>
+            <td style="color:#dc3545">${s.prodConsumed || '—'}</td>
+            <td><strong>${s.closing}</strong>
+              <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%; background:${barColor}"></div></div>
+            </td>
+            <td>${s.threshold || '—'}</td>
+            <td><span class="badge ${cls}">${st}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderStockLedger() {
+  setBreadcrumb(['Camp Operations', 'Stock Register', 'Aggregate 20mm — Ledger']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('stock')">← Back to Summary</button></div>
+      <div>
+        <div class="view-title">Stock Ledger — Aggregate 20mm</div>
+        <div class="view-subtitle">Khatraj Chokdi &bull; All transactions</div>
+      </div>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns: repeat(3,1fr);">
+      <div class="kpi-card"><div class="label">Total Inward</div><div class="value">40.0 MT</div></div>
+      <div class="kpi-card"><div class="label">Total Outward</div><div class="value">20.1 MT</div><div class="sub">Site: 18.0 + RMC: 2.1</div></div>
+      <div class="kpi-card"><div class="label">Closing Balance</div><div class="value">19.9 MT</div><div class="sub">Threshold: 10 MT</div></div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Date & Time</th><th>Type</th><th>Reference</th><th>Detail</th><th>Qty In</th><th>Qty Out</th><th>Balance</th><th>State</th><th>By</th></tr></thead>
+        <tbody>${ledgerData.map(l=>`
+          <tr>
+            <td>${l.date}</td>
+            <td><span class="badge badge-info">${l.type}</span></td>
+            <td><strong>${l.ref}</strong></td>
+            <td>${l.detail}</td>
+            <td style="color:#198754; font-weight:600">${l.qtyIn ? '+'+l.qtyIn : ''}</td>
+            <td style="color:#dc3545; font-weight:600">${l.qtyOut ? '-'+l.qtyOut : ''}</td>
+            <td><strong>${l.balance}</strong></td>
+            <td>${stateBadge(l.state)}</td>
+            <td>${l.by}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============== RMC PRODUCTION ==============
+function renderRmcList() {
+  setBreadcrumb(['Camp Operations', 'RMC Production']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">RMC Production</div><div class="view-subtitle">Camp-level concrete mixing &bull; Khatraj Chokdi (M20, M25)</div></div>
+      <button class="btn btn-primary" onclick="renderView('rmc','form')">+ New Production</button>
+    </div>
+    <div class="info-banner">RMC production consumes raw materials (cement, sand, aggregate, water) and produces concrete output into camp stock. Dispatch via Material Outward.</div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Shift</th><th>Operator</th><th>Output Grade</th><th>Output Qty</th><th>Inputs</th><th>Diesel (L)</th><th>State</th></tr></thead>
+        <tbody>${rmcData.map(r=>`
+          <tr onclick="renderView('rmc','form')">
+            <td><strong>${r.code}</strong></td>
+            <td>${r.date}</td>
+            <td>${r.shift}</td>
+            <td>${r.operator}</td>
+            <td><span class="badge badge-info">${r.grade}</span></td>
+            <td><strong>${r.outputQty} ${r.uom}</strong></td>
+            <td>${r.inputs.map(i=>i.material+' '+i.qty+' '+i.uom).join(', ')}</td>
+            <td>${r.diesel}</td>
+            <td>${stateBadge(r.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderRmcForm() {
+  setBreadcrumb(['Camp Operations', 'RMC Production', 'New Batch']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('rmc')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New RMC Production Batch</h2><div class="view-subtitle">CPRD/2026/0002 &bull; Khatraj Chokdi</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="field"><label>Production Code</label><input value="CPRD/2026/0002" readonly></div>
+        <div class="field"><label>Camp</label><input value="Khatraj Chokdi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T11:00"></div>
+        <div class="field"><label>Shift <span class="req">*</span></label>
+          <select><option selected>Morning</option><option>Afternoon</option><option>Night</option></select>
+        </div>
+        <div class="field"><label>Operator Name <span class="req">*</span></label><input value="Ramesh Mixer"></div>
+        <div class="field"><label>Output Grade <span class="req">*</span></label>
+          <select id="rmcGrade" onchange="fillBom()">
+            <option value="">— Select Grade —</option>
+            <option>M20</option>
+            <option selected>M25</option>
+          </select>
+          <div class="hint">Only grades this camp produces</div>
+        </div>
+        <div class="field"><label>Output Quantity (m³) <span class="req">*</span></label>
+          <input type="number" value="3.0" id="rmcQty" oninput="fillBom()">
+        </div>
+        <div class="field"><label>Linked Site</label>
+          <select><option value="">— Optional —</option><option>Kalol Sanand</option></select>
+        </div>
+      </div>
+
+      <div class="section-title">Input Materials Consumed</div>
+      <div class="info-banner">Auto-filled from BoM for M25 x 3.0 m³. Adjust actual quantities if they differ. <strong>Pending from client:</strong> exact mix ratios — these are placeholders.</div>
+      <div class="input-row" style="grid-template-columns: 2fr 1fr 1fr 1fr; font-weight:700; background:#f7f8fa;">
+        <div>Material</div><div>BoM Qty</div><div>Actual Qty</div><div>UoM</div>
+      </div>
+      <div class="input-row" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
+        <div>Cement <span style="color:#8a8f99">(stock: 32.30 MT)</span></div>
+        <div style="color:#8a8f99">1.05</div>
+        <div><input type="number" value="1.05" style="width:80px; padding:4px 6px; border:1px solid #d8dae0; border-radius:3px"></div>
+        <div>MT</div>
+      </div>
+      <div class="input-row" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
+        <div>Sand <span style="color:#8a8f99">(stock: 18.80 MT)</span></div>
+        <div style="color:#8a8f99">1.80</div>
+        <div><input type="number" value="1.80" style="width:80px; padding:4px 6px; border:1px solid #d8dae0; border-radius:3px"></div>
+        <div>MT</div>
+      </div>
+      <div class="input-row" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
+        <div>Aggregate 20mm <span style="color:#8a8f99">(stock: 19.90 MT)</span></div>
+        <div style="color:#8a8f99">3.15</div>
+        <div><input type="number" value="3.15" style="width:80px; padding:4px 6px; border:1px solid #d8dae0; border-radius:3px"></div>
+        <div>MT</div>
+      </div>
+      <div class="input-row" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
+        <div>Water</div>
+        <div style="color:#8a8f99">510</div>
+        <div><input type="number" value="510" style="width:80px; padding:4px 6px; border:1px solid #d8dae0; border-radius:3px"></div>
+        <div>L</div>
+      </div>
+
+      <div class="section-title">Diesel & Remarks</div>
+      <div class="form-grid">
+        <div class="field"><label>Diesel Consumed (L)</label><input type="number" value="12"><div class="hint">Informational only — actual diesel tracked in Diesel Module</div></div>
+        <div class="field"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+    <div class="warn-banner" style="margin-top:14px"><strong>Stock impact on submit:</strong> Cement −1.05 MT, Sand −1.80 MT, Aggregate 20mm −3.15 MT → Concrete Mix M25 +3.0 m³</div>
+  `;
+}
+
+function fillBom() { /* placeholder for demo interactivity */ }
+
+// ============== LABOR ==============
+function renderLaborList() {
+  setBreadcrumb(['Camp Operations', 'Labor']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Labor Arrival & Deployment</div><div class="view-subtitle">${laborData.length} entries</div></div>
+      <button class="btn btn-primary" onclick="renderView('labor','form')">+ New Labor Entry</button>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search by party name..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Party (Mukadam)</th><th>Workers</th><th>Deployed To</th><th>Site</th><th>Purpose</th><th>State</th></tr></thead>
+        <tbody>${laborData.map(l=>`
+          <tr onclick="renderView('labor','form')">
+            <td><strong>${l.code}</strong></td>
+            <td>${l.date}</td>
+            <td>${l.party}</td>
+            <td><strong>${l.workers}</strong></td>
+            <td><span class="badge badge-info">${l.deployedTo}</span></td>
+            <td>${l.site}</td>
+            <td>${l.purpose}</td>
+            <td>${stateBadge(l.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderLaborForm() {
+  setBreadcrumb(['Camp Operations', 'Labor', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('labor')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Labor Entry</h2><div class="view-subtitle">LAB/2026/0004 &bull; Khatraj Chokdi</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Entry Code</label><input value="LAB/2026/0004" readonly></div>
+        <div class="field"><label>Camp</label><input value="Khatraj Chokdi" readonly></div>
+        <div class="field"><label>Date <span class="req">*</span></label><input type="date" value="2026-04-17"></div>
+        <div class="field"><label>Party Name (Mukadam) <span class="req">*</span></label>
+          <input list="partyList" placeholder="Type or select...">
+          <datalist id="partyList">
+            <option value="Ramesh Mukadam">
+            <option value="Gopal Thakur">
+          </datalist>
+          <div class="hint">Free text with autocomplete from history</div>
+        </div>
+        <div class="field"><label>Number of Workers <span class="req">*</span></label><input type="number" value="10" min="1"></div>
+        <div class="field"><label>Deployed To <span class="req">*</span></label>
+          <select>
+            <option selected>Site</option>
+            <option>Camp</option>
+          </select>
+        </div>
+        <div class="field"><label>Deployed To — Site</label>
+          <select><option selected>Kalol Sanand</option></select>
+          <div class="hint">Shown when Deployed To = Site</div>
+        </div>
+        <div class="field"><label>Purpose / Activity</label>
+          <select>
+            <option value="">— Select —</option>
+            <option>Excavation</option>
+            <option>Concrete work</option>
+            <option selected>Paving</option>
+            <option>Shuttering</option>
+            <option>General</option>
+          </select>
+        </div>
+        <div class="field full"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== SHUTTERING ==============
+function renderShutteringList() {
+  setBreadcrumb(['Camp Operations', 'Shuttering']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Shuttering Tracking</div><div class="view-subtitle">${shutteringData.length} entries</div></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="renderView('shuttering','register')">📊 Shuttering Register</button>
+        <button class="btn btn-primary" onclick="renderView('shuttering','form')">+ New Entry</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Inward</span><span class="filter-chip">Issue</span><span class="filter-chip">Return</span><span class="filter-chip">Damage</span><span class="filter-chip">Loss</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Type</th><th>Item</th><th>Qty</th><th>Site</th><th>Vendor</th><th>Condition</th><th>Remarks</th><th>State</th></tr></thead>
+        <tbody>${shutteringData.map(s=>{
+          const tBadge = s.type==='Inward'?'badge-ok':s.type.includes('Return')?'badge-info':s.type==='Damage'?'badge-critical':s.type==='Loss'?'badge-critical':'badge-warn';
+          return `<tr onclick="renderView('shuttering','form')">
+            <td><strong>${s.code}</strong></td>
+            <td>${s.date}</td>
+            <td><span class="badge ${tBadge}">${s.type}</span></td>
+            <td>${s.item}</td>
+            <td><strong>${s.qty}</strong></td>
+            <td>${s.site}</td>
+            <td>${s.vendor || '—'}</td>
+            <td>${s.condition || '—'}</td>
+            <td style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${s.remarks}</td>
+            <td>${stateBadge(s.state)}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderShutteringRegister() {
+  setBreadcrumb(['Camp Operations', 'Shuttering', 'Register']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('shuttering')">← Back to Entries</button></div>
+      <div><div class="view-title">Shuttering Register</div><div class="view-subtitle">Summary of all shuttering assets</div></div>
+    </div>
+    <div class="info-banner">Total Accounted = At Camp + Issued + Damaged + Lost. Discrepancy should be 0.</div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Shuttering Type</th><th>Total Received</th><th>At Camp</th><th>Issued to Sites</th><th>Damaged</th><th>Lost</th><th>Total Accounted</th><th>Discrepancy</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Steel Plate 1.2m x 0.6m</strong></td>
+            <td>100</td>
+            <td><strong>88</strong></td>
+            <td>10 <span style="color:#8a8f99">(Kalol Sanand)</span></td>
+            <td style="color:#dc3545">2</td>
+            <td>0</td>
+            <td>100</td>
+            <td><span class="badge badge-ok">0</span></td>
+          </tr>
+          <tr>
+            <td><strong>Prop 3m</strong></td>
+            <td>200</td>
+            <td><strong>150</strong></td>
+            <td>50 <span style="color:#8a8f99">(Kalol Sanand)</span></td>
+            <td>0</td>
+            <td>0</td>
+            <td>200</td>
+            <td><span class="badge badge-ok">0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderShutteringForm() {
+  setBreadcrumb(['Camp Operations', 'Shuttering', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('shuttering')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Shuttering Entry</h2><div class="view-subtitle">SHT/2026/0007 &bull; Khatraj Chokdi</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Entry Code</label><input value="SHT/2026/0007" readonly></div>
+        <div class="field"><label>Camp</label><input value="Khatraj Chokdi" readonly></div>
+        <div class="field"><label>Date <span class="req">*</span></label><input type="date" value="2026-04-17"></div>
+        <div class="field"><label>Transaction Type <span class="req">*</span></label>
+          <select>
+            <option>Inward</option>
+            <option selected>Issue to Site</option>
+            <option>Return from Site</option>
+            <option>Damage</option>
+            <option>Loss</option>
+          </select>
+        </div>
+        <div class="field"><label>Shuttering Type <span class="req">*</span></label>
+          <select>
+            <option selected>Steel Plate 1.2m x 0.6m</option>
+            <option>Prop 3m</option>
+            <option>H-Frame</option>
+            <option>Plywood Sheet</option>
+          </select>
+          <div class="hint">Available at camp: 88 pcs</div>
+        </div>
+        <div class="field"><label>Quantity (pieces) <span class="req">*</span></label><input type="number" value="15" min="1"></div>
+        <div class="field"><label>Site <span class="req">*</span></label>
+          <select><option selected>Kalol Sanand</option></select>
+          <div class="hint">Mandatory for Issue / Return</div>
+        </div>
+        <div class="field"><label>Source Vendor</label>
+          <input value="" placeholder="For Inward only" disabled>
+        </div>
+        <div class="field"><label>Condition on Return</label>
+          <select disabled><option>Good</option><option>Minor Damage</option><option>Major Damage</option></select>
+          <div class="hint">For Return entries only</div>
+        </div>
+        <div class="field"><label>Slip / Reference</label><input></div>
+        <div class="field"><label>Photo</label><div class="photo-upload">📷 Upload (esp. for Damage entries)</div></div>
+        <div class="field"><label>Remarks</label><textarea placeholder="Required for Damage and Loss entries"></textarea></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== VERIFICATION QUEUE ==============
+function renderVerifyQueue() {
+  setBreadcrumb(['Camp Operations', 'Verification Queue']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Verification Queue</div><div class="view-subtitle">${verifyQueue.length} entries pending &bull; Reviewed by Senior Engineer / Admin</div></div>
+      <div class="btn-group">
+        <button class="btn btn-success" onclick="alert('Bulk verify: select entries first')">✅ Verify Selected</button>
+      </div>
+    </div>
+    <div class="info-banner"><strong>Verification never blocks.</strong> Submitted entries are already in stock, reports, and dashboard. Verification adds an accountability stamp. Entries older than 2 days are highlighted.</div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Inward</span><span class="filter-chip">Outward</span><span class="filter-chip">Labor</span><span class="filter-chip">Shuttering</span><span class="filter-chip">RMC</span>
+      <span class="filter-chip">Stale (>24h)</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th><input type="checkbox"></th><th>Code</th><th>Type</th><th>Date</th><th>Description</th><th>Entered By</th><th>Age</th><th>Actions</th></tr></thead>
+        <tbody>${verifyQueue.map(v=>`
+          <tr style="${v.stale?'background:#fff9e6':''}">
+            <td><input type="checkbox"></td>
+            <td><strong>${v.code}</strong></td>
+            <td><span class="badge badge-info">${v.type}</span></td>
+            <td>${v.date}</td>
+            <td>${v.desc}</td>
+            <td>${v.by}</td>
+            <td class="${v.stale?'age-stale':''}">${v.age}</td>
+            <td>
+              <div class="verify-actions">
+                <button class="btn btn-success" style="padding:4px 10px; font-size:12px" onclick="event.stopPropagation(); alert('Verified: '+this.closest('tr').querySelector('strong').textContent)">✅ Verify</button>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px" onclick="event.stopPropagation(); alert('Correction requested')">✏️ Correct</button>
+              </div>
+            </td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="warn-banner" style="margin-top:14px">1 entry is older than 24 hours (system threshold: 2 days). Review recommended.</div>
+  `;
+}
+
+// ============== INIT ==============
+renderHome();
+</script>
+</body>
+</html>
