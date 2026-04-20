@@ -75,6 +75,15 @@
   .footer { text-align: center; padding: 32px 20px; font-size: 12px; color: #9ca3af; }
   .footer a { color: #6b7280; }
 
+  /* Drive banner */
+  .drive-banner { background: linear-gradient(135deg, #1a73e8, #0f5cc7); color: #fff; border-radius: 12px; padding: 18px 22px; display: flex; align-items: center; gap: 16px; margin-bottom: 10px; text-decoration: none; box-shadow: 0 2px 10px rgba(26,115,232,0.18); transition: box-shadow 0.15s, transform 0.15s; }
+  .drive-banner:hover { box-shadow: 0 4px 16px rgba(26,115,232,0.3); transform: translateY(-1px); }
+  .drive-banner .drive-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .drive-banner .drive-text { flex: 1; }
+  .drive-banner .drive-title { font-size: 15px; font-weight: 700; }
+  .drive-banner .drive-sub { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+  .drive-banner .drive-cta { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; }
+
   /* Responsive */
   @media (min-width: 640px) {
     .module-grid { grid-template-columns: 1fr; }
@@ -106,6 +115,18 @@
     </div>
   </div>
 
+  <!-- Google Drive link -->
+  <div class="section">
+    <a href="https://drive.google.com/drive/folders/1ted-1QgAyxHjseUebMMHQNLX_mbAy4We" class="drive-banner" target="_blank" rel="noopener">
+      <div class="drive-icon">&#x1F4C1;</div>
+      <div class="drive-text">
+        <div class="drive-title">All Documents on Google Drive</div>
+        <div class="drive-sub">PRD, module specs, meeting notes, pitch materials &mdash; shared folder</div>
+      </div>
+      <div class="drive-cta">Open Drive &rarr;</div>
+    </a>
+  </div>
+
   <!-- Modules -->
   <div class="section">
     <div class="section-title">Modules</div>
@@ -125,7 +146,6 @@
           <a href="mockups/admin-portal.html" class="link-btn primary" target="_blank">&#x1F4BB; List & View Mockup</a>
           <a href="mockups/admin-forms.html" class="link-btn primary" target="_blank">&#x1F4DD; Data Entry Forms</a>
           <a href="docs/Module_01_Admin_Portal.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
-          <a href="downloads/Module_01_Admin_Portal.docx" class="link-btn">&#x2B07; Download .docx</a>
         </div>
       </div>
 
@@ -142,7 +162,6 @@
         <div class="module-links">
           <a href="mockups/camp-module.html" class="link-btn primary" target="_blank">&#x1F4BB; Interactive Mockup</a>
           <a href="docs/Module_02_Camp_Module.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
-          <a href="downloads/Module_02_Camp_Module.docx" class="link-btn">&#x2B07; Download .docx</a>
         </div>
       </div>
 
@@ -159,7 +178,6 @@
         <div class="module-links">
           <a href="mockups/onsite-materials.html" class="link-btn primary" target="_blank">&#x1F4F1; Mobile Mockup</a>
           <a href="docs/Module_03_OnSite_Materials.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
-          <a href="downloads/Module_03_OnSite_Materials.docx" class="link-btn">&#x2B07; Download .docx</a>
         </div>
       </div>
 
@@ -176,7 +194,6 @@
         <div class="module-links">
           <a href="mockups/plant-module.html" class="link-btn primary" target="_blank">&#x1F4BB; Interactive Mockup</a>
           <a href="docs/Module_04_Plant_Module.md" class="link-btn" target="_blank">&#x1F4C4; Spec (.md)</a>
-          <a href="downloads/Module_04_Plant_Module.docx" class="link-btn">&#x2B07; Download .docx</a>
         </div>
       </div>
 
@@ -245,7 +262,6 @@
         </div>
         <div class="module-links">
           <a href="docs/PRD.md" class="link-btn" target="_blank">&#x1F4C4; View (.md)</a>
-          <a href="downloads/PRD.docx" class="link-btn">&#x2B07; Download .docx</a>
         </div>
       </div>
       <div class="module-card">
@@ -258,7 +274,6 @@
         </div>
         <div class="module-links">
           <a href="docs/Demo_Documentation.md" class="link-btn" target="_blank">&#x1F4C4; View (.md)</a>
-          <a href="downloads/Demo_Documentation.docx" class="link-btn">&#x2B07; Download .docx</a>
         </div>
       </div>
       <div class="module-card">
@@ -360,7 +375,7 @@
 
 <div class="footer">
   McWay Site Management &mdash; Aveo Software &mdash; Last updated: 20 April 2026 (Module 04)<br>
-  <a href="CHANGELOG.md">Changelog</a> &bull; <a href="docs/">All Documents</a> &bull; <a href="mockups/">All Mockups</a>
+  <a href="CHANGELOG.md">Changelog</a> &bull; <a href="https://drive.google.com/drive/folders/1ted-1QgAyxHjseUebMMHQNLX_mbAy4We" target="_blank" rel="noopener">Google Drive</a> &bull; <a href="mockups/">All Mockups</a>
 </div>
 
 </body>
