@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>McWay Plant Module — Mockup v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; color: #2d3142; background: #f4f5f7; height: 100vh; overflow: hidden; }
+  .topbar { height: 48px; background: #1e4d7b; color: #fff; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .topbar .logo { font-weight: 600; font-size: 15px; }
+  .topbar .logo .tag { background: #ffb300; color: #333; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-left: 8px; font-weight: 700; }
+  .topbar .breadcrumb { margin-left: 24px; color: rgba(255,255,255,0.8); font-size: 12px; }
+  .topbar .breadcrumb span { margin: 0 6px; }
+  .topbar .user { margin-left: auto; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+  .topbar .avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .layout { display: flex; margin-top: 48px; height: calc(100vh - 48px); }
+  .sidebar { width: 240px; background: #fff; border-right: 1px solid #e0e2e7; overflow-y: auto; flex-shrink: 0; }
+  .sidebar-group { padding: 10px 0; border-bottom: 1px solid #eef0f3; }
+  .sidebar-group-title { font-size: 10px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 18px; }
+  .sidebar-item { padding: 9px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #4a4f5c; border-left: 3px solid transparent; font-size: 13px; }
+  .sidebar-item:hover { background: #e8eef5; }
+  .sidebar-item.active { background: #e8eef5; border-left-color: #1e4d7b; color: #1e4d7b; font-weight: 600; }
+  .sidebar-item.sub { padding-left: 36px; font-size: 12px; }
+  .sidebar-item .icon { width: 18px; text-align: center; }
+  .sidebar-item .count { margin-left: auto; background: #dc3545; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px 40px; }
+  .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .view-title { font-size: 20px; font-weight: 600; }
+  .view-subtitle { font-size: 12px; color: #8a8f99; margin-top: 2px; }
+  .btn { padding: 7px 14px; border-radius: 4px; border: 1px solid transparent; font-size: 13px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: #1e4d7b; color: #fff; }
+  .btn-primary:hover { background: #143656; }
+  .btn-secondary { background: #fff; color: #4a4f5c; border-color: #d8dae0; }
+  .btn-secondary:hover { background: #f4f5f7; }
+  .btn-success { background: #198754; color: #fff; }
+  .btn-success:hover { background: #157347; }
+  .btn-warn { background: #ffc107; color: #333; }
+  .btn-danger { background: #dc3545; color: #fff; }
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toolbar { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 180px; padding: 6px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; }
+  .filter-chip { padding: 4px 10px; background: #f4f5f7; border: 1px solid #d8dae0; border-radius: 14px; font-size: 12px; cursor: pointer; color: #4a4f5c; }
+  .filter-chip.active { background: #1e4d7b; color: #fff; border-color: #1e4d7b; }
+  .table-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f7f8fa; padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6c7080; letter-spacing: 0.5px; border-bottom: 1px solid #e0e2e7; white-space: nowrap; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #fafbfc; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-active, .badge-ok { background: #d4f4dd; color: #1a7b36; }
+  .badge-inactive { background: #e0e2e7; color: #6c7080; }
+  .badge-submitted { background: #d4e5f7; color: #1a5a9b; }
+  .badge-verified { background: #d4f4dd; color: #1a7b36; }
+  .badge-locked { background: #e0e2e7; color: #4a4f5c; }
+  .badge-draft { background: #fff4d4; color: #8b6b00; }
+  .badge-info { background: #d4e5f7; color: #1a5a9b; }
+  .badge-warn { background: #fff4d4; color: #8b6b00; }
+  .badge-low { background: #fff4d4; color: #8b6b00; }
+  .badge-critical { background: #fddede; color: #b5313c; }
+  .badge-bit { background: #3d2817; color: #fff; }
+  .badge-rmc { background: #5a6c7d; color: #fff; }
+  .badge-eml { background: #8b5a2b; color: #fff; }
+  .badge-steel { background: #495057; color: #fff; }
+  .badge-vendor { background: #d4e5f7; color: #1a5a9b; }
+  .badge-quarry { background: #fde9d4; color: #b86e00; }
+  .badge-camp { background: #d4f4dd; color: #1a7b36; }
+  .badge-site { background: #e0d4f4; color: #5a1a9b; }
+  .form-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 20px 24px; }
+  .form-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid #eef0f3; margin-bottom: 20px; }
+  .form-header h2 { font-size: 18px; font-weight: 600; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 28px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 11px; font-weight: 600; color: #6c7080; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field label .req { color: #dc3545; margin-left: 2px; }
+  .field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; font-family: inherit; background: #fff; }
+  .field input:focus, .field select:focus { outline: none; border-color: #1e4d7b; box-shadow: 0 0 0 3px rgba(30,77,123,0.1); }
+  .field input[readonly], .field .computed { background: #f7f8fa; color: #6c7080; cursor: not-allowed; }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field .hint { font-size: 11px; color: #8a8f99; }
+  .section-title { font-size: 13px; font-weight: 700; color: #4a4f5c; margin: 22px 0 12px; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #1e4d7b; padding-left: 10px; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid #e0e2e7; margin-bottom: 20px; }
+  .tab { padding: 10px 16px; cursor: pointer; font-size: 13px; color: #6c7080; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab:hover { color: #1e4d7b; }
+  .tab.active { color: #1e4d7b; border-bottom-color: #1e4d7b; font-weight: 600; }
+  .hidden { display: none !important; }
+  .info-banner { background: #e7f1fb; border: 1px solid #b4d5f2; color: #1a5a9b; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .warn-banner { background: #fff9e6; border: 1px solid #ffe0a6; color: #7a5800; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .success-banner { background: #d4f4dd; border: 1px solid #a3e4b5; color: #1a7b36; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .kpi-card { background: #fff; border: 1px solid #e0e2e7; border-radius: 8px; padding: 16px; transition: box-shadow 0.15s; cursor: pointer; }
+  .kpi-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .kpi-card .label { font-size: 11px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-card .value { font-size: 26px; font-weight: 700; color: #1e4d7b; margin-top: 4px; }
+  .kpi-card .sub { font-size: 11px; color: #8a8f99; margin-top: 4px; }
+  .kpi-card.alert .value { color: #dc3545; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: #dbe5ef; color: #1e4d7b; border-radius: 12px; font-size: 12px; }
+  .activity-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .activity-icon.in { background: #d4f4dd; }
+  .activity-icon.out { background: #fddede; }
+  .activity-icon.prod { background: #e0d4f4; }
+  .activity-icon.scrap { background: #fde9d4; }
+  .activity-icon.labor { background: #d4e5f7; }
+  .activity-time { color: #8a8f99; font-size: 11px; margin-left: auto; white-space: nowrap; }
+  .stock-bar { height: 6px; background: #e0e2e7; border-radius: 3px; overflow: hidden; width: 80px; display: inline-block; vertical-align: middle; margin-left: 8px; }
+  .stock-bar-fill { height: 100%; border-radius: 3px; }
+  .capacity-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; margin-bottom: 8px; }
+  .capacity-label { width: 160px; font-weight: 600; font-size: 13px; }
+  .capacity-track { flex: 1; height: 16px; background: #eef0f3; border-radius: 8px; overflow: hidden; position: relative; }
+  .capacity-fill { height: 100%; background: linear-gradient(90deg, #1e4d7b, #3a7bb0); border-radius: 8px; transition: width 0.3s; }
+  .capacity-val { font-weight: 600; min-width: 170px; font-size: 13px; text-align: right; color: #4a4f5c; }
+  .input-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 40px; gap: 8px; padding: 8px 10px; background: #fafbfc; border-radius: 4px; margin-bottom: 6px; align-items: end; }
+  .photo-upload { border: 2px dashed #d8dae0; border-radius: 6px; padding: 20px; text-align: center; color: #8a8f99; cursor: pointer; }
+  .photo-upload:hover { border-color: #1e4d7b; color: #1e4d7b; }
+  .verify-actions { display: flex; gap: 6px; }
+  .age-stale { color: #dc3545; font-weight: 600; }
+  .variance-good { color: #198754; font-weight: 600; }
+  .variance-amber { color: #d97706; font-weight: 600; }
+  .variance-red { color: #dc3545; font-weight: 600; }
+  .prod-tabs { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .prod-tab { padding: 10px 18px; border: 1px solid #e0e2e7; border-radius: 8px; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; color: #6c7080; display: flex; flex-direction: column; gap: 2px; min-width: 140px; }
+  .prod-tab .sub { font-size: 11px; font-weight: 400; color: #8a8f99; }
+  .prod-tab.active { border-color: #1e4d7b; background: #e8eef5; color: #1e4d7b; }
+  .prod-tab:hover { background: #f4f5f7; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">McWay Plant<span class="tag">DEMO v1</span></div>
+  <div class="breadcrumb" id="breadcrumb">Plant Operations <span>&rsaquo;</span> Home</div>
+  <div class="user">
+    <span style="opacity:0.7">Magodi Plant</span>
+    <span>Pravin Modi (Plant In-charge)</span>
+    <div class="avatar">PM</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-item active" data-view="home"><span class="icon">🏠</span> Home</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Receipts</div>
+      <div class="sidebar-item" data-view="inward"><span class="icon">📥</span> Raw Material Inward</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Production</div>
+      <div class="sidebar-item" data-view="prod" data-cap="bit"><span class="icon">🛢️</span> Bituminous Mix</div>
+      <div class="sidebar-item" data-view="prod" data-cap="rmc"><span class="icon">🏗️</span> Concrete (RMC)</div>
+      <div class="sidebar-item" data-view="prod" data-cap="eml"><span class="icon">🪣</span> Emulsion</div>
+      <div class="sidebar-item" data-view="prod" data-cap="steel"><span class="icon">⚙️</span> Steel Cut/Bend</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Dispatch</div>
+      <div class="sidebar-item" data-view="outward"><span class="icon">📤</span> Plant Outward</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Inventory</div>
+      <div class="sidebar-item" data-view="stock"><span class="icon">📊</span> Stock Register</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Operations</div>
+      <div class="sidebar-item" data-view="scrap"><span class="icon">🗑️</span> Scrap & Wastage</div>
+      <div class="sidebar-item" data-view="labor"><span class="icon">👷</span> Labor</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Review</div>
+      <div class="sidebar-item" data-view="verify"><span class="icon">✅</span> Verification Queue <span class="count">5</span></div>
+    </div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+// ============== DEMO DATA ==============
+const plant = {
+  name: "Magodi",
+  code: "PLNT/2026/001",
+  incharge: "Pravin Modi",
+  capabilities: ["Bituminous", "Concrete (RMC)", "Emulsion", "Steel"],
+  capacity: { bit: {val: 500, unit: "MT"}, rmc: {val: 300, unit: "m³"}, eml: {val: 10, unit: "MT"}, steel: {val: 50, unit: "MT"} },
+  suppliesCamps: ["Khatraj Chokdi"],
+  suppliesSites: ["Kalol Sanand"]
+};
+
+const inwardData = [
+  { code:"PIN/2026/0001", date:"2026-04-14 08:00", material:"Aggregate", variant:"20mm", sourceType:"Quarry", source:"Shree Construction", vehicle:"GJ-05-AB-1111", slip:"SLP-0501", royalty:"ROY-12001", gross:35.0, tare:7.0, net:28.0, uom:"MT", state:"Verified" },
+  { code:"PIN/2026/0002", date:"2026-04-14 10:30", material:"Aggregate", variant:"10mm", sourceType:"Quarry", source:"Shree Construction", vehicle:"GJ-05-AB-2222", slip:"SLP-0502", royalty:"ROY-12002", gross:33.0, tare:7.0, net:26.0, uom:"MT", state:"Verified" },
+  { code:"PIN/2026/0003", date:"2026-04-14 14:00", material:"Bitumen", variant:"VG-30", sourceType:"Vendor", source:"IOCL Depot", vehicle:"GJ-03-TK-4444", slip:"SLP-0503", royalty:"", gross:26.0, tare:8.0, net:18.0, uom:"MT", state:"Verified" },
+  { code:"PIN/2026/0004", date:"2026-04-15 09:15", material:"Sand", variant:"—", sourceType:"Quarry", source:"Shree Construction", vehicle:"GJ-05-AB-3333", slip:"SLP-0504", royalty:"ROY-12010", gross:30.0, tare:8.0, net:22.0, uom:"MT", state:"Verified" },
+  { code:"PIN/2026/0005", date:"2026-04-15 11:30", material:"Cement", variant:"—", sourceType:"Vendor", source:"Ambuja Cement", vehicle:"GJ-01-XX-9999", slip:"SLP-0505", royalty:"", gross:37.0, tare:12.0, net:25.0, uom:"MT", secQty:"500 bags", state:"Submitted" },
+  { code:"PIN/2026/0006", date:"2026-04-16 08:45", material:"Steel", variant:"12mm rod", sourceType:"Vendor", source:"Maruti Hirers", vehicle:"GJ-01-XX-7777", slip:"SLP-0506", royalty:"", gross:17.0, tare:5.0, net:12.0, uom:"MT", secQty:"~1,500 pcs", state:"Submitted" },
+  { code:"PIN/2026/0007", date:"2026-04-17 07:30", material:"Emulsifier", variant:"—", sourceType:"Vendor", source:"IOCL Depot", vehicle:"GJ-03-TK-5555", slip:"SLP-0507", royalty:"", gross:0, tare:0, net:0.15, uom:"MT", state:"Submitted" },
+];
+
+const productionData = {
+  bit: [
+    { code:"PPRD/BIT/2026/0001", date:"2026-04-15 10:00", shift:"Morning", operator:"Mohan Batcher", grade:"BM", output:10.0, uom:"MT", temp:155, diesel:40,
+      inputs: [
+        { mat:"Aggregate 20mm", bom:4.50, actual:4.55, uom:"MT", variance:1.1 },
+        { mat:"Aggregate 10mm", bom:3.00, actual:3.05, uom:"MT", variance:1.7 },
+        { mat:"Sand", bom:2.00, actual:2.00, uom:"MT", variance:0 },
+        { mat:"Bitumen VG-30", bom:0.50, actual:0.55, uom:"MT", variance:10.0 },
+      ], state:"Verified" },
+    { code:"PPRD/BIT/2026/0002", date:"2026-04-16 09:30", shift:"Morning", operator:"Mohan Batcher", grade:"DBM", output:12.0, uom:"MT", temp:160, diesel:48,
+      inputs: [
+        { mat:"Aggregate 20mm", bom:4.80, actual:4.85, uom:"MT", variance:1.0 },
+        { mat:"Aggregate 10mm", bom:4.20, actual:4.25, uom:"MT", variance:1.2 },
+        { mat:"Sand", bom:2.40, actual:2.45, uom:"MT", variance:2.1 },
+        { mat:"Bitumen VG-30", bom:0.60, actual:0.62, uom:"MT", variance:3.3 },
+      ], state:"Submitted" },
+    { code:"PPRD/BIT/2026/0003", date:"2026-04-17 09:00", shift:"Morning", operator:"Mohan Batcher", grade:"BC", output:8.0, uom:"MT", temp:165, diesel:32,
+      inputs: [
+        { mat:"Aggregate 20mm", bom:2.80, actual:3.10, uom:"MT", variance:10.7 },
+        { mat:"Aggregate 10mm", bom:3.20, actual:3.25, uom:"MT", variance:1.6 },
+        { mat:"Sand", bom:1.44, actual:1.45, uom:"MT", variance:0.7 },
+        { mat:"Bitumen VG-30", bom:0.48, actual:0.50, uom:"MT", variance:4.2 },
+      ], state:"Submitted", flagged:true },
+  ],
+  rmc: [
+    { code:"PPRD/RMC/2026/0001", date:"2026-04-16 11:00", shift:"Morning", operator:"Suresh Mixer", grade:"M25", output:5.0, uom:"m³", slump:75, diesel:22,
+      inputs: [
+        { mat:"Cement", bom:1.75, actual:1.80, uom:"MT", variance:2.9 },
+        { mat:"Sand", bom:3.00, actual:3.00, uom:"MT", variance:0 },
+        { mat:"Aggregate 20mm", bom:5.25, actual:5.25, uom:"MT", variance:0 },
+        { mat:"Water", bom:850, actual:850, uom:"L", variance:0 },
+      ], state:"Submitted" },
+  ],
+  eml: [
+    { code:"PPRD/EML/2026/0001", date:"2026-04-17 07:30", shift:"Morning", operator:"Kiran Emulsion", grade:"SS1", output:2.0, uom:"MT", diesel:6,
+      inputs: [
+        { mat:"Bitumen VG-30", bom:1.10, actual:1.10, uom:"MT", variance:0 },
+        { mat:"Water", bom:0.80, actual:0.80, uom:"MT", variance:0 },
+        { mat:"Emulsifier", bom:0.04, actual:0.04, uom:"MT", variance:0 },
+      ], state:"Submitted" },
+  ],
+  steel: []
+};
+
+const outwardData = [
+  { code:"POUT/2026/0001", date:"2026-04-15 14:00", material:"BM", variant:"—", destType:"Site", dest:"Kalol Sanand", qty:8.0, uom:"MT", vehicle:"GJ-05-AB-4444", slip:"PLT-0088", receiver:"Mahesh Desai", temp:150, state:"Verified" },
+  { code:"POUT/2026/0002", date:"2026-04-16 08:00", material:"Aggregate", variant:"6mm", destType:"Camp", dest:"Khatraj Chokdi", qty:15.0, uom:"MT", vehicle:"GJ-01-ZZ-3456", slip:"PLT-0089", receiver:"Suresh Rathod", temp:0, state:"Verified" },
+  { code:"POUT/2026/0003", date:"2026-04-16 14:30", material:"DBM", variant:"—", destType:"Site", dest:"Kalol Sanand", qty:10.0, uom:"MT", vehicle:"GJ-05-AB-5555", slip:"PLT-0090", receiver:"Mahesh Desai", temp:158, state:"Submitted" },
+  { code:"POUT/2026/0004", date:"2026-04-17 10:15", material:"BC", variant:"—", destType:"Site", dest:"Kalol Sanand", qty:8.0, uom:"MT", vehicle:"GJ-05-AB-6666", slip:"PLT-0091", receiver:"", temp:163, state:"Submitted" },
+];
+
+const rawStockData = [
+  { material:"Aggregate", variant:"20mm", uom:"MT", opening:0, inward:28.0, consumed:14.65, scrap:0, closing:13.35, threshold:10, },
+  { material:"Aggregate", variant:"10mm", uom:"MT", opening:0, inward:26.0, consumed:7.30, scrap:0, closing:18.70, threshold:10, },
+  { material:"Aggregate", variant:"6mm", uom:"MT", opening:20.0, inward:0, consumed:0, scrap:0, closing:5.0, threshold:8, outOther:15.0 },
+  { material:"Bitumen", variant:"VG-30", uom:"MT", opening:0, inward:18.0, consumed:2.82, scrap:0.15, closing:15.03, threshold:5, },
+  { material:"Sand", variant:"—", uom:"MT", opening:0, inward:22.0, consumed:7.45, scrap:0, closing:14.55, threshold:8, },
+  { material:"Cement", variant:"—", uom:"MT", opening:0, inward:25.0, consumed:1.80, scrap:0, closing:23.20, threshold:8, },
+  { material:"Steel", variant:"12mm rod", uom:"MT", opening:0, inward:12.0, consumed:0, scrap:0, closing:12.00, threshold:5, },
+  { material:"Emulsifier", variant:"—", uom:"MT", opening:0, inward:0.15, consumed:0.04, scrap:0, closing:0.11, threshold:0.05, },
+];
+
+const finStockData = [
+  { product:"BM", variant:"—", uom:"MT", opening:0, produced:10.0, dispatched:8.0, scrap:0, closing:2.0, threshold:2, },
+  { product:"DBM", variant:"—", uom:"MT", opening:0, produced:12.0, dispatched:10.0, scrap:0, closing:2.0, threshold:2, },
+  { product:"BC", variant:"—", uom:"MT", opening:0, produced:8.0, dispatched:8.0, scrap:0, closing:0, threshold:2, },
+  { product:"M25 Concrete Mix", variant:"—", uom:"m³", opening:0, produced:5.0, dispatched:0, scrap:0, closing:5.0, threshold:0, },
+  { product:"SS1 Emulsion", variant:"—", uom:"MT", opening:0, produced:2.0, dispatched:0, scrap:0, closing:2.0, threshold:0, },
+];
+
+const scrapData = [
+  { code:"PSCR/2026/0001", date:"2026-04-15 16:00", category:"Spillage", material:"Bitumen VG-30", qty:0.15, uom:"MT", reason:"Leak during transfer from tank to mixer pump inlet", batch:"—", state:"Verified" },
+  { code:"PSCR/2026/0002", date:"2026-04-17 09:45", category:"Batch rejection", material:"BC", qty:0.5, uom:"MT", reason:"Temperature dropped below spec during cold patch; load scrapped", batch:"PPRD/BIT/2026/0003", state:"Submitted" },
+];
+
+const laborData = [
+  { code:"LAB/2026/0010", date:"2026-04-16", party:"Kishor Mukadam", workers:10, purpose:"Plant operations", state:"Verified" },
+  { code:"LAB/2026/0011", date:"2026-04-17", party:"Kishor Mukadam", workers:10, purpose:"Loading / unloading", state:"Submitted" },
+  { code:"LAB/2026/0012", date:"2026-04-17", party:"Hasmukh Gang", workers:4, purpose:"Maintenance / cleaning", state:"Submitted" },
+];
+
+const verifyQueue = [
+  { code:"PIN/2026/0005", type:"Raw Inward", cap:"", date:"2026-04-15 11:30", desc:"Cement 25.0 MT from Ambuja Cement", by:"Pravin Modi", age:"1d 20h", stale:true },
+  { code:"PIN/2026/0006", type:"Raw Inward", cap:"", date:"2026-04-16 08:45", desc:"Steel 12mm rod 12.0 MT from Maruti Hirers", by:"Pravin Modi", age:"23h ago" },
+  { code:"PPRD/BIT/2026/0003", type:"Production", cap:"Bituminous", date:"2026-04-17 09:00", desc:"BC 8.0 MT — ⚠️ Agg 20mm variance +10.7%", by:"Pravin Modi", age:"2h ago", flagged:true },
+  { code:"PPRD/RMC/2026/0001", type:"Production", cap:"Concrete", date:"2026-04-16 11:00", desc:"M25 Concrete 5.0 m³", by:"Pravin Modi", age:"1d 0h" },
+  { code:"POUT/2026/0004", type:"Outward", cap:"", date:"2026-04-17 10:15", desc:"BC 8.0 MT → Kalol Sanand", by:"Pravin Modi", age:"1h ago" },
+];
+
+const ledgerData = [
+  { date:"2026-04-14 08:00", type:"Raw Inward", ref:"PIN/2026/0001", detail:"From Shree Construction (Quarry)", qtyIn:28.0, qtyOut:"", balance:28.0, state:"Verified", by:"Pravin Modi" },
+  { date:"2026-04-15 10:00", type:"Prod Consumed", ref:"PPRD/BIT/2026/0001", detail:"BM batch (10 MT output)", qtyIn:"", qtyOut:4.55, balance:23.45, state:"Verified", by:"Pravin Modi" },
+  { date:"2026-04-16 09:30", type:"Prod Consumed", ref:"PPRD/BIT/2026/0002", detail:"DBM batch (12 MT output)", qtyIn:"", qtyOut:4.85, balance:18.60, state:"Submitted", by:"Pravin Modi" },
+  { date:"2026-04-17 09:00", type:"Prod Consumed", ref:"PPRD/BIT/2026/0003", detail:"BC batch (8 MT output)", qtyIn:"", qtyOut:3.10, balance:15.50, state:"Submitted", by:"Pravin Modi" },
+  { date:"2026-04-16 11:00", type:"Prod Consumed", ref:"PPRD/RMC/2026/0001", detail:"M25 batch (5 m³ output)", qtyIn:"", qtyOut:2.15, balance:13.35, state:"Submitted", by:"Pravin Modi" },
+];
+
+// ============== ROUTING ==============
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const mainEl = document.getElementById('main');
+const breadcrumbEl = document.getElementById('breadcrumb');
+let activeProdCap = 'bit';
+
+sidebarItems.forEach(item => {
+  item.addEventListener('click', () => {
+    sidebarItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    if (item.dataset.cap) activeProdCap = item.dataset.cap;
+    renderView(item.dataset.view);
+  });
+});
+
+function setBreadcrumb(parts) { breadcrumbEl.innerHTML = parts.map(p=>p).join(' <span>&rsaquo;</span> '); }
+
+function renderView(view, detail) {
+  switch(view) {
+    case 'home': renderHome(); break;
+    case 'inward': detail==='form' ? renderInwardForm() : renderInwardList(); break;
+    case 'prod': detail==='form' ? renderProdForm() : renderProdList(); break;
+    case 'outward': detail==='form' ? renderOutwardForm() : renderOutwardList(); break;
+    case 'stock': detail==='ledger' ? renderStockLedger() : renderStock(); break;
+    case 'scrap': detail==='form' ? renderScrapForm() : renderScrapList(); break;
+    case 'labor': detail==='form' ? renderLaborForm() : renderLaborList(); break;
+    case 'verify': renderVerifyQueue(); break;
+    default: renderHome();
+  }
+}
+
+function stateBadge(s) { return `<span class="badge badge-${s.toLowerCase().replace(/\s/g,'')}">${s}</span>`; }
+function srcBadge(t) { const c = t==='Quarry' ? 'quarry' : 'vendor'; return `<span class="badge badge-${c}">${t}</span>`; }
+function destBadge(t) { const c = t==='Camp' ? 'camp' : 'site'; return `<span class="badge badge-${c}">${t}</span>`; }
+function capBadge(c) {
+  if (!c) return '';
+  const map = { 'Bituminous':'bit', 'Concrete':'rmc', 'Concrete (RMC)':'rmc', 'Emulsion':'eml', 'Steel':'steel' };
+  return `<span class="badge badge-${map[c]||'info'}">${c}</span>`;
+}
+function varianceClass(v) { const a = Math.abs(v); if (a <= 5) return 'variance-good'; if (a <= 10) return 'variance-amber'; return 'variance-red'; }
+
+// ============== HOME ==============
+function renderHome() {
+  setBreadcrumb(['Plant Operations', 'Home']);
+  const todayIn = inwardData.filter(i => i.date.startsWith('2026-04-17'));
+  const todayProdAll = Object.values(productionData).flat().filter(p => p.date.startsWith('2026-04-17'));
+  const todayOut = outwardData.filter(o => o.date.startsWith('2026-04-17'));
+  const todayBit = productionData.bit.filter(p => p.date.startsWith('2026-04-17')).reduce((s,p) => s+p.output, 0);
+  const todayRmc = productionData.rmc.filter(p => p.date.startsWith('2026-04-17')).reduce((s,p) => s+p.output, 0);
+  const todayEml = productionData.eml.filter(p => p.date.startsWith('2026-04-17')).reduce((s,p) => s+p.output, 0);
+  const lowRaw = rawStockData.filter(s => s.threshold > 0 && s.closing < s.threshold);
+  const lowFin = finStockData.filter(s => s.threshold > 0 && s.closing < s.threshold);
+  const pending = verifyQueue.length;
+  const todayLabor = laborData.filter(l => l.date === '2026-04-17').reduce((s,l) => s + l.workers, 0);
+
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">Plant Home — ${plant.name}</div>
+        <div class="view-subtitle">${plant.code} &bull; Capabilities: ${plant.capabilities.join(' · ')} &bull; Today: 17 Apr 2026</div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card" onclick="renderView('inward')">
+        <div class="label">Today's Raw Inward</div>
+        <div class="value">${todayIn.length}</div>
+        <div class="sub">${todayIn.reduce((s,i)=>s+(i.net||0),0).toFixed(2)} MT total</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('prod')">
+        <div class="label">Today's Production</div>
+        <div class="value">${todayProdAll.length}</div>
+        <div class="sub">${todayBit} MT bit · ${todayEml} MT eml</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('outward')">
+        <div class="label">Today's Outward</div>
+        <div class="value">${todayOut.length}</div>
+        <div class="sub">${todayOut.reduce((s,o)=>s+o.qty,0).toFixed(1)} MT/m³ dispatched</div>
+      </div>
+      <div class="kpi-card ${lowRaw.length?'alert':''}" onclick="renderView('stock')">
+        <div class="label">Low Raw Stock</div>
+        <div class="value">${lowRaw.length}</div>
+        <div class="sub">${lowRaw.length ? lowRaw.map(s=>s.material+' '+s.variant).join(', ') : 'All raw stock OK'}</div>
+      </div>
+      <div class="kpi-card ${lowFin.length?'alert':''}" onclick="renderView('stock')">
+        <div class="label">Low Finished Stock</div>
+        <div class="value">${lowFin.length}</div>
+        <div class="sub">${lowFin.length ? lowFin.map(s=>s.product).join(', ') : 'All finished stock OK'}</div>
+      </div>
+      <div class="kpi-card ${pending>0?'alert':''}" onclick="renderView('verify')">
+        <div class="label">Pending Verification</div>
+        <div class="value">${pending}</div>
+        <div class="sub">${verifyQueue.filter(v=>v.stale||v.flagged).length} need review</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('labor')">
+        <div class="label">Labor at Plant Today</div>
+        <div class="value">${todayLabor}</div>
+        <div class="sub">${laborData.filter(l=>l.date==='2026-04-17').length} parties</div>
+      </div>
+    </div>
+
+    <div class="section-title">Capacity Utilization — Today</div>
+    <div class="capacity-bar">
+      <div class="capacity-label">🛢️ Bituminous Mix</div>
+      <div class="capacity-track"><div class="capacity-fill" style="width:${(todayBit/plant.capacity.bit.val*100).toFixed(1)}%"></div></div>
+      <div class="capacity-val">${todayBit} / ${plant.capacity.bit.val} MT (${(todayBit/plant.capacity.bit.val*100).toFixed(1)}%)</div>
+    </div>
+    <div class="capacity-bar">
+      <div class="capacity-label">🏗️ Concrete (RMC)</div>
+      <div class="capacity-track"><div class="capacity-fill" style="width:${(todayRmc/plant.capacity.rmc.val*100).toFixed(1)}%"></div></div>
+      <div class="capacity-val">${todayRmc} / ${plant.capacity.rmc.val} m³ (${(todayRmc/plant.capacity.rmc.val*100).toFixed(1)}%)</div>
+    </div>
+    <div class="capacity-bar">
+      <div class="capacity-label">🪣 Emulsion</div>
+      <div class="capacity-track"><div class="capacity-fill" style="width:${(todayEml/plant.capacity.eml.val*100).toFixed(1)}%"></div></div>
+      <div class="capacity-val">${todayEml} / ${plant.capacity.eml.val} MT (${(todayEml/plant.capacity.eml.val*100).toFixed(1)}%)</div>
+    </div>
+    <div class="capacity-bar">
+      <div class="capacity-label">⚙️ Steel Cut/Bend</div>
+      <div class="capacity-track"><div class="capacity-fill" style="width:0%"></div></div>
+      <div class="capacity-val">0 / ${plant.capacity.steel.val} MT (0%)</div>
+    </div>
+
+    <div class="btn-group" style="margin:22px 0 18px">
+      <button class="btn btn-primary" onclick="renderView('inward','form')">+ New Raw Inward</button>
+      <button class="btn btn-primary" onclick="activeProdCap='bit'; renderView('prod','form')">+ New Bituminous Batch</button>
+      <button class="btn btn-primary" onclick="activeProdCap='rmc'; renderView('prod','form')">+ New RMC Batch</button>
+      <button class="btn btn-primary" onclick="renderView('outward','form')">+ New Outward</button>
+      <button class="btn btn-secondary" onclick="renderView('verify')">Review Pending (${pending})</button>
+    </div>
+
+    <div class="section-title">Recent Activity</div>
+    <div class="table-container">
+      <div class="activity-item"><div class="activity-icon in">📥</div><div><strong>PIN/2026/0007</strong> — Emulsifier 0.15 MT from IOCL <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">07:30 today</div></div>
+      <div class="activity-item"><div class="activity-icon prod">🏭</div><div><strong>PPRD/EML/2026/0001</strong> — SS1 Emulsion 2.0 MT produced <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">07:30 today</div></div>
+      <div class="activity-item"><div class="activity-icon prod">🏭</div><div><strong>PPRD/BIT/2026/0003</strong> — BC 8.0 MT produced ⚠️ variance flag <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">09:00 today</div></div>
+      <div class="activity-item"><div class="activity-icon scrap">🗑️</div><div><strong>PSCR/2026/0002</strong> — 0.5 MT BC batch rejected <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">09:45 today</div></div>
+      <div class="activity-item"><div class="activity-icon out">📤</div><div><strong>POUT/2026/0004</strong> — BC 8.0 MT → Kalol Sanand <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">10:15 today</div></div>
+      <div class="activity-item"><div class="activity-icon labor">👷</div><div><strong>LAB/2026/0011</strong> — Kishor Mukadam 10 workers (loading) <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">today</div></div>
+    </div>
+  `;
+}
+
+// ============== RAW MATERIAL INWARD ==============
+function renderInwardList() {
+  setBreadcrumb(['Plant Operations', 'Raw Material Inward']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Raw Material Inward</div><div class="view-subtitle">${inwardData.length} entries &bull; Magodi Plant</div></div>
+      <button class="btn btn-primary" onclick="renderView('inward','form')">+ New Inward</button>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search by material, slip, vehicle..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span><span class="filter-chip">Vendor</span><span class="filter-chip">Quarry</span>
+      <span class="filter-chip">Submitted</span><span class="filter-chip">Verified</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Material</th><th>Variant</th><th>Source</th><th>From</th><th>Vehicle</th><th>Slip</th><th>Net Wt</th><th>State</th></tr></thead>
+        <tbody>${inwardData.map(i=>`
+          <tr onclick="renderView('inward','form')">
+            <td><strong>${i.code}</strong></td>
+            <td>${i.date}</td>
+            <td>${i.material}</td>
+            <td>${i.variant}</td>
+            <td>${srcBadge(i.sourceType)}</td>
+            <td>${i.source}</td>
+            <td>${i.vehicle}</td>
+            <td>${i.slip}</td>
+            <td><strong>${i.net} ${i.uom}</strong>${i.secQty?' <span style="color:#8a8f99">('+i.secQty+')</span>':''}</td>
+            <td>${stateBadge(i.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderInwardForm() {
+  setBreadcrumb(['Plant Operations', 'Raw Material Inward', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('inward')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+        <button class="btn btn-secondary">Save & Add Another</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div>
+          <h2>New Raw Material Inward</h2>
+          <div class="view-subtitle">PIN/2026/0008 &bull; Magodi Plant</div>
+        </div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="info-banner">Only raw materials appear here. Finished goods (BM, RMC, Emulsion) are added via Production, not Inward.</div>
+
+      <div class="form-grid">
+        <div class="field"><label>Inward Code</label><input value="PIN/2026/0008" readonly></div>
+        <div class="field"><label>Plant</label><input value="Magodi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T14:00"><div class="hint">Backdating allowed up to 3 days</div></div>
+        <div class="field"><label>Material <span class="req">*</span></label>
+          <select>
+            <option value="">— Select Raw Material —</option>
+            <option selected>Aggregate</option>
+            <option>Bitumen</option>
+            <option>Cement</option>
+            <option>Sand</option>
+            <option>Steel</option>
+            <option>Emulsifier</option>
+          </select>
+          <div class="hint">Raw materials only — finished goods excluded</div>
+        </div>
+        <div class="field"><label>Variant / Grade <span class="req">*</span></label>
+          <select>
+            <option>6mm</option>
+            <option>10mm</option>
+            <option selected>20mm</option>
+            <option>40mm</option>
+          </select>
+        </div>
+        <div class="field"><label>Source Type <span class="req">*</span></label>
+          <select id="srcType" onchange="toggleSourceField()">
+            <option>Vendor</option>
+            <option selected>Quarry</option>
+          </select>
+        </div>
+        <div class="field"><label>Source — Vendor/Quarry <span class="req">*</span></label>
+          <select>
+            <option selected>Shree Construction</option>
+            <option>IOCL Depot</option>
+            <option>Ambuja Cement</option>
+            <option>Maruti Hirers</option>
+          </select>
+          <div class="hint">Quarries filtered when Source=Quarry</div>
+        </div>
+        <div class="field"><label>Stored At — Location</label><input value="PLNT/Magodi/Raw/Aggregate Yard" readonly><div class="hint">Auto-assigned based on material</div></div>
+      </div>
+
+      <div class="section-title">Vehicle & Slip Details</div>
+      <div class="form-grid">
+        <div class="field"><label>Vehicle Number <span class="req">*</span></label><input value="GJ-05-AB-1234" style="text-transform:uppercase"></div>
+        <div class="field"><label>Slip / Challan Number <span class="req">*</span></label><input value="SLP-0520"></div>
+        <div class="field"><label>Royalty Number</label><input placeholder="For aggregates / sand"></div>
+        <div class="field"></div>
+      </div>
+
+      <div class="section-title">Weights (plant weighbridge)</div>
+      <div class="info-banner">Net Weight = Gross − Tare, auto-computed. Plant has its own weighbridge.</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Gross Weight (MT) <span class="req">*</span></label><input type="number" value="34.0" id="gross" oninput="calcNet()"></div>
+        <div class="field"><label>Tare Weight (MT) <span class="req">*</span></label><input type="number" value="7.0" id="tare" oninput="calcNet()"></div>
+        <div class="field"><label>Net Weight (MT) — auto</label><input class="computed" readonly id="netWt" value="27.00"></div>
+      </div>
+
+      <div class="section-title">Photo & Remarks</div>
+      <div class="form-grid">
+        <div class="field"><label>Photos (optional, up to 3)</label>
+          <div class="photo-upload">📷 Click or drag to upload slip / vehicle / material<br><span style="font-size:11px">Max 5 MB each, auto-compressed</span></div>
+        </div>
+        <div class="field"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleSourceField() { /* placeholder */ }
+
+function calcNet() {
+  const g = parseFloat(document.getElementById('gross').value) || 0;
+  const t = parseFloat(document.getElementById('tare').value) || 0;
+  const n = g - t;
+  document.getElementById('netWt').value = n >= 0 ? n.toFixed(2) : 'ERROR: Negative!';
+  document.getElementById('netWt').style.color = n >= 0 ? '#6c7080' : '#dc3545';
+}
+
+// ============== PRODUCTION ==============
+const capMeta = {
+  bit:   { label: 'Bituminous Mix',   icon:'🛢️', unit:'MT', grades:['BM','DBM','BC','SDBC','MSS'], extraField:'Temperature (°C)', capacity:500 },
+  rmc:   { label: 'Concrete (RMC)',   icon:'🏗️', unit:'m³', grades:['M10','M15','M20','M25','M30','M35','M40'], extraField:'Slump (mm)', capacity:300 },
+  eml:   { label: 'Emulsion',         icon:'🪣', unit:'MT', grades:['SS1','SS2','RS1','RS2','MS'], extraField:null, capacity:10 },
+  steel: { label: 'Steel Cut/Bend',   icon:'⚙️', unit:'MT', grades:['Cut to size','Bent L-bar','Bent U-bar','Straightened'], extraField:'Shape/Spec', capacity:50 }
+};
+
+const bomTemplates = {
+  bit: {
+    'BM':   [{mat:'Aggregate 20mm', per:0.45},{mat:'Aggregate 10mm', per:0.30},{mat:'Sand', per:0.20},{mat:'Bitumen VG-30', per:0.05}],
+    'DBM':  [{mat:'Aggregate 20mm', per:0.40},{mat:'Aggregate 10mm', per:0.35},{mat:'Sand', per:0.20},{mat:'Bitumen VG-30', per:0.05}],
+    'BC':   [{mat:'Aggregate 20mm', per:0.35},{mat:'Aggregate 10mm', per:0.40},{mat:'Sand', per:0.18},{mat:'Bitumen VG-30', per:0.06}],
+    'SDBC': [{mat:'Aggregate 20mm', per:0.30},{mat:'Aggregate 10mm', per:0.45},{mat:'Sand', per:0.18},{mat:'Bitumen VG-30', per:0.06}],
+    'MSS':  [{mat:'Aggregate 20mm', per:0.25},{mat:'Aggregate 10mm', per:0.50},{mat:'Sand', per:0.18},{mat:'Bitumen VG-30', per:0.06}],
+  },
+  rmc: {
+    'M20': [{mat:'Cement', per:0.32},{mat:'Sand', per:0.65},{mat:'Aggregate 20mm', per:1.00},{mat:'Water', per:180, uom:'L'}],
+    'M25': [{mat:'Cement', per:0.35},{mat:'Sand', per:0.60},{mat:'Aggregate 20mm', per:1.05},{mat:'Water', per:170, uom:'L'}],
+  },
+  eml: {
+    'SS1': [{mat:'Bitumen VG-30', per:0.55},{mat:'Water', per:0.40},{mat:'Emulsifier', per:0.02}],
+    'RS1': [{mat:'Bitumen VG-30', per:0.60},{mat:'Water', per:0.35},{mat:'Emulsifier', per:0.02}],
+  },
+  steel: {}
+};
+
+function renderProdList() {
+  const meta = capMeta[activeProdCap];
+  setBreadcrumb(['Plant Operations', 'Production', meta.label]);
+  const data = productionData[activeProdCap] || [];
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">${meta.icon} ${meta.label} — Production</div>
+        <div class="view-subtitle">${data.length} batches &bull; Daily capacity: ${meta.capacity} ${meta.unit}</div>
+      </div>
+      <button class="btn btn-primary" onclick="renderView('prod','form')">+ New ${meta.label} Batch</button>
+    </div>
+
+    <div class="prod-tabs">
+      ${Object.keys(capMeta).map(k => `
+        <div class="prod-tab ${k===activeProdCap?'active':''}" onclick="activeProdCap='${k}'; renderView('prod')">
+          <div>${capMeta[k].icon} ${capMeta[k].label}</div>
+          <div class="sub">${productionData[k]?.length || 0} batches &bull; ${capMeta[k].capacity} ${capMeta[k].unit}/day</div>
+        </div>`).join('')}
+    </div>
+
+    ${activeProdCap === 'steel' ? `
+      <div class="info-banner">Steel cut/bend has no BoM auto-fill — input rod stock, output = cut pieces. No demo batches yet.</div>
+    ` : `<div class="info-banner">Production consumes raw materials (per BoM) and outputs finished goods into plant stock. Dispatch via Plant Outward. <strong>Pending from client:</strong> exact mix ratios — current values are placeholders.</div>`}
+
+    ${data.length > 0 ? `
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Shift</th><th>Operator</th><th>Grade</th><th>Output</th><th>${meta.extraField||'—'}</th><th>Variance</th><th>State</th></tr></thead>
+        <tbody>${data.map(r=>{
+          const maxVar = Math.max(...r.inputs.map(i=>Math.abs(i.variance)));
+          const varCls = maxVar <= 5 ? 'variance-good' : maxVar <= 10 ? 'variance-amber' : 'variance-red';
+          const extraVal = activeProdCap==='bit' ? r.temp+'°C' : activeProdCap==='rmc' ? r.slump+' mm' : '—';
+          return `<tr onclick="renderView('prod','form')">
+            <td><strong>${r.code}</strong>${r.flagged?' <span title="variance warning">⚠️</span>':''}</td>
+            <td>${r.date}</td>
+            <td>${r.shift}</td>
+            <td>${r.operator}</td>
+            <td><span class="badge badge-info">${r.grade}</span></td>
+            <td><strong>${r.output} ${r.uom}</strong></td>
+            <td>${extraVal}</td>
+            <td><span class="${varCls}">${maxVar.toFixed(1)}%</span></td>
+            <td>${stateBadge(r.state)}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>` : `<div style="padding:40px; text-align:center; color:#8a8f99;">No ${meta.label} batches yet. Click "+ New Batch" to create one.</div>`}
+  `;
+}
+
+function renderProdForm() {
+  const meta = capMeta[activeProdCap];
+  const defaultGrade = activeProdCap==='bit' ? 'BM' : activeProdCap==='rmc' ? 'M25' : activeProdCap==='eml' ? 'SS1' : 'Cut to size';
+  const defaultQty = activeProdCap==='bit' ? 10 : activeProdCap==='rmc' ? 3 : activeProdCap==='eml' ? 2 : 5;
+  setBreadcrumb(['Plant Operations', 'Production', meta.label, 'New Batch']);
+
+  // Build BoM rows
+  const bom = (bomTemplates[activeProdCap] && bomTemplates[activeProdCap][defaultGrade]) || [];
+  const bomRows = bom.map((b,i) => {
+    const expected = (b.per * defaultQty).toFixed(2);
+    return `
+      <div class="input-row">
+        <div style="padding-top:6px"><strong>${b.mat}</strong> <span style="color:#8a8f99">(stock ok)</span></div>
+        <div style="padding-top:6px; color:#8a8f99">${expected}</div>
+        <div><input type="number" value="${expected}" style="width:90px; padding:4px 6px; border:1px solid #d8dae0; border-radius:3px"></div>
+        <div style="padding-top:6px">${b.uom || meta.unit==='m³' ? (b.uom || 'MT') : 'MT'}</div>
+        <div></div>
+      </div>`;
+  }).join('');
+
+  const hasBom = bom.length > 0;
+
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('prod')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div>
+          <h2>${meta.icon} New ${meta.label} Batch</h2>
+          <div class="view-subtitle">PPRD/${activeProdCap.toUpperCase()}/2026/NEW &bull; Magodi Plant</div>
+        </div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="field"><label>Batch Code</label><input value="PPRD/${activeProdCap.toUpperCase()}/2026/NEW" readonly></div>
+        <div class="field"><label>Plant</label><input value="Magodi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T14:30"></div>
+        <div class="field"><label>Shift <span class="req">*</span></label>
+          <select><option selected>Morning</option><option>Afternoon</option><option>Night</option></select>
+        </div>
+        <div class="field"><label>Operator / Batching In-charge <span class="req">*</span></label><input value="Mohan Batcher"></div>
+        <div class="field"><label>Output Grade <span class="req">*</span></label>
+          <select>
+            ${meta.grades.map(g => `<option ${g===defaultGrade?'selected':''}>${g}</option>`).join('')}
+          </select>
+          <div class="hint">Filtered to grades this plant produces (${meta.label} capability)</div>
+        </div>
+        <div class="field"><label>Output Quantity (${meta.unit}) <span class="req">*</span></label>
+          <input type="number" value="${defaultQty}">
+        </div>
+        ${meta.extraField ? `<div class="field"><label>${meta.extraField}</label><input type="number" value="${activeProdCap==='bit'?155:activeProdCap==='rmc'?75:''}" placeholder="${meta.extraField}"></div>` : `<div class="field"></div>`}
+        <div class="field"><label>Target Destination</label>
+          <select><option value="">— Optional hint (doesn't dispatch) —</option><option>Camp: Khatraj Chokdi</option><option>Site: Kalol Sanand</option></select>
+          <div class="hint">Which camp/site this batch is intended for — dispatch still via Plant Outward</div>
+        </div>
+      </div>
+
+      ${hasBom ? `
+      <div class="section-title">Input Materials Consumed (BoM auto-filled)</div>
+      <div class="info-banner">Auto-filled from BoM for <strong>${defaultGrade} × ${defaultQty} ${meta.unit}</strong>. Adjust Actual Qty if it differed. Variance is captured — not blocked.</div>
+      <div class="input-row" style="font-weight:700; background:#f7f8fa;">
+        <div>Material</div><div>BoM Qty</div><div>Actual Qty</div><div>UoM</div><div></div>
+      </div>
+      ${bomRows}
+      ` : `
+      <div class="section-title">Input Materials (manual)</div>
+      <div class="info-banner">Steel cut/bend: no BoM. Enter input steel rod consumed and output cut/bent pieces.</div>
+      <div class="input-row" style="font-weight:700; background:#f7f8fa;">
+        <div>Material</div><div>BoM Qty</div><div>Actual Qty</div><div>UoM</div><div></div>
+      </div>
+      <div class="input-row">
+        <div style="padding-top:6px"><strong>Steel 12mm rod</strong> <span style="color:#8a8f99">(stock 12 MT)</span></div>
+        <div style="padding-top:6px; color:#8a8f99">—</div>
+        <div><input type="number" value="5.00" style="width:90px; padding:4px 6px; border:1px solid #d8dae0; border-radius:3px"></div>
+        <div style="padding-top:6px">MT</div>
+        <div></div>
+      </div>`}
+
+      <div class="section-title">Diesel & Remarks</div>
+      <div class="form-grid">
+        <div class="field"><label>Diesel Consumed (L)</label><input type="number" value="${activeProdCap==='bit'?40:activeProdCap==='rmc'?22:6}"><div class="hint">Informational only — actual diesel tracked in Diesel Module</div></div>
+        <div class="field"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+    <div class="warn-banner" style="margin-top:14px"><strong>Stock impact on submit:</strong> Raw inputs decrease per Actual Qty above. Finished stock increases by ${defaultQty} ${meta.unit} of ${defaultGrade}.</div>
+  `;
+}
+
+// ============== PLANT OUTWARD ==============
+function renderOutwardList() {
+  setBreadcrumb(['Plant Operations', 'Plant Outward']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Plant Outward</div><div class="view-subtitle">${outwardData.length} entries &bull; Dispatches to linked camps and sites</div></div>
+      <button class="btn btn-primary" onclick="renderView('outward','form')">+ New Outward</button>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span><span class="filter-chip">To Camp</span><span class="filter-chip">To Site</span>
+      <span class="filter-chip">Submitted</span><span class="filter-chip">Verified</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Material</th><th>Variant</th><th>Destination</th><th>To</th><th>Quantity</th><th>Vehicle</th><th>Slip</th><th>State</th></tr></thead>
+        <tbody>${outwardData.map(o=>`
+          <tr onclick="renderView('outward','form')">
+            <td><strong>${o.code}</strong></td>
+            <td>${o.date}</td>
+            <td>${o.material}</td>
+            <td>${o.variant}</td>
+            <td>${destBadge(o.destType)}</td>
+            <td><span class="tag">${o.dest}</span></td>
+            <td><strong>${o.qty} ${o.uom}</strong></td>
+            <td>${o.vehicle}</td>
+            <td>${o.slip}</td>
+            <td>${stateBadge(o.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderOutwardForm() {
+  setBreadcrumb(['Plant Operations', 'Plant Outward', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('outward')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+        <button class="btn btn-secondary">Save & Add Another</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Plant Outward</h2><div class="view-subtitle">POUT/2026/0005 &bull; Magodi Plant</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="info-banner">One material per outward entry. Destination can be a linked Camp or Site (Plant Master "Supplies To"). Only materials with finished/raw stock > 0 appear.</div>
+      <div class="form-grid">
+        <div class="field"><label>Outward Code</label><input value="POUT/2026/0005" readonly></div>
+        <div class="field"><label>Plant</label><input value="Magodi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T14:45"></div>
+        <div class="field"><label>Destination Type <span class="req">*</span></label>
+          <select>
+            <option>Camp</option>
+            <option selected>Site</option>
+          </select>
+        </div>
+        <div class="field"><label>Destination <span class="req">*</span></label>
+          <select>
+            <option selected>Kalol Sanand (Site)</option>
+            <option>Khatraj Chokdi (Camp)</option>
+          </select>
+          <div class="hint">Filtered to destinations this plant supplies</div>
+        </div>
+        <div class="field"><label>Material <span class="req">*</span></label>
+          <select>
+            <option value="">— Select (in-stock only) —</option>
+            <option selected>BM</option>
+            <option>DBM</option>
+            <option>BC</option>
+            <option>M25 Concrete Mix</option>
+            <option>SS1 Emulsion</option>
+            <option>Aggregate (raw, rebalance)</option>
+          </select>
+          <div class="hint">Finished goods first, raw materials after (for rebalance dispatches)</div>
+        </div>
+        <div class="field"><label>Variant / Grade</label>
+          <select><option>—</option></select>
+        </div>
+        <div class="field"><label>Issue Quantity <span class="req">*</span></label>
+          <input type="number" value="2.0">
+          <div class="hint">Available: 2.0 MT | UoM: MT</div>
+        </div>
+        <div class="field"><label>Vehicle Number <span class="req">*</span></label><input value="GJ-05-AB-7777" style="text-transform:uppercase"></div>
+        <div class="field"><label>Slip / Challan Number <span class="req">*</span></label><input value="PLT-0095"></div>
+        <div class="field"><label>Driver / Transporter</label><input placeholder="Optional"></div>
+        <div class="field"><label>Receiving Person</label><input placeholder="Name at destination"></div>
+        <div class="field"><label>Temperature at Dispatch (°C)</label><input type="number" value="155" placeholder="For bituminous QA"></div>
+      </div>
+
+      <div class="section-title">Weighbridge (optional — for cross-check)</div>
+      <div class="form-grid-3">
+        <div class="field"><label>Gross Weight (MT)</label><input type="number" placeholder="Optional"></div>
+        <div class="field"><label>Tare Weight (MT)</label><input type="number" placeholder="Optional"></div>
+        <div class="field"><label>Net Weight (MT) — auto</label><input class="computed" readonly placeholder="Auto"></div>
+      </div>
+
+      <div class="section-title">Photo & Remarks</div>
+      <div class="form-grid">
+        <div class="field"><label>Photos (optional)</label>
+          <div class="photo-upload">📷 Click to upload (loaded vehicle, challan)</div>
+        </div>
+        <div class="field"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+    <div class="warn-banner" style="margin-top:14px">After this dispatch, <strong>0 MT</strong> of BM remaining. Threshold: 2 MT — low stock alert will trigger.</div>
+  `;
+}
+
+// ============== STOCK REGISTER ==============
+let stockTab = 'raw';
+function renderStock() {
+  setBreadcrumb(['Plant Operations', 'Stock Register']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Stock Register — Magodi Plant</div><div class="view-subtitle">Real-time balances &bull; Click any row for ledger</div></div>
+      <div class="btn-group">
+        <select class="btn btn-secondary" style="padding:6px 10px"><option>Today (17 Apr 2026)</option><option>Yesterday</option><option>This Week</option><option>This Month</option></select>
+        <button class="btn btn-secondary">⬇ Export</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab ${stockTab==='raw'?'active':''}" onclick="stockTab='raw'; renderStock()">Raw Materials (${rawStockData.length})</div>
+      <div class="tab ${stockTab==='fin'?'active':''}" onclick="stockTab='fin'; renderStock()">Finished Goods (${finStockData.length})</div>
+    </div>
+    <div class="info-banner">Stock is auto-computed from transactions. No manual edits. Raw and Finished are separate stock locations in Odoo (<code>PLNT/Magodi/Raw</code> vs <code>PLNT/Magodi/Finished</code>).</div>
+    ${stockTab === 'raw' ? renderRawStockTable() : renderFinStockTable()}
+  `;
+}
+
+function statusBadge(closing, threshold) {
+  if (!threshold || threshold <= 0) return {cls:'badge-ok', lbl:'OK', color:'#198754'};
+  if (closing < threshold) return {cls:'badge-critical', lbl:'Critical', color:'#dc3545'};
+  if (closing < threshold * 2) return {cls:'badge-low', lbl:'Low', color:'#ffc107'};
+  return {cls:'badge-ok', lbl:'OK', color:'#198754'};
+}
+
+function renderRawStockTable() {
+  return `
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Material</th><th>Variant</th><th>UoM</th><th>Opening</th><th>Inward</th><th>Prod Consumed</th><th>Outward</th><th>Scrap</th><th>Closing</th><th>Threshold</th><th>Status</th></tr></thead>
+        <tbody>${rawStockData.map(s=>{
+          const st = statusBadge(s.closing, s.threshold);
+          const pct = s.threshold > 0 ? Math.min(100, (s.closing / (s.threshold * 3)) * 100) : 100;
+          return `<tr onclick="renderView('stock','ledger')">
+            <td><strong>${s.material}</strong></td>
+            <td>${s.variant}</td>
+            <td>${s.uom}</td>
+            <td>${s.opening}</td>
+            <td style="color:#198754">${s.inward || '—'}</td>
+            <td style="color:#dc3545">${s.consumed || '—'}</td>
+            <td style="color:#dc3545">${s.outOther || '—'}</td>
+            <td style="color:#dc3545">${s.scrap || '—'}</td>
+            <td><strong>${s.closing}</strong>
+              <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%; background:${st.color}"></div></div>
+            </td>
+            <td>${s.threshold || '—'}</td>
+            <td><span class="badge ${st.cls}">${st.lbl}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderFinStockTable() {
+  return `
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Product</th><th>Variant</th><th>UoM</th><th>Opening</th><th>Produced</th><th>Dispatched</th><th>Scrap</th><th>Closing</th><th>Threshold</th><th>Status</th></tr></thead>
+        <tbody>${finStockData.map(s=>{
+          const st = statusBadge(s.closing, s.threshold);
+          const pct = s.threshold > 0 ? Math.min(100, (s.closing / (s.threshold * 3)) * 100) : 100;
+          return `<tr onclick="renderView('stock','ledger')">
+            <td><strong>${s.product}</strong></td>
+            <td>${s.variant}</td>
+            <td>${s.uom}</td>
+            <td>${s.opening}</td>
+            <td style="color:#6f42c1">${s.produced || '—'}</td>
+            <td style="color:#dc3545">${s.dispatched || '—'}</td>
+            <td style="color:#dc3545">${s.scrap || '—'}</td>
+            <td><strong>${s.closing}</strong>
+              ${s.threshold>0 ? `<div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%; background:${st.color}"></div></div>` : ''}
+            </td>
+            <td>${s.threshold || '—'}</td>
+            <td><span class="badge ${st.cls}">${st.lbl}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderStockLedger() {
+  setBreadcrumb(['Plant Operations', 'Stock Register', 'Aggregate 20mm — Ledger']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('stock')">← Back to Summary</button></div>
+      <div>
+        <div class="view-title">Stock Ledger — Aggregate 20mm (Raw)</div>
+        <div class="view-subtitle">Magodi Plant &bull; All transactions</div>
+      </div>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns: repeat(3,1fr);">
+      <div class="kpi-card"><div class="label">Total Inward</div><div class="value">28.0 MT</div></div>
+      <div class="kpi-card"><div class="label">Production Consumed</div><div class="value">14.65 MT</div><div class="sub">BM 4.55 + DBM 4.85 + BC 3.10 + M25 2.15</div></div>
+      <div class="kpi-card"><div class="label">Closing Balance</div><div class="value">13.35 MT</div><div class="sub">Threshold: 10 MT</div></div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Date & Time</th><th>Type</th><th>Reference</th><th>Detail</th><th>Qty In</th><th>Qty Out</th><th>Balance</th><th>State</th><th>By</th></tr></thead>
+        <tbody>${ledgerData.map(l=>`
+          <tr>
+            <td>${l.date}</td>
+            <td><span class="badge badge-info">${l.type}</span></td>
+            <td><strong>${l.ref}</strong></td>
+            <td>${l.detail}</td>
+            <td style="color:#198754; font-weight:600">${l.qtyIn ? '+'+l.qtyIn : ''}</td>
+            <td style="color:#dc3545; font-weight:600">${l.qtyOut ? '-'+l.qtyOut : ''}</td>
+            <td><strong>${l.balance}</strong></td>
+            <td>${stateBadge(l.state)}</td>
+            <td>${l.by}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============== SCRAP ==============
+function renderScrapList() {
+  setBreadcrumb(['Plant Operations', 'Scrap & Wastage']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Scrap & Wastage</div><div class="view-subtitle">${scrapData.length} entries &bull; Explicit scrap (batch rejection, spillage, contamination)</div></div>
+      <button class="btn btn-primary" onclick="renderView('scrap','form')">+ New Scrap Entry</button>
+    </div>
+    <div class="info-banner">Scrap differs from BoM variance (implicit consumption difference). Use this when material is physically dumped, contaminated, or a full batch is rejected. <strong>Reason is mandatory.</strong></div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Raw wastage</span><span class="filter-chip">Batch rejection</span><span class="filter-chip">Spillage</span><span class="filter-chip">Contamination</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Category</th><th>Material</th><th>Qty</th><th>Reason</th><th>Linked Batch</th><th>State</th></tr></thead>
+        <tbody>${scrapData.map(s=>`
+          <tr onclick="renderView('scrap','form')">
+            <td><strong>${s.code}</strong></td>
+            <td>${s.date}</td>
+            <td><span class="badge badge-warn">${s.category}</span></td>
+            <td>${s.material}</td>
+            <td><strong>${s.qty} ${s.uom}</strong></td>
+            <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${s.reason}</td>
+            <td>${s.batch}</td>
+            <td>${stateBadge(s.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderScrapForm() {
+  setBreadcrumb(['Plant Operations', 'Scrap & Wastage', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('scrap')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Scrap Entry</h2><div class="view-subtitle">PSCR/2026/0003 &bull; Magodi Plant</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Scrap Code</label><input value="PSCR/2026/0003" readonly></div>
+        <div class="field"><label>Plant</label><input value="Magodi" readonly></div>
+        <div class="field"><label>Date & Time <span class="req">*</span></label><input type="datetime-local" value="2026-04-17T15:00"></div>
+        <div class="field"><label>Scrap Category <span class="req">*</span></label>
+          <select>
+            <option>Raw-material wastage</option>
+            <option selected>Batch rejection</option>
+            <option>Spillage</option>
+            <option>Contamination</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Material <span class="req">*</span></label>
+          <select>
+            <option selected>BC (finished)</option>
+            <option>Bitumen VG-30 (raw)</option>
+            <option>Aggregate 20mm (raw)</option>
+            <option>BM (finished)</option>
+          </select>
+          <div class="hint">Any material — raw or finished</div>
+        </div>
+        <div class="field"><label>Variant / Grade</label><input value="—"></div>
+        <div class="field"><label>Quantity <span class="req">*</span></label><input type="number" value="0.5"><div class="hint">Available: 8 MT | UoM: MT</div></div>
+        <div class="field"><label>Linked Batch</label>
+          <select>
+            <option value="">— None —</option>
+            <option selected>PPRD/BIT/2026/0003 (BC 8 MT)</option>
+            <option>PPRD/BIT/2026/0002 (DBM 12 MT)</option>
+          </select>
+          <div class="hint">Optional — if scrap arose from a specific batch</div>
+        </div>
+        <div class="field"><label>Disposal Method</label>
+          <select>
+            <option>Disposed</option>
+            <option>Reused elsewhere</option>
+            <option selected>Pending disposal</option>
+          </select>
+        </div>
+        <div class="field full"><label>Reason <span class="req">*</span></label>
+          <textarea placeholder="Explain what happened (mandatory)">Temperature dropped below spec during cold patch transport delay; load rejected by site QA.</textarea>
+          <div class="hint">Reason is mandatory for scrap entries</div>
+        </div>
+        <div class="field"><label>Photos (optional)</label>
+          <div class="photo-upload">📷 Click to upload (up to 2)</div>
+        </div>
+        <div class="field"></div>
+      </div>
+    </div>
+    <div class="warn-banner" style="margin-top:14px"><strong>Stock impact on submit:</strong> BC (finished) −0.5 MT → 7.5 MT remaining. Logged against batch PPRD/BIT/2026/0003.</div>
+  `;
+}
+
+// ============== LABOR ==============
+function renderLaborList() {
+  setBreadcrumb(['Plant Operations', 'Labor']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Labor at Plant</div><div class="view-subtitle">${laborData.length} entries</div></div>
+      <button class="btn btn-primary" onclick="renderView('labor','form')">+ New Labor Entry</button>
+    </div>
+    <div class="info-banner">Plant labor works at the plant only (loading, maintenance, operations). No cross-deployment to sites — camp labor handles site deployment.</div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search by party name..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Party (Mukadam)</th><th>Workers</th><th>Purpose</th><th>State</th></tr></thead>
+        <tbody>${laborData.map(l=>`
+          <tr onclick="renderView('labor','form')">
+            <td><strong>${l.code}</strong></td>
+            <td>${l.date}</td>
+            <td>${l.party}</td>
+            <td><strong>${l.workers}</strong></td>
+            <td>${l.purpose}</td>
+            <td>${stateBadge(l.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderLaborForm() {
+  setBreadcrumb(['Plant Operations', 'Labor', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('labor')">← Back to list</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Labor Entry</h2><div class="view-subtitle">LAB/2026/0013 &bull; Magodi Plant</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Entry Code</label><input value="LAB/2026/0013" readonly></div>
+        <div class="field"><label>Plant</label><input value="Magodi" readonly></div>
+        <div class="field"><label>Date <span class="req">*</span></label><input type="date" value="2026-04-17"></div>
+        <div class="field"><label>Party Name (Mukadam) <span class="req">*</span></label>
+          <input list="partyList" value="Kishor Mukadam">
+          <datalist id="partyList">
+            <option value="Kishor Mukadam">
+            <option value="Hasmukh Gang">
+          </datalist>
+          <div class="hint">Free text with autocomplete from history</div>
+        </div>
+        <div class="field"><label>Number of Workers <span class="req">*</span></label><input type="number" value="8" min="1"></div>
+        <div class="field"><label>Purpose / Activity</label>
+          <select>
+            <option>Plant operations</option>
+            <option selected>Loading / unloading</option>
+            <option>Maintenance / cleaning</option>
+            <option>Housekeeping</option>
+            <option>General</option>
+          </select>
+        </div>
+        <div class="field"></div>
+        <div class="field full"><label>Remarks</label><textarea></textarea></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============== VERIFICATION QUEUE ==============
+function renderVerifyQueue() {
+  setBreadcrumb(['Plant Operations', 'Verification Queue']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">Verification Queue</div><div class="view-subtitle">${verifyQueue.length} entries pending &bull; Reviewed by Senior Engineer / Admin</div></div>
+      <div class="btn-group">
+        <button class="btn btn-success" onclick="alert('Bulk verify: select entries first')">✅ Verify Selected</button>
+      </div>
+    </div>
+    <div class="info-banner"><strong>Verification never blocks.</strong> Submitted entries are already in stock, reports, and dashboard. Entries with ⚠️ have variance &gt; 10% and warrant closer review. Stale entries (&gt;24h) highlighted orange.</div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Raw Inward</span><span class="filter-chip">Production</span><span class="filter-chip">Outward</span><span class="filter-chip">Scrap</span>
+      <span class="filter-chip">⚠️ Flagged</span><span class="filter-chip">Stale (>24h)</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th><input type="checkbox"></th><th>Code</th><th>Type</th><th>Capability</th><th>Date</th><th>Description</th><th>Entered By</th><th>Age</th><th>Actions</th></tr></thead>
+        <tbody>${verifyQueue.map(v=>`
+          <tr style="${v.stale?'background:#fff9e6':v.flagged?'background:#fdf0e6':''}">
+            <td><input type="checkbox"></td>
+            <td><strong>${v.code}</strong>${v.flagged?' ⚠️':''}</td>
+            <td><span class="badge badge-info">${v.type}</span></td>
+            <td>${capBadge(v.cap)}</td>
+            <td>${v.date}</td>
+            <td>${v.desc}</td>
+            <td>${v.by}</td>
+            <td class="${v.stale?'age-stale':''}">${v.age}</td>
+            <td>
+              <div class="verify-actions">
+                <button class="btn btn-success" style="padding:4px 10px; font-size:12px" onclick="event.stopPropagation(); alert('Verified: '+this.closest('tr').querySelector('strong').textContent)">✅ Verify</button>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px" onclick="event.stopPropagation(); alert('Correction requested')">✏️ Correct</button>
+              </div>
+            </td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="warn-banner" style="margin-top:14px">1 entry is older than 24 hours &bull; 1 entry has variance &gt; 10% (BC batch — Aggregate 20mm 10.7%). Review recommended.</div>
+  `;
+}
+
+// ============== INIT ==============
+renderHome();
+</script>
+</body>
+</html>

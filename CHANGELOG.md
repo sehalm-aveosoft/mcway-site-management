@@ -4,6 +4,42 @@ All notable changes to the project documentation and mockups are documented here
 
 ---
 
+## [2026-04-20] — Module 04: Plant Module
+
+### Added
+- **Module 04 spec** (`docs/Module_04_Plant_Module.md`) — 16 sections covering:
+  - Raw Material Inward (plant weighbridge, vendor/quarry sources)
+  - Capability-driven Production sub-modules (Bituminous / Concrete RMC / Emulsion / Steel)
+  - BoM auto-fill with editable Actual Quantity column and variance tracking (green/amber/red)
+  - Plant Outward — dispatches to either linked camps OR linked sites (polymorphic destination)
+  - Stock Register with Raw + Finished as separate tabs
+  - Explicit Scrap & Wastage module (distinct from implicit BoM variance)
+  - Plant-scoped Labor entries (no cross-deployment to sites)
+  - Capacity Utilization strip (today's output vs Daily Capacity per capability)
+  - Verification Queue with variance flagging (> 10% = ⚠️)
+  - State machine, access control, pre-loaded demo data, 16 design decisions
+- **Interactive HTML mockup** (`mockups/plant-module.html`) — slate-blue theme:
+  - Home with capacity utilization bars, 7 KPI tiles, quick actions
+  - Raw Inward list + form (gross/tare/net auto-calc from plant weighbridge)
+  - Production tabs — Bituminous, RMC, Emulsion, Steel — with card-style capability switcher
+  - Production form with BoM auto-fill per grade (placeholder ratios)
+  - Plant Outward form (Camp or Site destination picker)
+  - Stock Register with Raw/Finished tabbed views
+  - Scrap form with mandatory reason + linked batch reference
+  - Verification Queue with variance ⚠️ highlighting
+- **Demo data:** Magodi plant, 4 capabilities, 7 raw inward entries, 5 production batches across 3 capabilities, 4 outward dispatches, 2 scrap entries
+
+### Design Decisions
+- Capability-driven menu visibility — a plant without Emulsion capability doesn't see that screen
+- BoM auto-fill is a suggestion, not a constraint — variance captured for reporting, never blocks
+- Raw vs Finished as separate Odoo stock locations — operationally different, reported separately
+- Plant Outward can dispatch raw materials too (rebalance scenario — e.g., extra Aggregate to camp)
+- Explicit Scrap module separates physical scrap from implicit consumption variance
+- No plant-to-plant transfers in demo (only 1 plant)
+- Shared labor model with Camp but no "Deployed To" (plant labor = plant-only)
+
+---
+
 ## [2026-04-20] — Module 03: On-Site Materials (Dumping)
 
 ### Added
