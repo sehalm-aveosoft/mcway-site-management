@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>McWay Work Progress — Mockup v1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; color: #2d3142; background: #f4f5f7; height: 100vh; overflow: hidden; }
+  .topbar { height: 48px; background: #5b3a96; color: #fff; display: flex; align-items: center; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .topbar .logo { font-weight: 600; font-size: 15px; }
+  .topbar .logo .tag { background: #ffb300; color: #333; font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-left: 8px; font-weight: 700; }
+  .topbar .breadcrumb { margin-left: 24px; color: rgba(255,255,255,0.85); font-size: 12px; }
+  .topbar .breadcrumb span { margin: 0 6px; }
+  .topbar .user { margin-left: auto; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+  .topbar .avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .layout { display: flex; margin-top: 48px; height: calc(100vh - 48px); }
+  .sidebar { width: 230px; background: #fff; border-right: 1px solid #e0e2e7; overflow-y: auto; flex-shrink: 0; }
+  .sidebar-group { padding: 10px 0; border-bottom: 1px solid #eef0f3; }
+  .sidebar-group-title { font-size: 10px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 18px; }
+  .sidebar-item { padding: 9px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: #4a4f5c; border-left: 3px solid transparent; font-size: 13px; }
+  .sidebar-item:hover { background: #f1ecf9; }
+  .sidebar-item.active { background: #f1ecf9; border-left-color: #5b3a96; color: #5b3a96; font-weight: 600; }
+  .sidebar-item .icon { width: 18px; text-align: center; }
+  .sidebar-item .count { margin-left: auto; background: #dc3545; color: #fff; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px 40px; }
+  .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .view-title { font-size: 20px; font-weight: 600; }
+  .view-subtitle { font-size: 12px; color: #8a8f99; margin-top: 2px; }
+  .btn { padding: 7px 14px; border-radius: 4px; border: 1px solid transparent; font-size: 13px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: #5b3a96; color: #fff; }
+  .btn-primary:hover { background: #422971; }
+  .btn-secondary { background: #fff; color: #4a4f5c; border-color: #d8dae0; border: 1px solid #d8dae0; }
+  .btn-secondary:hover { background: #f4f5f7; }
+  .btn-success { background: #198754; color: #fff; }
+  .btn-success:hover { background: #157347; }
+  .btn-warn { background: #ffc107; color: #333; }
+  .btn-danger { background: #dc3545; color: #fff; }
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toolbar { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .search-input { flex: 1; min-width: 180px; padding: 6px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; }
+  .filter-chip { padding: 4px 10px; background: #f4f5f7; border: 1px solid #d8dae0; border-radius: 14px; font-size: 12px; cursor: pointer; color: #4a4f5c; }
+  .filter-chip.active { background: #5b3a96; color: #fff; border-color: #5b3a96; }
+  .table-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f7f8fa; padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6c7080; letter-spacing: 0.5px; border-bottom: 1px solid #e0e2e7; white-space: nowrap; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #fafbfc; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-active, .badge-ok { background: #d4f4dd; color: #1a7b36; }
+  .badge-inactive { background: #e0e2e7; color: #6c7080; }
+  .badge-submitted { background: #d4e5f7; color: #1a5a9b; }
+  .badge-verified { background: #d4f4dd; color: #1a7b36; }
+  .badge-locked { background: #e0e2e7; color: #4a4f5c; }
+  .badge-draft { background: #fff4d4; color: #8b6b00; }
+  .badge-info { background: #d4e5f7; color: #1a5a9b; }
+  .badge-warn { background: #fff4d4; color: #8b6b00; }
+  .badge-critical { background: #fddede; color: #b5313c; }
+  .badge-complete { background: #198754; color: #fff; }
+  .badge-progress { background: #f4c430; color: #333; }
+  .badge-notstarted { background: #e0e2e7; color: #6c7080; }
+  .badge-gsb { background: #c6ad7a; color: #fff; }
+  .badge-wmm { background: #a0826d; color: #fff; }
+  .badge-bm { background: #5d4037; color: #fff; }
+  .badge-dbm { background: #3e2723; color: #fff; }
+  .badge-bc { background: #263238; color: #fff; }
+  .badge-sdbc { background: #455a64; color: #fff; }
+  .badge-cc { background: #607d8b; color: #fff; }
+  .form-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 20px 24px; }
+  .form-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid #eef0f3; margin-bottom: 20px; }
+  .form-header h2 { font-size: 18px; font-weight: 600; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 28px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 11px; font-weight: 600; color: #6c7080; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field label .req { color: #dc3545; margin-left: 2px; }
+  .field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid #d8dae0; border-radius: 4px; font-size: 13px; font-family: inherit; background: #fff; }
+  .field input:focus, .field select:focus { outline: none; border-color: #5b3a96; box-shadow: 0 0 0 3px rgba(91,58,150,0.1); }
+  .field input[readonly], .field .computed { background: #f7f8fa; color: #6c7080; cursor: not-allowed; }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field .hint { font-size: 11px; color: #8a8f99; }
+  .section-title { font-size: 13px; font-weight: 700; color: #4a4f5c; margin: 22px 0 12px; text-transform: uppercase; letter-spacing: 0.5px; border-left: 3px solid #5b3a96; padding-left: 10px; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid #e0e2e7; margin-bottom: 20px; }
+  .tab { padding: 10px 16px; cursor: pointer; font-size: 13px; color: #6c7080; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab:hover { color: #5b3a96; }
+  .tab.active { color: #5b3a96; border-bottom-color: #5b3a96; font-weight: 600; }
+  .info-banner { background: #f1ecf9; border: 1px solid #d0bfef; color: #4e2e8a; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .warn-banner { background: #fff9e6; border: 1px solid #ffe0a6; color: #7a5800; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .success-banner { background: #d4f4dd; border: 1px solid #a3e4b5; color: #1a7b36; padding: 10px 14px; border-radius: 4px; font-size: 12px; margin-bottom: 14px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .kpi-card { background: #fff; border: 1px solid #e0e2e7; border-radius: 8px; padding: 16px; transition: box-shadow 0.15s; cursor: pointer; }
+  .kpi-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .kpi-card .label { font-size: 11px; font-weight: 700; color: #8a8f99; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-card .value { font-size: 26px; font-weight: 700; color: #5b3a96; margin-top: 4px; }
+  .kpi-card .sub { font-size: 11px; color: #8a8f99; margin-top: 4px; }
+  .kpi-card.alert .value { color: #dc3545; }
+  .activity-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #eef0f3; font-size: 13px; }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .activity-icon.prg { background: #e0d4f4; }
+  .activity-icon.ver { background: #d4f4dd; }
+  .activity-icon.cor { background: #fde9d4; }
+  .activity-time { color: #8a8f99; font-size: 11px; margin-left: auto; white-space: nowrap; }
+  .age-stale { color: #dc3545; font-weight: 600; }
+  .verify-actions { display: flex; gap: 6px; }
+  .photo-upload { border: 2px dashed #d8dae0; border-radius: 6px; padding: 20px; text-align: center; color: #8a8f99; cursor: pointer; }
+  .photo-upload:hover { border-color: #5b3a96; color: #5b3a96; }
+
+  /* Strip view */
+  .strip-container { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 16px; overflow: auto; }
+  .strip-legend { display: flex; align-items: center; gap: 16px; font-size: 11px; color: #6c7080; margin-bottom: 14px; flex-wrap: wrap; }
+  .legend-cell { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 2px; }
+  .strip-grid { display: grid; grid-template-columns: 64px repeat(var(--cols, 270), 1fr); gap: 1px; min-width: 1400px; }
+  .strip-header-cell { font-size: 9px; color: #8a8f99; text-align: center; padding: 4px 0; grid-row: 1; border-bottom: 1px solid #eef0f3; }
+  .strip-row-label { font-weight: 700; font-size: 11px; padding: 8px 10px; text-align: right; color: #4a4f5c; display: flex; align-items: center; justify-content: flex-end; background: #f7f8fa; }
+  .strip-cell { height: 22px; background: #e0e2e7; cursor: pointer; position: relative; transition: transform 0.08s; }
+  .strip-cell:hover { transform: scale(1.3); z-index: 5; outline: 2px solid #5b3a96; }
+  .strip-cell.c-ns { background: #e0e2e7; }
+  .strip-cell.c-ip1 { background: #f4a261; }
+  .strip-cell.c-ip2 { background: #f4c430; }
+  .strip-cell.c-ip3 { background: #8bc34a; }
+  .strip-cell.c-done { background: #198754; }
+  .strip-cell.c-na { background: repeating-linear-gradient(45deg, #f4f5f7, #f4f5f7 3px, #d8dae0 3px, #d8dae0 5px); }
+  .strip-cell.selected { outline: 2px solid #dc3545; z-index: 4; }
+  .km-ticks { display: grid; grid-template-columns: 64px repeat(var(--cols, 270), 1fr); gap: 1px; min-width: 1400px; font-size: 10px; color: #6c7080; margin-bottom: 6px; }
+  .km-tick { text-align: center; border-bottom: 1px dashed #d8dae0; }
+  .strip-tooltip { position: fixed; background: #2d3142; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: none; max-width: 260px; line-height: 1.5; }
+
+  /* Bulk entry grid */
+  .bulk-grid { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 16px; overflow: auto; }
+  .bulk-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; padding: 12px; background: #f7f8fa; border-radius: 6px; }
+  .bulk-cells { display: grid; grid-template-columns: 50px repeat(30, 1fr); gap: 2px; }
+  .bulk-cell { height: 40px; border: 1px solid #d8dae0; border-radius: 3px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; cursor: pointer; user-select: none; }
+  .bulk-cell.km { background: #f7f8fa; border: none; font-weight: 400; color: #6c7080; }
+  .bulk-cell.selected { background: #f1ecf9; border-color: #5b3a96; box-shadow: 0 0 0 2px rgba(91,58,150,0.2); }
+  .bulk-cell.c-done { background: #198754; color: #fff; }
+  .bulk-cell.c-ip { background: #f4c430; color: #333; }
+  .bulk-cell.c-ns { background: #e0e2e7; color: #6c7080; }
+
+  /* Layer summary bars */
+  .layer-summary { background: #fff; border: 1px solid #e0e2e7; border-radius: 6px; padding: 16px; }
+  .layer-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eef0f3; }
+  .layer-row:last-child { border-bottom: none; }
+  .layer-label { width: 80px; font-weight: 700; font-size: 13px; }
+  .layer-bar { flex: 1; height: 22px; background: #eef0f3; border-radius: 4px; overflow: hidden; position: relative; display: flex; }
+  .layer-fill { height: 100%; background: linear-gradient(90deg, #5b3a96, #8b5fbf); }
+  .layer-fill.done { background: #198754; }
+  .layer-stats { min-width: 280px; font-size: 12px; color: #6c7080; text-align: right; }
+  .layer-pct { min-width: 50px; text-align: right; font-weight: 700; font-size: 14px; color: #5b3a96; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">McWay Work Progress<span class="tag">DEMO v1</span></div>
+  <div class="breadcrumb" id="breadcrumb">Work Progress <span>&rsaquo;</span> Home</div>
+  <div class="user">
+    <span style="opacity:0.75">Kalol Sanand</span>
+    <span>Kiran Shah (Senior Engineer)</span>
+    <div class="avatar">KS</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-item active" data-view="home"><span class="icon">🏠</span> Home</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Progress</div>
+      <div class="sidebar-item" data-view="entry"><span class="icon">📝</span> Progress Entry</div>
+      <div class="sidebar-item" data-view="bulk"><span class="icon">▦</span> Bulk Entry Grid</div>
+      <div class="sidebar-item" data-view="strip"><span class="icon">🎨</span> Chainage Strip View</div>
+      <div class="sidebar-item" data-view="layers"><span class="icon">📊</span> Layer-Wise Summary</div>
+      <div class="sidebar-item" data-view="history"><span class="icon">📜</span> Progress History</div>
+    </div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Review</div>
+      <div class="sidebar-item" data-view="verify"><span class="icon">✅</span> Verification Queue <span class="count">14</span></div>
+    </div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<div class="strip-tooltip" id="tooltip"></div>
+
+<script>
+// ============== DEMO DATA ==============
+const site = { name: "Kalol Sanand", code: "SITE/2026/001", chainageEnd: 27000, bucketSize: 100, buckets: 270, se: "Kiran Shah" };
+
+const layers = [
+  { key: "GSB",  name: "Granular Sub-Base", weight: 1, cls: "gsb" },
+  { key: "WMM",  name: "Wet Mix Macadam",   weight: 1, cls: "wmm" },
+  { key: "BM",   name: "Bituminous Macadam",weight: 1, cls: "bm"  },
+  { key: "DBM",  name: "Dense Bituminous Macadam", weight: 1, cls: "dbm" },
+  { key: "BC",   name: "Bituminous Concrete",      weight: 1, cls: "bc"  },
+  { key: "SDBC", name: "Semi-Dense Bit. Concrete", weight: 1, cls: "sdbc"},
+  { key: "CC",   name: "Cement Concrete",           weight: 1, cls: "cc"  },
+];
+
+const progressEntries = [
+  { code:"PRG/2026/0001", date:"2026-04-10", cStart:0,    cEnd:1000, side:"LHS", layer:"GSB",  status:"Complete",    pct:100, photos:2, state:"Verified" },
+  { code:"PRG/2026/0002", date:"2026-04-11", cStart:1000, cEnd:2000, side:"LHS", layer:"GSB",  status:"Complete",    pct:100, photos:1, state:"Verified" },
+  { code:"PRG/2026/0003", date:"2026-04-12", cStart:2000, cEnd:2500, side:"LHS", layer:"GSB",  status:"In Progress", pct:60,  photos:2, state:"Verified" },
+  { code:"PRG/2026/0004", date:"2026-04-13", cStart:0,    cEnd:800,  side:"LHS", layer:"WMM",  status:"Complete",    pct:100, photos:1, state:"Verified" },
+  { code:"PRG/2026/0005", date:"2026-04-14", cStart:800,  cEnd:1200, side:"LHS", layer:"WMM",  status:"In Progress", pct:70,  photos:2, state:"Verified" },
+  { code:"PRG/2026/0006", date:"2026-04-15", cStart:0,    cEnd:500,  side:"LHS", layer:"BM",   status:"Complete",    pct:100, photos:3, state:"Verified" },
+  { code:"PRG/2026/0007", date:"2026-04-16", cStart:500,  cEnd:700,  side:"LHS", layer:"BM",   status:"In Progress", pct:40,  photos:1, state:"Verified" },
+  { code:"PRG/2026/0008", date:"2026-04-17", cStart:0,    cEnd:300,  side:"LHS", layer:"DBM",  status:"In Progress", pct:50,  photos:1, state:"Submitted" },
+  { code:"PRG/2026/0009", date:"2026-04-18", cStart:0,    cEnd:300,  side:"LHS", layer:"CC",   status:"Complete",    pct:100, photos:1, state:"Submitted" },
+  { code:"PRG/2026/0010", date:"2026-04-19", cStart:1500, cEnd:1700, side:"RHS", layer:"GSB",  status:"Complete",    pct:100, photos:0, state:"Submitted" },
+  { code:"PRG/2026/0011", date:"2026-04-20", cStart:0,    cEnd:200,  side:"LHS", layer:"BC",   status:"In Progress", pct:25,  photos:2, state:"Submitted" },
+  { code:"PRG/2026/0012", date:"2026-04-21", cStart:200,  cEnd:400,  side:"LHS", layer:"DBM",  status:"In Progress", pct:30,  photos:1, state:"Draft" },
+];
+
+// Compute bucket state matrix
+function buildBuckets(side) {
+  const matrix = {};
+  layers.forEach(l => {
+    matrix[l.key] = Array(site.buckets).fill(0); // 0 = not started
+  });
+  progressEntries
+    .filter(e => e.side === side || e.side === "Both")
+    .forEach(e => {
+      const startIdx = Math.floor(e.cStart / site.bucketSize);
+      const endIdx = Math.ceil(e.cEnd / site.bucketSize);
+      for (let i = startIdx; i < endIdx && i < site.buckets; i++) {
+        const cur = matrix[e.layer][i];
+        if (e.pct > cur) matrix[e.layer][i] = e.pct;
+      }
+    });
+  return matrix;
+}
+
+const verifyQueue = {
+  dumping: [
+    { code:"DMP/2026/0005", type:"Dumping", date:"2026-04-16 10:00", desc:"WMM 20.0 MT — km 1.0-1.2 (LHS) from Magodi Plant", by:"Mahesh Desai", age:"1d 22h", stale:true },
+    { code:"DMP/2026/0006", type:"Dumping", date:"2026-04-16 14:30", desc:"Steel 12mm 3.0 MT — km 1.2-1.4 (RHS) from Khatraj Chokdi Camp", by:"Mahesh Desai", age:"1d 18h" },
+    { code:"DMP/2026/0007", type:"Dumping", date:"2026-04-17 08:00", desc:"Aggregate 20mm 8.0 MT — km 1.6-1.8 (LHS) from Khatraj Chokdi", by:"Mahesh Desai", age:"23h ago" },
+    { code:"DMP/2026/0008", type:"Dumping", date:"2026-04-17 09:45", desc:"Pipe 600mm × 12 Nos — km 2.0-2.1 (LHS) — ⚠️ count correction requested", by:"Mahesh Desai", age:"22h ago", flagged:true },
+    { code:"DMP/2026/0009", type:"Dumping", date:"2026-04-21 09:00", desc:"Aggregate 10mm 15.0 MT — km 2.5-2.7 (LHS)", by:"Mahesh Desai", age:"4h ago" },
+  ],
+  camp: [
+    { code:"CIN/2026/0006", type:"Camp Inward", date:"2026-04-17 07:50", desc:"Aggregate 20mm 22.0 MT from Magodi Plant", by:"Suresh Rathod", age:"23h ago" },
+    { code:"COUT/2026/0004", type:"Camp Outward", date:"2026-04-17 07:15", desc:"Aggregate 20mm 8.0 MT → Kalol Sanand", by:"Suresh Rathod", age:"1d 3h" },
+    { code:"LAB/2026/0002", type:"Camp Labor", date:"2026-04-17", desc:"Ramesh Mukadam — 8 workers (Shuttering)", by:"Suresh Rathod", age:"1d 4h" },
+    { code:"SHT/2026/0003", type:"Shuttering", date:"2026-04-16", desc:"Return 20× Steel Plate from Kalol Sanand", by:"Suresh Rathod", age:"2d 3h", stale:true },
+  ],
+  plant: [
+    { code:"PIN/2026/0005", type:"Plant Raw Inward", date:"2026-04-15 11:30", desc:"Cement 25.0 MT from Ambuja Cement", by:"Pravin Modi", age:"5d 22h", stale:true },
+    { code:"PPRD/BIT/2026/0002", type:"Production", date:"2026-04-16 09:30", desc:"DBM 12.0 MT (all inputs within ±3% variance)", by:"Pravin Modi", age:"1d 20h" },
+    { code:"PPRD/BIT/2026/0003", type:"Production", date:"2026-04-17 09:00", desc:"BC 8.0 MT — ⚠️ Agg 20mm variance +10.7%", by:"Pravin Modi", age:"23h ago", flagged:true },
+    { code:"PPRD/RMC/2026/0001", type:"Production", date:"2026-04-16 11:00", desc:"M25 Concrete 5.0 m³", by:"Pravin Modi", age:"1d 18h" },
+    { code:"POUT/2026/0004", type:"Plant Outward", date:"2026-04-17 10:15", desc:"BC 8.0 MT → Kalol Sanand", by:"Pravin Modi", age:"22h ago" },
+  ]
+};
+
+// ============== ROUTING ==============
+const sidebarItems = document.querySelectorAll('.sidebar-item');
+const mainEl = document.getElementById('main');
+const breadcrumbEl = document.getElementById('breadcrumb');
+let activeSide = 'LHS';
+let activeVerifyTab = 'dumping';
+
+sidebarItems.forEach(item => {
+  item.addEventListener('click', () => {
+    sidebarItems.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    renderView(item.dataset.view);
+  });
+});
+
+function setBreadcrumb(parts) { breadcrumbEl.innerHTML = parts.map(p=>p).join(' <span>&rsaquo;</span> '); }
+
+function renderView(view) {
+  switch(view) {
+    case 'home': renderHome(); break;
+    case 'entry': renderEntryForm(); break;
+    case 'bulk': renderBulkGrid(); break;
+    case 'strip': renderStrip(); break;
+    case 'layers': renderLayerSummary(); break;
+    case 'history': renderHistory(); break;
+    case 'verify': renderVerifyQueue(); break;
+    default: renderHome();
+  }
+}
+
+function stateBadge(s) { const key = s.toLowerCase().replace(/\s/g,''); return `<span class="badge badge-${key}">${s}</span>`; }
+function statusBadge(s, p) {
+  if (s === 'Complete') return `<span class="badge badge-complete">✅ Complete 100%</span>`;
+  if (s === 'In Progress') return `<span class="badge badge-progress">⚙ In Progress ${p}%</span>`;
+  return `<span class="badge badge-notstarted">⬜ Not Started</span>`;
+}
+function layerBadge(k) { const l = layers.find(x=>x.key===k); return `<span class="badge badge-${l?.cls||'info'}">${k}</span>`; }
+
+function pctToClass(pct) {
+  if (pct === 0) return 'c-ns';
+  if (pct >= 100) return 'c-done';
+  if (pct <= 33) return 'c-ip1';
+  if (pct <= 66) return 'c-ip2';
+  return 'c-ip3';
+}
+
+// ============== HOME ==============
+function renderHome() {
+  setBreadcrumb(['Work Progress', 'Home']);
+  const buckets = buildBuckets('LHS');
+  const layerPct = {};
+  let cumSum = 0, cumCount = 0;
+  layers.forEach(l => {
+    const sum = buckets[l.key].reduce((a,b)=>a+b,0);
+    const pct = (sum / (site.buckets * 100)) * 100;
+    layerPct[l.key] = pct;
+    cumSum += pct * l.weight;
+    cumCount += l.weight;
+  });
+  const cumulative = cumSum / cumCount;
+  const todayEntries = progressEntries.filter(e => e.date === '2026-04-21');
+  const pendingVerify = verifyQueue.dumping.length + verifyQueue.camp.length + verifyQueue.plant.length;
+  const stalePending = [...verifyQueue.dumping, ...verifyQueue.camp, ...verifyQueue.plant].filter(v => v.stale).length;
+
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">Work Progress — ${site.name}</div>
+        <div class="view-subtitle">${site.code} &bull; Chainage 0 – 27 km &bull; Bucket size: ${site.bucketSize}m &bull; Today: 21 Apr 2026</div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card" onclick="renderView('strip')">
+        <div class="label">Cumulative Progress (LHS)</div>
+        <div class="value">${cumulative.toFixed(1)}%</div>
+        <div class="sub">Equal-weighted across 7 layers</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('entry')">
+        <div class="label">Today's Progress Entries</div>
+        <div class="value">${todayEntries.length}</div>
+        <div class="sub">${todayEntries.length?'DBM km 0.2–0.4 in progress':'—'}</div>
+      </div>
+      <div class="kpi-card ${pendingVerify>0?'alert':''}" onclick="renderView('verify')">
+        <div class="label">Pending Verification</div>
+        <div class="value">${pendingVerify}</div>
+        <div class="sub">${stalePending} stale (&gt;24h)</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('layers')">
+        <div class="label">Leading Layer</div>
+        <div class="value">GSB</div>
+        <div class="sub">${layerPct.GSB.toFixed(1)}% complete</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('strip')">
+        <div class="label">Active Chainage</div>
+        <div class="value" style="font-size:20px">km 0.2 – 0.4</div>
+        <div class="sub">DBM layer in progress</div>
+      </div>
+      <div class="kpi-card" onclick="renderView('verify')">
+        <div class="label">Dumping Entries (7d)</div>
+        <div class="value">${verifyQueue.dumping.length+3}</div>
+        <div class="sub">${verifyQueue.dumping.length} awaiting verification</div>
+      </div>
+    </div>
+
+    <div class="section-title">Mini Chainage Strip (LHS) — click to open full view</div>
+    <div class="strip-container" onclick="document.querySelector('[data-view=strip]').click()" style="cursor:pointer">
+      ${renderStripGrid('LHS', true)}
+    </div>
+
+    <div class="btn-group" style="margin:22px 0 18px">
+      <button class="btn btn-primary" onclick="document.querySelector('[data-view=entry]').click()">+ New Progress Entry</button>
+      <button class="btn btn-primary" onclick="document.querySelector('[data-view=bulk]').click()">▦ Bulk Entry Grid</button>
+      <button class="btn btn-primary" onclick="document.querySelector('[data-view=strip]').click()">🎨 Open Strip View</button>
+      <button class="btn btn-secondary" onclick="document.querySelector('[data-view=verify]').click()">Review Pending (${pendingVerify})</button>
+    </div>
+
+    <div class="section-title">Recent Activity</div>
+    <div class="table-container">
+      <div class="activity-item"><div class="activity-icon prg">📝</div><div><strong>PRG/2026/0012</strong> — DBM km 0.2–0.4 (LHS) 30% <span class="badge badge-draft">Draft</span></div><div class="activity-time">today</div></div>
+      <div class="activity-item"><div class="activity-icon prg">📝</div><div><strong>PRG/2026/0011</strong> — BC km 0.0–0.2 (LHS) 25% <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">yesterday</div></div>
+      <div class="activity-item"><div class="activity-icon prg">📝</div><div><strong>PRG/2026/0010</strong> — GSB km 1.5–1.7 (RHS) Complete <span class="badge badge-submitted">Submitted</span></div><div class="activity-time">2 days ago</div></div>
+      <div class="activity-item"><div class="activity-icon ver">✅</div><div>Verified <strong>DMP/2026/0001–0004</strong> bulk-verified (4 entries)</div><div class="activity-time">3 days ago</div></div>
+      <div class="activity-item"><div class="activity-icon cor">✏️</div><div>Correction requested on <strong>DMP/2026/0008</strong> — pipe count verification</div><div class="activity-time">4 days ago</div></div>
+    </div>
+  `;
+}
+
+// ============== STRIP VIEW ==============
+function renderStripGrid(side, mini) {
+  const buckets = buildBuckets(side);
+  const cols = site.buckets;
+  const cellsPerKm = 1000 / site.bucketSize;
+  let kmMarkers = '';
+  for (let km = 0; km <= 27; km += (mini ? 3 : 1)) {
+    const col = km * cellsPerKm + 2; // +2 because grid-column is 1-indexed and col 1 is the row label
+    kmMarkers += `<div style="grid-column:${col}; grid-row:1; font-size:9px; color:#8a8f99; text-align:center; padding:2px 0;">${km}km</div>`;
+  }
+
+  return `
+    <div class="strip-legend">
+      <div class="legend-cell"><div class="legend-swatch" style="background:#e0e2e7"></div>Not Started</div>
+      <div class="legend-cell"><div class="legend-swatch" style="background:#f4a261"></div>1–33%</div>
+      <div class="legend-cell"><div class="legend-swatch" style="background:#f4c430"></div>34–66%</div>
+      <div class="legend-cell"><div class="legend-swatch" style="background:#8bc34a"></div>67–99%</div>
+      <div class="legend-cell"><div class="legend-swatch" style="background:#198754"></div>Complete 100%</div>
+    </div>
+    <div class="strip-grid" style="--cols:${cols}; grid-template-columns: 64px repeat(${cols}, 1fr);">
+      ${kmMarkers}
+      ${layers.map((l, li) => {
+        const row = li + 2;
+        let cells = `<div class="strip-row-label" style="grid-row:${row}">${l.key}</div>`;
+        for (let i = 0; i < cols; i++) {
+          const pct = buckets[l.key][i];
+          const cls = pctToClass(pct);
+          const kmLo = (i * site.bucketSize / 1000).toFixed(1);
+          const kmHi = ((i+1) * site.bucketSize / 1000).toFixed(1);
+          const statusText = pct === 0 ? 'Not Started' : pct === 100 ? 'Complete' : 'In Progress ' + pct + '%';
+          cells += `<div class="strip-cell ${cls}" style="grid-column:${i+2}; grid-row:${row}" data-tip="${l.key} @ km ${kmLo}–${kmHi} (${side}) — ${statusText}"></div>`;
+        }
+        return cells;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderStrip() {
+  setBreadcrumb(['Work Progress', 'Chainage Strip View']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">🎨 Chainage Strip View — ${site.name}</div>
+        <div class="view-subtitle">270 buckets × 7 layers (~1,890 cells per side) &bull; Hover any cell for detail</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">⬇ Export PNG</button>
+        <button class="btn btn-secondary">⬇ Export PDF</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab ${activeSide==='LHS'?'active':''}" onclick="activeSide='LHS';renderStrip()">LHS Side</div>
+      <div class="tab ${activeSide==='RHS'?'active':''}" onclick="activeSide='RHS';renderStrip()">RHS Side</div>
+      <div class="tab" onclick="alert('Combined view merges LHS+RHS (phase 2)')">Combined</div>
+    </div>
+    <div class="toolbar">
+      <span style="font-size:12px; color:#6c7080; font-weight:600">Date cursor:</span>
+      <select class="btn btn-secondary" style="padding:6px 10px"><option>As of today (21 Apr 2026)</option><option>As of 15 Apr 2026</option><option>As of 10 Apr 2026</option><option>Custom…</option></select>
+      <span style="font-size:12px; color:#6c7080; font-weight:600">Zoom:</span>
+      <span class="filter-chip active">100m</span><span class="filter-chip">500m</span><span class="filter-chip">1km</span>
+      <span style="margin-left:auto; font-size:12px; color:#6c7080;">Click cell for history &bull; Drag to select range</span>
+    </div>
+    <div class="strip-container">
+      ${renderStripGrid(activeSide, false)}
+    </div>
+    <div class="info-banner" style="margin-top:14px">
+      <strong>Interactions:</strong> Hover any cell for a tooltip with chainage, layer, status, and last-updated info. Click for bucket history drawer. Drag across multiple cells to open "Quick Update Status" (simulated in mockup).
+    </div>
+  `;
+  wireStripTooltips();
+}
+
+function wireStripTooltips() {
+  const tt = document.getElementById('tooltip');
+  document.querySelectorAll('.strip-cell').forEach(cell => {
+    cell.addEventListener('mousemove', e => {
+      const tip = cell.dataset.tip;
+      if (!tip) return;
+      tt.textContent = tip;
+      tt.style.display = 'block';
+      tt.style.left = (e.clientX + 14) + 'px';
+      tt.style.top = (e.clientY + 14) + 'px';
+    });
+    cell.addEventListener('mouseleave', () => { tt.style.display = 'none'; });
+  });
+}
+
+// ============== PROGRESS ENTRY FORM ==============
+function renderEntryForm() {
+  setBreadcrumb(['Work Progress', 'Progress Entry', 'New Entry']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div class="btn-group"><button class="btn btn-secondary" onclick="renderView('home')">← Back</button></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Save Draft</button>
+        <button class="btn btn-primary">Save & Submit</button>
+        <button class="btn btn-secondary">Save & Add Another</button>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <div><h2>New Progress Entry</h2><div class="view-subtitle">PRG/2026/0013 &bull; Kalol Sanand</div></div>
+        <span class="badge badge-draft">Draft</span>
+      </div>
+      <div class="info-banner">Method A — record layer-wise status (Not Started / In Progress % / Complete) for a chainage span. The entry may span multiple 100m buckets.</div>
+      <div class="form-grid">
+        <div class="field"><label>Entry Code</label><input value="PRG/2026/0013" readonly></div>
+        <div class="field"><label>Site</label><input value="Kalol Sanand" readonly></div>
+        <div class="field"><label>Date <span class="req">*</span></label><input type="date" value="2026-04-21"><div class="hint">Backdating up to 3 days allowed</div></div>
+        <div class="field"><label>Side <span class="req">*</span></label>
+          <select><option selected>LHS</option><option>RHS</option><option>Both</option><option>Lane</option><option>Median</option></select>
+        </div>
+        <div class="field"><label>Chainage Start (m) <span class="req">*</span></label><input type="number" value="400" step="100"><div class="hint">Snaps to nearest bucket</div></div>
+        <div class="field"><label>Chainage End (m) <span class="req">*</span></label><input type="number" value="700" step="100"><div class="hint">Affects 3 buckets: 400-500, 500-600, 600-700</div></div>
+        <div class="field"><label>Layer <span class="req">*</span></label>
+          <select>
+            <option>GSB — Granular Sub-Base</option>
+            <option>WMM — Wet Mix Macadam</option>
+            <option>BM — Bituminous Macadam</option>
+            <option selected>DBM — Dense Bituminous Macadam</option>
+            <option>BC — Bituminous Concrete</option>
+            <option>SDBC — Semi-Dense Bit. Concrete</option>
+            <option>CC — Cement Concrete</option>
+          </select>
+        </div>
+        <div class="field"><label>Status <span class="req">*</span></label>
+          <select id="statusSel" onchange="togglePct()">
+            <option>Not Started</option>
+            <option selected>In Progress</option>
+            <option>Complete</option>
+          </select>
+        </div>
+        <div class="field" id="pctField"><label>Percent Complete <span class="req">*</span></label>
+          <input type="number" value="45" min="1" max="99"><div class="hint">1–99 for In Progress. Slider + number (both update together).</div></div>
+        <div class="field"></div>
+      </div>
+      <div class="section-title">Photos & Remarks</div>
+      <div class="form-grid">
+        <div class="field"><label>Photos (optional, up to 4)</label>
+          <div class="photo-upload">📷 Click or drag to upload progress photos<br><span style="font-size:11px">Recommended for Complete status</span></div>
+        </div>
+        <div class="field"><label>Remarks</label><textarea placeholder="Any notes..."></textarea></div>
+      </div>
+    </div>
+    <div class="warn-banner" style="margin-top:14px"><strong>Layer-order check:</strong> BM at this chainage is currently at 40% average. Typical sequence is GSB → WMM → BM → DBM → BC → SDBC → CC. Saving DBM progress here is permitted (non-blocking warning).</div>
+  `;
+}
+
+function togglePct() {
+  const s = document.getElementById('statusSel').value;
+  document.getElementById('pctField').style.display = s === 'In Progress' ? 'flex' : 'none';
+}
+
+// ============== BULK ENTRY GRID ==============
+function renderBulkGrid() {
+  setBreadcrumb(['Work Progress', 'Bulk Entry Grid']);
+  // Show first 3 km (30 cells of 100m each) for demo
+  const cells = 30;
+  const buckets = buildBuckets('LHS');
+  const selectedLayer = 'GSB';
+  const row = buckets[selectedLayer];
+
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">▦ Bulk Entry Grid</div>
+        <div class="view-subtitle">Fast path — drag to select buckets, apply status/percent in one action</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary">Undo Last Apply</button>
+        <button class="btn btn-primary">Save & Submit (3 buckets modified)</button>
+      </div>
+    </div>
+    <div class="info-banner">Showing first 3 km of Kalol Sanand (30 buckets × 100m each). Click or drag across cells to select. Use controls below to set status and percent, then Apply.</div>
+    <div class="bulk-grid">
+      <div class="bulk-controls">
+        <div style="font-weight:700; font-size:13px;">Filters:</div>
+        <select class="btn btn-secondary" style="padding:6px 10px"><option>Kalol Sanand</option></select>
+        <select class="btn btn-secondary" style="padding:6px 10px"><option>LHS</option><option>RHS</option></select>
+        <select class="btn btn-secondary" style="padding:6px 10px" id="bulkLayer"><option selected>GSB</option><option>WMM</option><option>BM</option><option>DBM</option><option>BC</option><option>SDBC</option><option>CC</option></select>
+        <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+          <span style="font-weight:700; font-size:13px;">Apply:</span>
+          <select class="btn btn-secondary" style="padding:6px 10px"><option>Complete (100%)</option><option>In Progress</option><option>Not Started</option></select>
+          <input type="number" placeholder="%" value="100" style="width:70px; padding:6px 8px; border:1px solid #d8dae0; border-radius:4px; font-size:13px;">
+          <button class="btn btn-primary" onclick="alert('Applied: 3 buckets set to Complete (100%). Saved as PRG/2026/0014.')">Apply to Selected</button>
+        </div>
+      </div>
+      <div class="bulk-cells">
+        <div class="bulk-cell km" title="km marker">km</div>
+        ${Array.from({length: cells}, (_, i) => `<div class="bulk-cell km">${(i/10).toFixed(1)}</div>`).join('')}
+        <div class="bulk-cell km" style="background:transparent">${selectedLayer}</div>
+        ${row.slice(0, cells).map((pct, i) => {
+          const cls = pct === 100 ? 'c-done' : pct > 0 ? 'c-ip' : 'c-ns';
+          const txt = pct === 100 ? '✓' : pct > 0 ? pct + '%' : '';
+          const sel = (i >= 8 && i <= 10) ? 'selected' : '';
+          return `<div class="bulk-cell ${cls} ${sel}" onclick="this.classList.toggle('selected')">${txt}</div>`;
+        }).join('')}
+      </div>
+      <div style="margin-top:14px; font-size:12px; color:#6c7080">
+        <strong>Legend:</strong>
+        <span style="display:inline-block; width:12px; height:12px; background:#e0e2e7; vertical-align:middle; margin:0 4px 0 8px"></span> Not Started
+        <span style="display:inline-block; width:12px; height:12px; background:#f4c430; vertical-align:middle; margin:0 4px 0 8px"></span> In Progress
+        <span style="display:inline-block; width:12px; height:12px; background:#198754; vertical-align:middle; margin:0 4px 0 8px"></span> Complete
+        &bull; Cells outlined in purple are currently selected.
+      </div>
+    </div>
+    <div class="success-banner" style="margin-top:14px">After apply: GSB km 0.8–1.1 marked Complete — 3 buckets updated. One PRG/ entry records the action for audit.</div>
+  `;
+}
+
+// ============== LAYER SUMMARY ==============
+function renderLayerSummary() {
+  setBreadcrumb(['Work Progress', 'Layer-Wise Summary']);
+  const buckets = buildBuckets('LHS');
+  const rowsHtml = layers.map(l => {
+    const arr = buckets[l.key];
+    const complete = arr.filter(p=>p===100).length;
+    const inProg = arr.filter(p=>p>0 && p<100);
+    const notStart = arr.filter(p=>p===0).length;
+    const sum = arr.reduce((a,b)=>a+b,0);
+    const pct = (sum / (site.buckets*100)) * 100;
+    const avgInProg = inProg.length ? (inProg.reduce((a,b)=>a+b,0) / inProg.length).toFixed(0) : 0;
+    return `
+      <div class="layer-row">
+        <div class="layer-label">${layerBadge(l.key)}</div>
+        <div class="layer-bar"><div class="layer-fill ${pct>=100?'done':''}" style="width:${Math.max(pct,1)}%"></div></div>
+        <div class="layer-stats">${complete} done · ${inProg.length} in prog @ ${avgInProg}% · ${notStart} not started</div>
+        <div class="layer-pct">${pct.toFixed(1)}%</div>
+      </div>
+    `;
+  }).join('');
+
+  let cumSum = 0, cumCount = 0;
+  layers.forEach(l => {
+    const sum = buckets[l.key].reduce((a,b)=>a+b,0);
+    cumSum += (sum / (site.buckets*100)) * 100 * l.weight;
+    cumCount += l.weight;
+  });
+  const cumulative = cumSum / cumCount;
+
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div>
+        <div class="view-title">📊 Layer-Wise Summary (LHS)</div>
+        <div class="view-subtitle">${site.name} &bull; 270 buckets per layer &bull; Equal-weighted cumulative</div>
+      </div>
+      <div class="btn-group">
+        <select class="btn btn-secondary" style="padding:6px 10px"><option>LHS</option><option>RHS</option><option>Combined</option></select>
+        <button class="btn btn-secondary">⬇ Export</button>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="label">Cumulative Site Progress</div><div class="value">${cumulative.toFixed(1)}%</div><div class="sub">Weighted across 7 layers</div></div>
+      <div class="kpi-card"><div class="label">Leading Layer</div><div class="value" style="font-size:20px">GSB</div><div class="sub">${((buckets.GSB.reduce((a,b)=>a+b,0)/(site.buckets*100))*100).toFixed(1)}%</div></div>
+      <div class="kpi-card"><div class="label">Layers In Progress</div><div class="value">${layers.filter(l=>buckets[l.key].some(p=>p>0&&p<100)).length}</div><div class="sub">of 7</div></div>
+      <div class="kpi-card"><div class="label">Layers Not Started</div><div class="value">${layers.filter(l=>buckets[l.key].every(p=>p===0)).length}</div><div class="sub">of 7</div></div>
+    </div>
+    <div class="layer-summary">
+      ${rowsHtml}
+    </div>
+    <div class="info-banner" style="margin-top:14px">Click any layer to filter Progress History and drill into bucket-level detail. Layer weights are configurable in Admin → System Thresholds (demo uses equal weights).</div>
+  `;
+}
+
+// ============== HISTORY ==============
+function renderHistory() {
+  setBreadcrumb(['Work Progress', 'Progress History']);
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">📜 Progress History</div><div class="view-subtitle">${progressEntries.length} entries &bull; ${site.name}</div></div>
+      <button class="btn btn-primary" onclick="renderView('entry')">+ New Entry</button>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search entries..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">Today</span><span class="filter-chip">This Week</span>
+      ${layers.map(l => `<span class="filter-chip">${l.key}</span>`).join('')}
+      <span class="filter-chip">LHS</span><span class="filter-chip">RHS</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Code</th><th>Date</th><th>Chainage</th><th>Side</th><th>Layer</th><th>Status</th><th>Photos</th><th>State</th></tr></thead>
+        <tbody>${progressEntries.slice().reverse().map(e=>`
+          <tr>
+            <td><strong>${e.code}</strong></td>
+            <td>${e.date}</td>
+            <td>km ${(e.cStart/1000).toFixed(1)} – ${(e.cEnd/1000).toFixed(1)}</td>
+            <td>${e.side}</td>
+            <td>${layerBadge(e.layer)}</td>
+            <td>${statusBadge(e.status, e.pct)}</td>
+            <td>${e.photos > 0 ? '📷 × '+e.photos : '—'}</td>
+            <td>${stateBadge(e.state)}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============== VERIFICATION QUEUE ==============
+function renderVerifyQueue() {
+  setBreadcrumb(['Work Progress', 'Verification Queue']);
+  const tabs = { dumping: 'Dumping', camp: 'Camp Entries', plant: 'Plant Entries' };
+  const counts = { dumping: verifyQueue.dumping.length, camp: verifyQueue.camp.length, plant: verifyQueue.plant.length };
+  const data = verifyQueue[activeVerifyTab];
+  mainEl.innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">✅ Consolidated Verification Queue</div><div class="view-subtitle">${counts.dumping + counts.camp + counts.plant} entries across 3 source modules &bull; Scoped to ${site.name}</div></div>
+      <div class="btn-group">
+        <button class="btn btn-success">✅ Verify Selected</button>
+      </div>
+    </div>
+    <div class="info-banner"><strong>Verification never blocks.</strong> Submitted entries are already live in stock / reports / dashboard. Variance ⚠️ and stale (🕒 &gt;24h) rows warrant closer review.</div>
+    <div class="tabs">
+      ${Object.keys(tabs).map(k => `<div class="tab ${activeVerifyTab===k?'active':''}" onclick="activeVerifyTab='${k}';renderVerifyQueue()">${tabs[k]} <span style="background:#dc3545;color:#fff;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px">${counts[k]}</span></div>`).join('')}
+    </div>
+    <div class="toolbar">
+      <input class="search-input" placeholder="Search..." />
+      <span class="filter-chip active">All</span><span class="filter-chip">⚠️ Flagged</span><span class="filter-chip">🕒 Stale (&gt;24h)</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead><tr><th><input type="checkbox"></th><th>Code</th><th>Type</th><th>Date</th><th>Description</th><th>Entered By</th><th>Age</th><th>Actions</th></tr></thead>
+        <tbody>${data.map(v=>`
+          <tr style="${v.stale?'background:#fff9e6':v.flagged?'background:#fdf0e6':''}">
+            <td><input type="checkbox"></td>
+            <td><strong>${v.code}</strong>${v.flagged?' ⚠️':''}${v.stale?' 🕒':''}</td>
+            <td><span class="badge badge-info">${v.type}</span></td>
+            <td>${v.date}</td>
+            <td>${v.desc}</td>
+            <td>${v.by}</td>
+            <td class="${v.stale?'age-stale':''}">${v.age}</td>
+            <td>
+              <div class="verify-actions">
+                <button class="btn btn-success" style="padding:4px 10px; font-size:12px" onclick="event.stopPropagation(); alert('Verified: '+this.closest('tr').querySelector('strong').textContent)">✅ Verify</button>
+                <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px" onclick="event.stopPropagation(); alert('Correction requested')">✏️ Correct</button>
+              </div>
+            </td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="warn-banner" style="margin-top:14px">${[...verifyQueue.dumping, ...verifyQueue.camp, ...verifyQueue.plant].filter(v=>v.stale).length} entries stale (&gt;24h) &bull; ${[...verifyQueue.dumping, ...verifyQueue.camp, ...verifyQueue.plant].filter(v=>v.flagged).length} flagged for variance. Review recommended.</div>
+  `;
+}
+
+// ============== INIT ==============
+renderHome();
+</script>
+</body>
+</html>

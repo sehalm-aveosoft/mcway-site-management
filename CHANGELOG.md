@@ -4,6 +4,40 @@ All notable changes to the project documentation and mockups are documented here
 
 ---
 
+## [2026-04-21] — Module 05: Senior Engineer Work Progress
+
+### Added
+- **Module 05 spec** (`docs/Module_05_Work_Progress.md`) — 16 sections covering:
+  - Method A progress entry (Not Started / In Progress % / Complete) per 100m chainage bucket × layer × side
+  - Chainage Strip View — hero visual: 270 buckets × 7 layers grid, colour-coded by status, hover tooltips, click-to-drill, time-travel date cursor, PNG/PDF export
+  - Bulk Entry Grid — drag-select buckets, apply status/percent in one action
+  - Layer-Wise Summary — per-layer %, cumulative site progress (configurable weights)
+  - Consolidated Verification Queue — three tabs (Dumping / Camp / Plant) routed to the SE based on site linkage
+  - Self-verification vs secondary verifier (configurable per site)
+  - Method A vs Method B design note (schema keeps `planned_qty`/`executed_qty` nullable for Method B phase-2 upgrade)
+  - 16 design decisions, 16 developer open items
+- **Interactive HTML mockup** (`mockups/work-progress.html`) — purple (#5b3a96) theme:
+  - Home with mini strip, 6 KPI tiles, recent activity
+  - Full Strip View with LHS/RHS tabs, tooltip-on-hover, zoom controls, date cursor
+  - Progress Entry form with status→percent toggle and layer-order warning
+  - Bulk Entry Grid showing 3 km × 30 buckets with selection UI
+  - Layer-Wise Summary with progress bars per layer
+  - Progress History with layer/side filters
+  - Consolidated Verification Queue tabbing across Dumping/Camp/Plant — pulls live data from Modules 02/03/04
+- **Demo data:** Kalol Sanand 27 km × 7 layers, 12 pre-loaded progress entries, ~2.4% cumulative LHS progress, 14 pending verifications across source modules
+
+### Design Decisions
+- Method A for demo (status + %); Method B (qty-based) deferred pending Estimation module
+- 100m default bucket size — granular enough for accountability, fast enough to render ≤1.5s (PRD NFR)
+- Strip is the hero UI — matches Demo Doc §9.3 and PRD F-E02 emphasis
+- Layer-order and monotonic-percent warnings are non-blocking (reality allows out-of-order / corrections)
+- SE can self-verify their own progress entries (Admin can enforce secondary verifier per site)
+- Camp/Plant routing to SE queue is opt-in per site via System Thresholds
+- Bulk entry grid is the #1 speed optimisation (100m × 7 layers is fiddly without it)
+- Strip PNG/PDF export supports the "share with owner via WhatsApp" workflow
+
+---
+
 ## [2026-04-20] — Module 04: Plant Module
 
 ### Added
